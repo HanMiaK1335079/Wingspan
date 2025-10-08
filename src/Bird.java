@@ -1,4 +1,3 @@
-import java.util.*;
 
 public class Bird {
     final String name;
@@ -9,10 +8,12 @@ public class Bird {
     final int maxEggs;
     final int wingspan;
     final String ability;
+    //final String abilityClass; // returns onActivate, betweenTurns, whenPlaced
+    //final String abilityType; // returns hunt, flock, none
 
     int storedEggs = 0;
-    ArrayList<String> cachedFood = new ArrayList<>();
-    ArrayList<Bird> flocked = new ArrayList<>();
+    int cachedFood = 0;
+    int flocked = 0;
 
     public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a){
         this.name = n;
@@ -34,8 +35,8 @@ public class Bird {
     public int getWingspan() {return this.wingspan;}
     public String getAbility() {return this.ability;}
     public int getStoredEggs() {return this.storedEggs;}
-    public ArrayList<String> getCachedFood() {return this.cachedFood;}
-    public ArrayList<Bird> getFlocked() {return this.flocked;}
+    public int getCachedFood() {return this.cachedFood;}
+    public int getFlocked() {return this.flocked;}
 
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
@@ -55,12 +56,9 @@ public class Bird {
         return 0;
     }
 
-    public void cacheFood(String food){this.cachedFood.add(food);}
-    public void cacheFood(String[] food){this.cachedFood.addAll(Arrays.asList(food));}
-
-    public void flock(Bird b){this.flocked.add(b);}
-    public void flock(Bird[] birds){this.flocked.addAll(Arrays.asList(birds));
+    public void cacheFood(){this.cachedFood++;}
+    public void flock(){this.flocked++;}
 }
 
     
-}
+
