@@ -3,6 +3,6 @@ import java.util.*;
 //testing
 
 
-public class Game {
+public class Game implements Runnable {
     
 }
