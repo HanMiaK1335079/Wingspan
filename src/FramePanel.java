@@ -9,6 +9,7 @@ public class FramePanel extends JPanel {
      public FramePanel()  {
          try{
              cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
+             System.out.println("Workie");
          } catch (Exception e){
              System.out.println("No workie because idk 🤷‍♂️");
          }
