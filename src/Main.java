@@ -1,16 +1,14 @@
 package src;
-
-import javax.swing.JFrame;
-
+ import javax.swing.*;
 public class Main {
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Wingspan");
-        frame.setSize(1600, 900);
-        frame.setDefaultCloseOperation(0);
-        frame.add(new FramePanel());
-        frame.setVisible(true);
-
-    }
-
+     public static void main(String[]args){
+        JFrame wingSpanFrame = new JFrame("Wingspan");
+     
+        wingSpanFrame.setSize(1600, 900);        
+        wingSpanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       
+        wingSpanFrame.setVisible(true);
+     }
+     
+    
 }

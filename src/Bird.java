@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 
+=======
+package src;
+>>>>>>> f0bc0cf3a06f20c7dd67f71165965f5e0e925bf7
 import java.util.*;
 
 public class Bird {
