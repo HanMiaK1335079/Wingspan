@@ -15,7 +15,7 @@ public class Bird {
     private ArrayList<String> cachedFood = new ArrayList<>();
     private ArrayList<Bird> flocked = new ArrayList<>();
 
-    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a){
+    public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a){
         this.name = n;
         this.habitats = h;
         this.foods = f;
