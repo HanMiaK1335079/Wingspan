@@ -6,7 +6,7 @@ public class Main {
      
         wingSpanFrame.setSize(1600, 900);        
         wingSpanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       
+        wingSpanFrame.add(new FramePanel());
         wingSpanFrame.setVisible(true);
      }
      

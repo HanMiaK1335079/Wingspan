@@ -6,6 +6,7 @@ package src;
 import java.util.*;
 
 public class Bird {
+<<<<<<< HEAD
 
     final String name;
     final String[] habitats;
@@ -15,12 +16,26 @@ public class Bird {
     final int maxEggs;
     final int wingspan;
     final String ability;
+=======
+    final private String name; // name of the bird
+    final private String[] habitats; // where the bird can live
+    final private String[] foods; // what the bird can eat
+    final private int feathers; // number of feathers the bird has
+    final private String nest; // type of nest the bird uses
+    final private int maxEggs; // maximum number of eggs the bird can hold
+    final private int wingspan; // wingspan of the bird in cm
+    final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED?
+>>>>>>> 777dda0c0f81e30aaa58cb37d9967655dc11f5b6
 
-    int storedEggs = 0;
-    ArrayList<String> cachedFood = new ArrayList<>();
-    ArrayList<Bird> flocked = new ArrayList<>();
+    private int storedEggs = 0;
+    private ArrayList<String> cachedFood = new ArrayList<>();
+    private ArrayList<Bird> flocked = new ArrayList<>();
 
+<<<<<<< HEAD
     public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a) {
+=======
+    public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a){
+>>>>>>> 777dda0c0f81e30aaa58cb37d9967655dc11f5b6
         this.name = n;
         this.habitats = h;
         this.foods = f;
@@ -31,9 +46,23 @@ public class Bird {
         this.ability = a;
     }
 
+<<<<<<< HEAD
     public String getName() {
         return this.name;
     }
+=======
+    public String getName() {return name;}
+    public String[] getHabitats() {return habitats;}
+    public String[] getFoods() {return foods;}
+    public int getFeathers() {return feathers;}
+    public String getNest() {return nest;}
+    public int getMaxEggs() {return maxEggs;}
+    public int getWingspan() {return wingspan;}
+    public String getAbility() {return ability;}
+    public int getStoredEggs() {return storedEggs;}
+    public ArrayList<String> getCachedFood() {return cachedFood;}
+    public ArrayList<Bird> getFlocked() {return flocked;}
+>>>>>>> 777dda0c0f81e30aaa58cb37d9967655dc11f5b6
 
     public String[] getHabitats() {
         return this.habitats;
