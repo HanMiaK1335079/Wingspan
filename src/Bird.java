@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 
 public class Bird {
     final String name;
@@ -8,6 +9,7 @@ public class Bird {
     final int maxEggs;
     final int wingspan;
     final String ability;
+    final BufferedImage image;
     //final String abilityClass; // returns onActivate, betweenTurns, whenPlaced
     //final String abilityType; // returns hunt, flock, none
 
@@ -15,7 +17,7 @@ public class Bird {
     int cachedFood = 0;
     int flocked = 0;
 
-    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a){
+    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a, BufferedImage i){
         this.name = n;
         this.habitats = h;
         this.foods = f;
@@ -24,6 +26,7 @@ public class Bird {
         this.maxEggs = mE;
         this.wingspan = w;
         this.ability = a;
+        this.image = i;
     }
 
     public String getName() {return this.name;}
@@ -37,6 +40,7 @@ public class Bird {
     public int getStoredEggs() {return this.storedEggs;}
     public int getCachedFood() {return this.cachedFood;}
     public int getFlocked() {return this.flocked;}
+    public BufferedImage getImage() {return this.image;}
 
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
