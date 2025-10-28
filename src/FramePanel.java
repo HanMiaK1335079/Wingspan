@@ -9,8 +9,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, KeyListener {
      private BufferedImage cover;
-
-     public FramePanel()  {
+     private final ProgramState state;
+     public FramePanel(ProgramState state){
+        this.state = state;
         addMouseListener(this);
         addKeyListener(this);
          try{
@@ -26,7 +27,26 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
             
         }
         @Override
-        public void mouseClicked(MouseEvent e) {System.out.println(e.getX());}
+        public void mouseClicked(MouseEvent e) {
+            
+            switch(state.CURRENTEVENT.getLast()) {
+                case "Game Start" -> {
+                    synchronized(state.lock) {
+                        state.CURRENTEVENT.add("Process Mouse Click Game Start");
+                        this.repaint();
+                        state.CURRENTEVENT.removeLast();
+                        state.lock.notifyAll();
+                    }
+                }
+                default -> {
+                    // No action for other cases
+                }
+            }
+            
+        
+        
+        
+        }
         public void mousePressed(MouseEvent e) {}
         public void mouseReleased(MouseEvent e) {}
         public void mouseEntered(MouseEvent e) {}
@@ -38,9 +58,20 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
     
      @Override
     public void paint(Graphics g) {
-        g.drawImage(cover,0,0,1600,900,null);
+        synchronized(state.lock){
+        switch(state.CURRENTEVENT.getLast()) {
+            case "Process Mouse Click Game Start" -> {
+                g.drawImage(cover, 0, 0, 1600, 900, null);
+                state.CURRENTEVENT.removeLast();
+            }
+            default -> {
+                super.paint(g);
+            }
+        }
+        state.lock.notifyAll();
     }
-   
+}
+}
      
    
-}
+

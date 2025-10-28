@@ -10,12 +10,13 @@ public class Bird {
     final private int maxEggs; // maximum number of eggs the bird can hold
     final private int wingspan; // wingspan of the bird in cm
     final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED?
+    final private String[] foodRequired; //stores all diffrent combinations of food required to play the bird
 
     private int storedEggs = 0;
     private ArrayList<String> cachedFood = new ArrayList<>();
     private ArrayList<Bird> flocked = new ArrayList<>();
 
-    public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a){
+    public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a, String[] fr){
         this.name = n;
         this.habitats = h;
         this.foods = f;
@@ -24,6 +25,7 @@ public class Bird {
         this.maxEggs = mE;
         this.wingspan = w;
         this.ability = a;
+        this.foodRequired = fr;
     }
 
     public String getName() {return name;}
@@ -34,6 +36,7 @@ public class Bird {
     public int getMaxEggs() {return maxEggs;}
     public int getWingspan() {return wingspan;}
     public String getAbility() {return ability;}
+    public String[] getFoodRequired() {return foodRequired;}
     public int getStoredEggs() {return storedEggs;}
     public ArrayList<String> getCachedFood() {return cachedFood;}
     public ArrayList<Bird> getFlocked() {return flocked;}
