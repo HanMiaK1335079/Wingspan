@@ -9,8 +9,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, KeyListener {
      private BufferedImage cover;
-
-     public FramePanel()  {
+     private final ProgramState state;
+     public FramePanel(ProgramState state){
+        this.state = state;
         addMouseListener(this);
         addKeyListener(this);
          try{
@@ -19,6 +20,7 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
          } catch (Exception e){
              System.out.println("No workie because idk 🤷‍♂️");
          }
+         this.repaint();
      }
         public void addNotify() {
             super.addNotify();
@@ -26,7 +28,30 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
             
         }
         @Override
-        public void mouseClicked(MouseEvent e) {System.out.println(e.getX());}
+        public void mouseClicked(MouseEvent e) {
+            
+            switch(state.CURRENTEVENT.getLast()) {
+                case "Game Start" -> {
+                    synchronized(state.lock) {
+                        System.out.println("workie click");
+                        state.CURRENTEVENT.add("Process Mouse Click Game Start");
+                        System.out.println(state.CURRENTEVENT);
+                        this.repaint();
+                        System.out.println(state.CURRENTEVENT);
+                        state.CURRENTEVENT.removeLast();
+                        
+                        state.lock.notifyAll();
+                    }
+                }
+                default -> {
+                    // No action for other cases
+                }
+            }
+            
+        
+        
+        
+        }
         public void mousePressed(MouseEvent e) {}
         public void mouseReleased(MouseEvent e) {}
         public void mouseEntered(MouseEvent e) {}
@@ -38,9 +63,29 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
     
      @Override
     public void paint(Graphics g) {
-        g.drawImage(cover,0,0,1600,900,null);
+         super.paint(g);
+        synchronized(state.lock){
+        switch(state.CURRENTEVENT.getLast()) {
+            case "Process Mouse Click Game Start" -> {
+              
+                
+                state.CURRENTEVENT.removeLast();
+                break;
+            }
+            case "Game Start" ->{
+                g.drawImage(cover, 0, 0, 1600, 900, null);
+                
+                break;
+                
+            }
+            default -> {
+                
+            }
+        }
+        state.lock.notifyAll();
     }
-   
+}
+}
      
    
-}
+
