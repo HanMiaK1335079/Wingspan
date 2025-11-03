@@ -1,3 +1,25 @@
+<<<<<<< HEAD
+import java.awt.image.BufferedImage;
+
+public class Bird {
+    final String name;
+    final String[] habitats;
+    final String[] foods;
+    final int feathers;
+    final String nest;
+    final int maxEggs;
+    final int wingspan;
+    final String ability;
+    final BufferedImage image;
+    //final String abilityClass; // returns onActivate, betweenTurns, whenPlaced
+    //final String abilityType; // returns hunt, flock, none
+
+    int storedEggs = 0;
+    int cachedFood = 0;
+    int flocked = 0;
+
+    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a, BufferedImage i){
+=======
 package src;
 import java.util.*;
 
@@ -17,6 +39,7 @@ public class Bird {
     private ArrayList<Bird> flocked = new ArrayList<>();
 
     public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a, String[] fr){
+>>>>>>> 739a3b504828b762678dbc313c4eabf69250ee5e
         this.name = n;
         this.habitats = h;
         this.foods = f;
@@ -25,6 +48,23 @@ public class Bird {
         this.maxEggs = mE;
         this.wingspan = w;
         this.ability = a;
+<<<<<<< HEAD
+        this.image = i;
+    }
+
+    public String getName() {return this.name;}
+    public String[] getHabitats() {return this.habitats;}
+    public String[] getFoods() {return this.foods;}
+    public int getFeathers() {return this.feathers;}
+    public String getNest() {return this.nest;}
+    public int getMaxEggs() {return this.maxEggs;}
+    public int getWingspan() {return this.wingspan;}
+    public String getAbility() {return this.ability;}
+    public int getStoredEggs() {return this.storedEggs;}
+    public int getCachedFood() {return this.cachedFood;}
+    public int getFlocked() {return this.flocked;}
+    public BufferedImage getImage() {return this.image;}
+=======
         this.foodRequired = fr;
     }
 
@@ -40,6 +80,7 @@ public class Bird {
     public int getStoredEggs() {return storedEggs;}
     public ArrayList<String> getCachedFood() {return cachedFood;}
     public ArrayList<Bird> getFlocked() {return flocked;}
+>>>>>>> 739a3b504828b762678dbc313c4eabf69250ee5e
 
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
@@ -59,12 +100,9 @@ public class Bird {
         return 0;
     }
 
-    public void cacheFood(String food){this.cachedFood.add(food);}
-    public void cacheFood(String[] food){this.cachedFood.addAll(Arrays.asList(food));}
-
-    public void flock(Bird b){this.flocked.add(b);}
-    public void flock(Bird[] birds){this.flocked.addAll(Arrays.asList(birds));
+    public void cacheFood(){this.cachedFood++;}
+    public void flock(){this.flocked++;}
 }
 
     
-}
+
