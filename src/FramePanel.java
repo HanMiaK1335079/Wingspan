@@ -29,25 +29,24 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
         }
         @Override
         public void mouseClicked(MouseEvent e) {
-            
+             System.out.println(state.CURRENTEVENT);
             switch(state.CURRENTEVENT.getLast()) {
                 case "Game Start" -> {
-                    synchronized(state.lock) {
-                        System.out.println("workie click");
+                    
                         state.CURRENTEVENT.add("Process Mouse Click Game Start");
-                        System.out.println(state.CURRENTEVENT);
-                        this.repaint();
-                        System.out.println(state.CURRENTEVENT);
-                        state.CURRENTEVENT.removeLast();
                         
-                        state.lock.notifyAll();
+                        this.repaint();
+                       
+                        
+                        
+                    break;
                     }
-                }
+                
                 default -> {
                     // No action for other cases
                 }
-            }
             
+        }
         
         
         
@@ -64,17 +63,17 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
      @Override
     public void paint(Graphics g) {
          super.paint(g);
-        synchronized(state.lock){
+       
         switch(state.CURRENTEVENT.getLast()) {
             case "Process Mouse Click Game Start" -> {
               
-                
+               
                 state.CURRENTEVENT.removeLast();
                 break;
             }
             case "Game Start" ->{
                 g.drawImage(cover, 0, 0, 1600, 900, null);
-                
+                 
                 break;
                 
             }
@@ -82,8 +81,8 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
                 
             }
         }
-        state.lock.notifyAll();
-    }
+       
+    
 }
 }
      
