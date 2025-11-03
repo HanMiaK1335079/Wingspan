@@ -56,7 +56,7 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
         public void mouseReleased(MouseEvent e) {}
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
-    public void keyTyped(KeyEvent e) {}
+        public void keyTyped(KeyEvent e) {}
         public void keyPressed(KeyEvent e) {}
         public void keyReleased(KeyEvent e) {}
 
