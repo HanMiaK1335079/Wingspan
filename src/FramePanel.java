@@ -20,6 +20,7 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
          } catch (Exception e){
              System.out.println("No workie because idk 🤷‍♂️");
          }
+         this.repaint();
      }
         public void addNotify() {
             super.addNotify();
@@ -32,9 +33,13 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
             switch(state.CURRENTEVENT.getLast()) {
                 case "Game Start" -> {
                     synchronized(state.lock) {
+                        System.out.println("workie click");
                         state.CURRENTEVENT.add("Process Mouse Click Game Start");
+                        System.out.println(state.CURRENTEVENT);
                         this.repaint();
+                        System.out.println(state.CURRENTEVENT);
                         state.CURRENTEVENT.removeLast();
+                        
                         state.lock.notifyAll();
                     }
                 }
@@ -58,14 +63,23 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
     
      @Override
     public void paint(Graphics g) {
+         super.paint(g);
         synchronized(state.lock){
         switch(state.CURRENTEVENT.getLast()) {
             case "Process Mouse Click Game Start" -> {
-                g.drawImage(cover, 0, 0, 1600, 900, null);
+              
+                
                 state.CURRENTEVENT.removeLast();
+                break;
+            }
+            case "Game Start" ->{
+                g.drawImage(cover, 0, 0, 1600, 900, null);
+                
+                break;
+                
             }
             default -> {
-                super.paint(g);
+                
             }
         }
         state.lock.notifyAll();
