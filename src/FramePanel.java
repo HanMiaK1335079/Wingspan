@@ -149,8 +149,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 
             }
         }
-        state.lock.notifyAll();
-    }
+       
+    
 }
 }
      
