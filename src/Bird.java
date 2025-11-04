@@ -1,7 +1,6 @@
 package src;
 import java.awt.image.BufferedImage;
 import java.util.*;
-
 public class Bird {
     final private String name;
     final private String activate;
