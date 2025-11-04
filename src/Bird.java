@@ -1,28 +1,6 @@
-<<<<<<< HEAD
-import java.awt.image.BufferedImage;
-
-public class Bird {
-    final String name;
-    final String[] habitats;
-    final String[] foods;
-    final int feathers;
-    final String nest;
-    final int maxEggs;
-    final int wingspan;
-    final String ability;
-    final BufferedImage image;
-    //final String abilityClass; // returns onActivate, betweenTurns, whenPlaced
-    //final String abilityType; // returns hunt, flock, none
-
-    int storedEggs = 0;
-    int cachedFood = 0;
-    int flocked = 0;
-
-    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a, BufferedImage i){
-=======
 package src;
+import java.awt.image.BufferedImage;
 import java.util.*;
-
 public class Bird {
     final private String name; // name of the bird
     final private String[] habitats; // where the bird can live
@@ -33,13 +11,13 @@ public class Bird {
     final private int wingspan; // wingspan of the bird in cm
     final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED?
     final private String[] foodRequired; //stores all diffrent combinations of food required to play the bird
+    private final BufferedImage image;
 
     private int storedEggs = 0;
     private ArrayList<String> cachedFood = new ArrayList<>();
     private ArrayList<Bird> flocked = new ArrayList<>();
 
-    public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a, String[] fr){
->>>>>>> 739a3b504828b762678dbc313c4eabf69250ee5e
+    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a, String[] fr, BufferedImage img){
         this.name = n;
         this.habitats = h;
         this.foods = f;
@@ -48,24 +26,8 @@ public class Bird {
         this.maxEggs = mE;
         this.wingspan = w;
         this.ability = a;
-<<<<<<< HEAD
-        this.image = i;
-    }
-
-    public String getName() {return this.name;}
-    public String[] getHabitats() {return this.habitats;}
-    public String[] getFoods() {return this.foods;}
-    public int getFeathers() {return this.feathers;}
-    public String getNest() {return this.nest;}
-    public int getMaxEggs() {return this.maxEggs;}
-    public int getWingspan() {return this.wingspan;}
-    public String getAbility() {return this.ability;}
-    public int getStoredEggs() {return this.storedEggs;}
-    public int getCachedFood() {return this.cachedFood;}
-    public int getFlocked() {return this.flocked;}
-    public BufferedImage getImage() {return this.image;}
-=======
         this.foodRequired = fr;
+        this.image = img;
     }
 
     public String getName() {return name;}
@@ -77,10 +39,10 @@ public class Bird {
     public int getWingspan() {return wingspan;}
     public String getAbility() {return ability;}
     public String[] getFoodRequired() {return foodRequired;}
+    public BufferedImage getImage() {return image;}
     public int getStoredEggs() {return storedEggs;}
     public ArrayList<String> getCachedFood() {return cachedFood;}
     public ArrayList<Bird> getFlocked() {return flocked;}
->>>>>>> 739a3b504828b762678dbc313c4eabf69250ee5e
 
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
@@ -100,8 +62,19 @@ public class Bird {
         return 0;
     }
 
-    public void cacheFood(){this.cachedFood++;}
-    public void flock(){this.flocked++;}
+    public void cacheFood(){
+        cachedFood.add("wild");
+    }
+    public void cacheFood(String foodType){
+        if (foodType != null && !foodType.isEmpty()) {
+            cachedFood.add(foodType);
+        }
+    }
+    public void flock(Bird other){
+        if (other != null) {
+            flocked.add(other);
+        }
+    }
 }
 
     

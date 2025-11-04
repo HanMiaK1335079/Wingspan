@@ -1,3 +1,4 @@
+package src;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -5,10 +6,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, KeyListener {
      private BufferedImage cover;
+     private BufferedImage board;
      private final ProgramState state;
      public FramePanel(ProgramState state){
         this.state = state;
@@ -77,6 +80,10 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
                 
                 break;
                 
+            }
+            case "Main Board" -> {
+                g.drawImage(board, 0, 0, 1600, 900, null);
+                break;
             }
             default -> {
                 

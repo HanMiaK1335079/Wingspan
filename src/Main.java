@@ -1,22 +1,13 @@
-<<<<<<< HEAD
-
-
-public class Main {
-   public static void main(String[]args){
-      Frame wingSpanFrame = new Frame("Wingspan");
-     
-        
-   }
-=======
 package src;
- import javax.swing.*;
+import javax.swing.*;
+
 public class Main {
      public static void main(String[]args){
        ProgramState state = new ProgramState();
        FramePanel panel = new FramePanel(state);
        state.CURRENTEVENT.add("BASE");
        state.CURRENTEVENT.add("Game Start");
-       JFrame wingSpanFrame = new JFrame("Wingspan");
+       Frame wingSpanFrame = new Frame("Wingspan");
      
         wingSpanFrame.setSize(1600, 900);        
         wingSpanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,7 +16,6 @@ public class Main {
         Thread gameThread = new Thread(new GameLogic(panel, state));
         gameThread.start();
      }
->>>>>>> 739a3b504828b762678dbc313c4eabf69250ee5e
      
     
 }
