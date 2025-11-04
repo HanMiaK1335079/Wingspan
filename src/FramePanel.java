@@ -44,8 +44,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
         @Override
         public void mouseClicked(MouseEvent e) {
-            // Only respond to clicks when we are on the start screen
-            if ("Game Start".equals(state.CURRENTEVENT.getLast())) {
+           switch(state.CURRENTEVENT.getLast()) {
+            case "Game Start" -> {
                 Point p = e.getPoint();
                 // Update rect position in case panel was resized
                 updateStartButtonRect();
@@ -54,12 +54,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         System.out.println("Start button clicked");
                         state.CURRENTEVENT.add("Process Mouse Click Game Start");
                         this.repaint();
-                        state.CURRENTEVENT.removeLast();
                         state.lock.notifyAll();
                     }
                 }
             }
         }
+    }
         public void mousePressed(MouseEvent e) {}
         public void mouseReleased(MouseEvent e) {}
         public void mouseEntered(MouseEvent e) {}
@@ -87,7 +87,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             case "Process Mouse Click Game Start" -> {
               
                 
-
+                
                 state.CURRENTEVENT.removeLast();
                 break;
             }
@@ -151,6 +151,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
        
     
+}
 }
 }
      
