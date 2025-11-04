@@ -1,13 +1,4 @@
-<<<<<<< HEAD
 
-
-public class Main {
-   public static void main(String[]args){
-      Frame wingSpanFrame = new Frame("Wingspan");
-     
-        
-   }
-=======
 package src;
  import javax.swing.*;
 public class Main {
@@ -25,7 +16,6 @@ public class Main {
         Thread gameThread = new Thread(new GameLogic(panel, state));
         gameThread.start();
      }
->>>>>>> 739a3b504828b762678dbc313c4eabf69250ee5e
      
     
 }
