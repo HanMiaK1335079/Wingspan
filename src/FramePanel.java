@@ -63,18 +63,20 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
     
      @Override
     public void paint(Graphics g) {
-         super.paint(g);
+        super.paint(g);
         synchronized(state.lock){
         switch(state.CURRENTEVENT.getLast()) {
             case "Process Mouse Click Game Start" -> {
               
                 
+
                 state.CURRENTEVENT.removeLast();
                 break;
             }
-            case "Game Start" ->{
+            case "Game Start" -> {
                 g.drawImage(cover, 0, 0, 1600, 900, null);
-                
+                g.drawRect(700, 700, 200, 100);
+                g.drawString("Click to Start", 750, 750);
                 break;
                 
             }
