@@ -1,6 +1,6 @@
 package src;
+import java.awt.image.BufferedImage;
 import java.util.*;
-
 public class Bird {
     final private String name; // name of the bird
     final private String[] habitats; // where the bird can live
@@ -11,12 +11,13 @@ public class Bird {
     final private int wingspan; // wingspan of the bird in cm
     final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED?
     final private String[] foodRequired; //stores all diffrent combinations of food required to play the bird
+    private final BufferedImage image;
 
     private int storedEggs = 0;
     private ArrayList<String> cachedFood = new ArrayList<>();
     private ArrayList<Bird> flocked = new ArrayList<>();
 
-    public Bird(String n, String[] h, String[] f, int fo, int mE, int w, String ne, String a, String[] fr){
+    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a, String[] fr, BufferedImage img){
         this.name = n;
         this.habitats = h;
         this.foods = f;
@@ -26,6 +27,7 @@ public class Bird {
         this.wingspan = w;
         this.ability = a;
         this.foodRequired = fr;
+        this.image = img;
     }
 
     public String getName() {return name;}
@@ -37,6 +39,7 @@ public class Bird {
     public int getWingspan() {return wingspan;}
     public String getAbility() {return ability;}
     public String[] getFoodRequired() {return foodRequired;}
+    public BufferedImage getImage() {return image;}
     public int getStoredEggs() {return storedEggs;}
     public ArrayList<String> getCachedFood() {return cachedFood;}
     public ArrayList<Bird> getFlocked() {return flocked;}
@@ -59,12 +62,20 @@ public class Bird {
         return 0;
     }
 
-    public void cacheFood(String food){this.cachedFood.add(food);}
-    public void cacheFood(String[] food){this.cachedFood.addAll(Arrays.asList(food));}
-
-    public void flock(Bird b){this.flocked.add(b);}
-    public void flock(Bird[] birds){this.flocked.addAll(Arrays.asList(birds));
+    public void cacheFood(){
+        cachedFood.add("wild");
+    }
+    public void cacheFood(String foodType){
+        if (foodType != null && !foodType.isEmpty()) {
+            cachedFood.add(foodType);
+        }
+    }
+    public void flock(Bird other){
+        if (other != null) {
+            flocked.add(other);
+        }
+    }
 }
 
     
-}
+

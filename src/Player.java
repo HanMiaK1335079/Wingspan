@@ -15,6 +15,8 @@ public class Player {
     public int score(){
         return 3;
     }
+    public ArrayList<String> getFoodInHand(){return foodInHand;}
+    public void setFoodInHand(ArrayList<String> x){foodInHand=x;}
 
 
 
