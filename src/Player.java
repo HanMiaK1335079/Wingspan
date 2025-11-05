@@ -8,20 +8,37 @@ public class Player {
     private int[] actionCubes = new int[4];
     private ArrayList<String> foodInHand = new ArrayList<>();
     
-    public Player(){
+    public Player(ArayList<Bird> cardsInHand, Bird[][] board, ArrayList<String> bonusCard, int[] actionCubes, ArrayList<String> foodInHand){
+        this.cardsInHand = cardsInHand;
+        this.board = board;
+        this.bonusCard = bonusCard;
+        this.actionCubes = actionCubes;
+        this.foodInHand = foodInHand;
         
     }
     
     public int score(){
         return 3;
     }
-    public ArrayList<String> getFoodInHand(){return foodInHand;}
-    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
+
     
 
+
+    // Get Methods for the Player class
+    public ArrayList<String> getFoodInHand(){return foodInHand;}
+    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
+    public ArrayList<String> getBonusCard(){return bonusCard;}
+    public Bird[][] getBoard(){return board;}
+    public int[] getActionCubes(){return actionCubes;}
+    
+
+
+
+    // Set Methods for the Player class
     public void addNewCardToHand(Bird b){cardsInHand.add(b);}
     public void setFoodInHand(ArrayList<String> x){foodInHand=x;}
     public void addFoodToHand(String f){foodInHand.add(f);}
+    
 
 
 

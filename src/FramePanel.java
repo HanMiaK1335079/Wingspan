@@ -8,27 +8,13 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-      private BufferedImage cover;
-      private final ProgramState state;
-      private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
-      private boolean hover = false;
-      private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
-      private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
-    
-    // update button geometry based on current panel size
-    private void updateStartButtonRect() {
-        int w = getWidth() > 0 ? getWidth() : 1600;
-        int h = getHeight() > 0 ? getHeight() : 900;
-        int btnW = Math.max(200, w / 6);
-        int btnH = Math.max(60, h / 12);
-        int x = (w - btnW) / 2;
-        int y = h - btnH - Math.max(60, h / 12);
-        startButtonRect.setBounds(x, y, btnW, btnH);
-    }
+public class FramePanel extends JPanel implements MouseListener, KeyListener {
+     private BufferedImage cover;
+     private final ProgramState state;
      public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
+        addKeyListener(this);
          try{
              cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
              System.out.println("Workie");
