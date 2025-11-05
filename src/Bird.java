@@ -9,7 +9,7 @@ public class Bird {
     final private String nest; // type of nest the bird uses
     final private int maxEggs; // maximum number of eggs the bird can hold
     final private int wingspan; // wingspan of the bird in cm
-    final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED?
+    final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED? WHO KNOW?!!?
     final private String[] foodRequired; //stores all diffrent combinations of food required to play the bird
     private final BufferedImage image;
 
