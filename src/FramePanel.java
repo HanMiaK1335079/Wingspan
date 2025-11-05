@@ -91,6 +91,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 
                 state.CURRENTEVENT.removeLast();
                 state.CURRENTEVENT.add("Player one turn");
+                GameLogic gameLogic = new GameLogic(this, state);
+                gameLogic.setUp();
                 break;
             }
             case "Game Start" -> {
