@@ -16,7 +16,13 @@ public class Player {
         return 3;
     }
     public ArrayList<String> getFoodInHand(){return foodInHand;}
+    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
+    
+
+    public void addNewCardToHand(Bird b){cardsInHand.add(b);}
     public void setFoodInHand(ArrayList<String> x){foodInHand=x;}
+    public void addFoodToHand(String f){foodInHand.add(f);}
+
 
 
 
