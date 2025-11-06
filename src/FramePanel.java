@@ -32,8 +32,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
      public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-
-
+     
         //Add all buffered images here 
          try{
              cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
@@ -62,7 +61,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
         @Override
         public void mouseClicked(MouseEvent e) {
-            // Only respond to clicks when we are on the start screen
+            // Only respond to clicks when we are on the start scree
+
+            
             if ("Game Start".equals(state.CURRENTEVENT.getLast())) {
                 Point p = e.getPoint();
                 // Update rect position in case panel was resized
@@ -85,6 +86,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
         public void mouseDragged(MouseEvent e) {}
+       
         @Override
         public void mouseMoved(MouseEvent e) {
             // highlight the button when hovered
@@ -175,5 +177,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 }
 }
+
      
    
