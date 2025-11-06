@@ -8,12 +8,7 @@ public class Player {
     private int[] actionCubes = new int[4];
     private ArrayList<String> foodInHand = new ArrayList<>();
     
-    public Player(ArayList<Bird> cardsInHand, Bird[][] board, ArrayList<String> bonusCard, int[] actionCubes, ArrayList<String> foodInHand){
-        this.cardsInHand = cardsInHand;
-        this.board = board;
-        this.bonusCard = bonusCard;
-        this.actionCubes = actionCubes;
-        this.foodInHand = foodInHand;
+    public Player(){
         
     }
     
