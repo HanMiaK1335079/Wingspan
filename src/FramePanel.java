@@ -48,24 +48,20 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener, Mo
         @Override
         public void mouseClicked(MouseEvent e) {
             String last = state.CURRENTEVENT.getLast();
+            System.out.println("Mouse clicked, current state: " + last);
+            
             if ("Game Start".equals(last)) {
                 Point p = e.getPoint();
                 updateStartButtonRect();
                 if (startButtonRect.contains(p)) {
                     synchronized(state.lock) {
-                        System.out.println("Start button clicked");
+                        System.out.println("Start button clicked - transitioning to game setup");
                         state.CURRENTEVENT.add("Process Mouse Click Game Start");
                         this.repaint();
                         state.lock.notifyAll();
                     }
-                }
-            } else if ("Start Button Clicked".equals(last)) {
-                synchronized(state.lock) {
-                    System.out.println("Start button clicked");
-                    state.CURRENTEVENT.removeLast();
-                    state.CURRENTEVENT.add("Process Mouse Click Game Start");
-                    this.repaint();
-                    state.lock.notifyAll();
+                } else {
+                    System.out.println("Click was outside button bounds");
                 }
             }
         }
@@ -102,7 +98,6 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener, Mo
         switch(state.CURRENTEVENT.getLast()) {
             case "Game Start" -> {
                 Graphics2D g2 = (Graphics2D) g;
-                // Smooth rendering ts was ai
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 
@@ -152,35 +147,42 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener, Mo
 
                 break;
             } case "Process Mouse Click Game Start" -> {
+                System.out.println("Processing game start - setting up game logic");
+                try {
+                    // Clear any existing states
+                    state.CURRENTEVENT.clear();
+                    System.out.println("Setting up game logic...");
+                    GameLogic gameLogic = new GameLogic(this, state);
+                    gameLogic.setUp();
+                    System.out.println("Current state after setup: " + state.CURRENTEVENT.getLast());
+                    this.repaint();
+                } catch (Exception ex) {
+                    System.out.println("Error during game setup: " + ex);
+                    ex.printStackTrace();
+                }
+                break;
+            } case "Decide Hand And Food Player One" -> {
+                // Draw the player setup screen
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                int w = getWidth();
-                int h = getHeight();
-                if (cover != null) g2.drawImage(cover, 0, 0, w, h, null);
-                g2.setColor(new Color(0, 0, 0, 100));
-                g2.fillRect(0, 0, w, h);
+                
+                // Clear background
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                
+                // Draw title
+                g2.setColor(Color.BLACK);
                 g2.setFont(titleFont);
-                g2.setColor(new Color(255, 245, 230));
-                String title = "Wingspan";
-                FontMetrics fmTitle = g2.getFontMetrics();
-                int tx = (w - fmTitle.stringWidth(title)) / 2;
-                int ty = h / 3;
-                g2.drawString(title, tx, ty);
-                updateStartButtonRect();
-                RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
-                g2.setColor(new Color(0, 0, 0, 100));
-                g2.fill(new RoundRectangle2D.Float(startButtonRect.x + 4, startButtonRect.y + 6, startButtonRect.width, startButtonRect.height, 24, 24));
-
-                Color top = hover ? new Color(70, 160, 70) : new Color(50, 130, 200);
-                Color bottom = hover ? new Color(40, 120, 40) : new Color(20, 80, 160);
-                GradientPaint gp = new GradientPaint(startButtonRect.x, startButtonRect.y, top, startButtonRect.x, startButtonRect.y + startButtonRect.height, bottom);
-                g2.setPaint(gp);
-                g2.fill(rr);
+                String title = "Player 1: Choose Your Starting Hand";
+                FontMetrics fm = g2.getFontMetrics();
+                int titleX = (getWidth() - fm.stringWidth(title)) / 2;
+                g2.drawString(title, titleX, 100);
+                
+                break;
             }
-       
-            
         }
     }
+}
 }
      
    
