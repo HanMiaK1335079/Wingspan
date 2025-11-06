@@ -10,7 +10,7 @@ public class Bird {
     final private String nest;
     final private int maxEggs;
     final private int wingspan;
-    final private String[] habitats;
+    final private ArrayList<String> habitats;
     final private ArrayList<String[]> foods;
 
     private BufferedImage image;
@@ -18,7 +18,7 @@ public class Bird {
     private int cachedFood = 0;
     private int flocked = 0;
 
-    public Bird(String n, String a, String ab, String aT, int p, String ne, int m, int w, String[] h, ArrayList<String[]> f){
+    public Bird(String n, String a, String ab, String aT, int p, String ne, int m, int w, ArrayList<String> h, ArrayList<String[]> f){
         name = n;
         activate = a;
         ability = ab;
@@ -39,7 +39,7 @@ public class Bird {
     public String getNest() {return nest;}
     public int getMaxEggs() {return maxEggs;}
     public int getWingspan() {return wingspan;}
-    public String[] getHabitats() {return habitats;}
+    public ArrayList<String> getHabitats() {return habitats;}
     public ArrayList<String[]> getFoods() {return foods;}
     public BufferedImage getImage() {return image;}
 
@@ -66,6 +66,25 @@ public class Bird {
 
     public void cacheFood(){this.cachedFood++;}
     public void flock(){this.flocked++;}
+
+    public String toString(){
+        String s = "";
+
+        s+= "*****" + name + "*****\n";
+        s+= activate+": "+"("+abilityType+") " + ability;
+        s+= "\nNest: " + nest;
+        s+= "\nHabitats: " + habitats;
+        s+= "\nPoints: " + points;
+        s+= "\nEggs: " + storedEggs + " / " + maxEggs;
+        s+= "\nWingspan: "+ wingspan;
+        s+= "\nFoods: ";
+
+        for (String[] arr: foods){
+            s+= Arrays.toString(arr)+", ";
+        }
+
+        return s;
+    }
 
 }
     

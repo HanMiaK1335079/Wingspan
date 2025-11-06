@@ -1,121 +1,44 @@
 package src;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import static java.lang.System.out;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-public class FramePanel extends JPanel implements MouseListener, KeyListener {
-    private BufferedImage cover;
-    private final ProgramState state;
-    private ArrayList<Bird> birds;
+import java.util.*;
+
+public class Tester {
+    private static ArrayList<Bird> birds = new ArrayList<Bird>();
     private Map<String, ArrayList<String>> bonusMap;
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
 
-    public FramePanel(ProgramState state){
-        for (String s: bonuses){bonusMap.put(s, new ArrayList<String>());}
-        this.state = state;
-        try{
-            cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
-            System.out.println("Workie");
-        } catch (Exception e){
-            System.out.println("No workie because idk 🤷‍♂️");
-        }
+    public static void main(String[] args) {
+        File f = new File("assets/birdInfo.csv");
 
-        
-
-        addMouseListener(this);
-        addKeyListener(this);
-        this.repaint();
+        readCSV(f);
+        for (int i=0;i<170;i++) out.println(birds.get(i));
     }
     
-    public void addNotify() {
-        super.addNotify();
-        requestFocus();
-        
-    }
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        switch(state.CURRENTEVENT.getLast()) {
-            case "Game Start" -> {
-                synchronized(state.lock) {
-                    System.out.println("workie click");
-                    state.CURRENTEVENT.add("Process Mouse Click Game Start");
-                    System.out.println(state.CURRENTEVENT);
-                    this.repaint();
-                    System.out.println(state.CURRENTEVENT);
-                    state.CURRENTEVENT.removeLast();
-                    
-                    state.lock.notifyAll();
-                }
-            }
-            default -> {
-                // No action for other cases
-            }
-        }
-    }
-    public void mousePressed(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void keyTyped(KeyEvent e) {}
-    public void keyPressed(KeyEvent e) {}
-    public void keyReleased(KeyEvent e) {}
-
-    
-    @Override
-    public void paint(Graphics g) {
-         super.paint(g);
-        synchronized(state.lock){
-            switch(state.CURRENTEVENT.getLast()) {
-                case "Process Mouse Click Game Start" -> {
-                
-                    
-                    state.CURRENTEVENT.removeLast();
-                    break;
-                }
-                case "Game Start" ->{
-                    g.drawImage(cover, 0, 0, 1600, 900, null);
-                    
-                    break;
-                    
-                }
-                case "Main Board" -> {
-                g.drawImage(board, 0, 0, 1600, 900, null);
-                break;
-            }
-            default -> {
-                    
-                }
-            }
-            state.lock.notifyAll();
-        }
-    }
-
     public static void readCSV(File f){
         try {
+            //out.println("Will activate scanner");
             Scanner scan = new Scanner(f);
+            //out.println("Read the scanner");
             Bird b;
             String[] items;
             while (scan.hasNextLine()){
                 String l = scan.nextLine();
+                //out.println("line: " + l);
                 if (l.contains("\"")){
                     l = l.replace("\"\"", "");
                     String[] quoteSplit = l.split("\"");
+                    //out.println("quotesplit: "+Arrays.toString(quoteSplit));
                     ArrayList<String> supportSplit = new ArrayList<String>();
                     supportSplit.addAll(Arrays.asList(quoteSplit[0].split(",")));
                     supportSplit.add(quoteSplit[1]);
                     supportSplit.addAll(Arrays.asList(quoteSplit[2].split(",")));
                     supportSplit.remove(3);
                     items = new String[supportSplit.size()];
-
+                    //out.println("Support: "+supportSplit);
                     for (int i=0;i<items.length;i++) items[i] = supportSplit.get(i);
                     
+                    //for (int i=0;i<items.length;i++) out.print(i+": "+items[i]+"        ");
                 }else{
                     items = l.split(",");
                 }
@@ -127,7 +50,9 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
                 for (int i=13;i<20;i++) foodMap.put(i, foodtypes[i-13]);
                 ArrayList<String[]> foodArr = new ArrayList<String[]>();
                 ArrayList<String> foods = new ArrayList<String>();
+                //out.println("Food stuff instantiated");
                 if (items[20].equals("/")){
+                    //out.println("Activated splitfoods");
                     for (int i=13;i<18;i++)
                         if (!items[i].equals("")) foods.add(foodMap.get(i));
 
@@ -137,20 +62,25 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
                     }
                     
                 }else{
+                    //out.println("Activated setfoods");
                     ArrayList<String> foo = new ArrayList<String>();
                     for (int i=13;i<20;i++){
                         if (!items[i].equals("")){
+                            //out.println("Adding");
                             for (int j=0;j<Integer.parseInt(items[i]);j++){
                                 foo.add(foodMap.get(i));
+                                //out.println("Added food to foodMap");
                             }
                         }
                     }
                     String[] foox = new String[foo.size()];
                     for (int i=0;i<foo.size();i++) foox[i] = foo.get(i);
+                    //out.println(Arrays.toString(foox));
                     foodArr.add(foox);
                 }
 
                 // Ability type stuff
+                //out.println("Got to abilityType stuff");
                 String abilityType;
                 if (items[3].equals("X")) abilityType = "predator";
                 else if (items[4].equals("X")) abilityType = "flocking";
@@ -158,6 +88,7 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
                 else abilityType = "";
 
                 //ablityActivate stuff
+                //out.println("Got to abilityActivate stuff");
                 String abilityActivate;
                 abilityActivate = switch (items[1]) {
                     case "brown" -> "OA";
@@ -167,13 +98,19 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
                 };
 
                 //habitat stuff
+                //out.println("Got to Habitat stuff");
                 ArrayList<String> habitats = new ArrayList<String>();
                 if (items[10].equals("X")) habitats.add("f");
                 if (items[11].equals("X")) habitats.add("p");
                 if (items[12].equals("X")) habitats.add("w");
+                //out.println("Items: " + items[11]+items[12]+items[13]);
+                //out.println("Habitats: "+habitats);
+
+                //out.println("Got to birdmaking stuff");
                 
                 b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
                 birds.add(b);
+                //out.println("Finished birdmaking stuff");
             }
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
@@ -181,8 +118,4 @@ public class FramePanel extends JPanel implements MouseListener, KeyListener {
         
         
     }
-
 }
-     
-   
-
