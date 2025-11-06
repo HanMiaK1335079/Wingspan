@@ -16,7 +16,7 @@ public class ProgramState {
 
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
 
-    public ArrayList<String> CURRENTEVENT = new ArrayList<>();
+    public volatile ArrayList<String> CURRENTEVENT = new ArrayList<>();
     
     public ProgramState(){
         
