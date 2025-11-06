@@ -9,12 +9,37 @@ public class Player {
     private ArrayList<String> foodInHand = new ArrayList<>();
     
     public Player(){
+        this.cardsInHand = cardsInHand;
+        this.board = board;
+        this.bonusCard = bonusCard;
+        this.actionCubes = actionCubes;
+        this.foodInHand = foodInHand;
         
     }
     
     public int score(){
         return 3;
     }
+
+    
+
+
+    // Get Methods for the Player class
+    public ArrayList<String> getFoodInHand(){return foodInHand;}
+    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
+    public ArrayList<String> getBonusCard(){return bonusCard;}
+    public Bird[][] getBoard(){return board;}
+    public int[] getActionCubes(){return actionCubes;}
+    
+
+
+
+    // Set Methods for the Player class
+    public void addNewCardToHand(Bird b){cardsInHand.add(b);}
+    public void setFoodInHand(ArrayList<String> x){foodInHand=x;}
+    public void addFoodToHand(String f){foodInHand.add(f);}
+    
+
 
 
 
