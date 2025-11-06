@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-      private BufferedImage cover;
+      private BufferedImage cover, infoButton;
       private final ProgramState state;
       private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
       private boolean hover = false;
@@ -26,15 +26,33 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int y = h - btnH - Math.max(60, h / 12);
         startButtonRect.setBounds(x, y, btnW, btnH);
     }
+
+
+
      public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
+
+
+        //Add all buffered images here 
          try{
              cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
-             System.out.println("Workie");
+        infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
+             
          } catch (Exception e){
              System.out.println("No workie because idk 🤷‍♂️");
+             System.out.println(e);
          }
+
+
+
+
+
+
+
+
+
+
          this.repaint();
      }
         public void addNotify() {
@@ -54,8 +72,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         System.out.println("Start button clicked");
                         state.CURRENTEVENT.add("Process Mouse Click Game Start");
                         this.repaint();
-                        state.CURRENTEVENT.removeLast();
+                        
                         state.lock.notifyAll();
+                        GameLogic gameLogic = new GameLogic(this, state);
+                      //  gameLogic.setUp(); //this has yet to be set up.
                     }
                 }
             }
@@ -86,8 +106,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         switch(state.CURRENTEVENT.getLast()) {
             case "Process Mouse Click Game Start" -> {
               
+                g.drawImage(infoButton, 1420, 720, 90, 90, null);
                 
-
                 state.CURRENTEVENT.removeLast();
                 break;
             }
@@ -96,7 +116,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 // Smooth rendering
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // Draw background image scaled to panel size
+                // Drsaw background image scaled to panel size
                 int w = getWidth();
                 int h = getHeight();
                 if (cover != null) g2.drawImage(cover, 0, 0, w, h, null);
