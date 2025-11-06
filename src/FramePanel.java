@@ -85,8 +85,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
         public void mouseDragged(MouseEvent e) {}
+        @Override
         public void mouseMoved(MouseEvent e) {
             // highlight the button when hovered
+            System.out.println("Mouse hovering");
             updateStartButtonRect();
             boolean nowHover = startButtonRect.contains(e.getPoint());
             if (nowHover != hover) {
