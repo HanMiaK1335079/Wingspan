@@ -20,12 +20,7 @@ public class Player {
 
 
     
-    public Player(ArayList<Bird> cardsInHand, Bird[][] board, ArrayList<String> bonusCard, int[] actionCubes, ArrayList<String> foodInHand){
-        this.cardsInHand = cardsInHand;
-        this.board = board;
-        this.bonusCard = bonusCard;
-        this.actionCubes = actionCubes;
-        this.foodInHand = foodInHand;
+    public Player(){
         
     }
     
