@@ -9,6 +9,11 @@ public class Player {
     private ArrayList<String> foodInHand = new ArrayList<>();
     
     public Player(){
+        this.cardsInHand = cardsInHand;
+        this.board = board;
+        this.bonusCard = bonusCard;
+        this.actionCubes = actionCubes;
+        this.foodInHand = foodInHand;
         
     }
     
