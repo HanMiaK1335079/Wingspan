@@ -5,17 +5,20 @@ import java.util.*;
 
 public class Tester {
     private static ArrayList<Bird> birds = new ArrayList<Bird>();
-    private Map<String, ArrayList<String>> bonusMap;
-    private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
-
+    private static Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
+    private static String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
     public static void main(String[] args) {
         File f = new File("assets/birdInfo.csv");
+        
 
         readCSV(f);
-        for (int i=0;i<170;i++) out.println(birds.get(i));
+        out.println(bonusMap.get("Wildlife Gardener"));
+        // for (int i=0;i<170;i++) out.println(birds.get(i));
     }
     
     public static void readCSV(File f){
+        for (String b: bonuses) bonusMap.put(b, new ArrayList<String>());
+
         try {
             //out.println("Will activate scanner");
             Scanner scan = new Scanner(f);
@@ -38,10 +41,12 @@ public class Tester {
                     //out.println("Support: "+supportSplit);
                     for (int i=0;i<items.length;i++) items[i] = supportSplit.get(i);
                     
-                    //for (int i=0;i<items.length;i++) out.print(i+": "+items[i]+"        ");
+                    // for (int i=0;i<items.length;i++) out.print(i+": "+items[i]+"        ");
                 }else{
                     items = l.split(",");
                 }
+
+                
 
 
                 // Doing all the food parsing yey
@@ -111,6 +116,18 @@ public class Tester {
                 b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
                 birds.add(b);
                 //out.println("Finished birdmaking stuff");
+
+                //22 start bonuses
+
+                
+
+                int i=22;
+                while (i<22+bonuses.length && i<items.length){
+                    if (items[i].equals("X")){
+                        bonusMap.get(bonuses[i-22]).add(items[0]);
+                    }
+                    i++;
+                }
             }
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
