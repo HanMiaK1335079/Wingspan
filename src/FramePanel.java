@@ -21,6 +21,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds;
+    private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
+    private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
+    
     
     // update button geometry based on current panel size
     private void updateStartButtonRect() {
@@ -286,6 +289,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
                 birds.add(b);
                 //out.println("Finished birdmaking stuff");
+
+                int i=22;
+                while (i<22+bonuses.length && i<items.length){
+                    if (items[i].equals("X")){
+                        bonusMap.get(bonuses[i-22]).add(items[0]);
+                    }
+                    i++;
+                }
             }
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
