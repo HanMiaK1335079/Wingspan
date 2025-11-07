@@ -9,14 +9,11 @@ public class Player {
     private ArrayList<String> foodInHand = new ArrayList<>();
     
     public Player(){
-<<<<<<< HEAD
-=======
         this.cardsInHand = cardsInHand;
         this.board = board;
         this.bonusCard = bonusCard;
         this.actionCubes = actionCubes;
         this.foodInHand = foodInHand;
->>>>>>> 30151ad76517e9d4c7b382e0ffa52468ce127043
         
     }
     
