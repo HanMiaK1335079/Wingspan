@@ -169,7 +169,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             state.lock.notifyAll();
         }
     }
-    public static void readCSV(File f){
+    public void readCSV(File f){
         try {
             //out.println("Will activate scanner");
             Scanner scan = new Scanner(f);
