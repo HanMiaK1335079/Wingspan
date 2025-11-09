@@ -42,7 +42,6 @@ public class Player {
     public void addBonus(Bonus b) {bonus.add(b);}
     public void removeBonus(Bonus b) {bonus.remove(b);}
 
-    
 
 
 

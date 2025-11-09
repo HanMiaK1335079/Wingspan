@@ -86,6 +86,12 @@ public class Bird {
         return s;
     }
 
+    public void playAbility(){
+        if (abilityType!="brown") return;
+
+        
+    }
+
 }
     
 
