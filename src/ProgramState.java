@@ -2,7 +2,7 @@ package src;
 import java.util.*;
 
 public class ProgramState {
-        public final Object lock = new Object();
+    public final Object lock = new Object();
     public volatile int round=0;
     public volatile int playerTurn=0;
     public volatile ArrayList<Bird> deckOfCards = new ArrayList<>();

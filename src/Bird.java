@@ -87,7 +87,19 @@ public class Bird {
     }
 
     public void playAbility(){
-        if (abilityType!="brown") return;
+        if (!abilityType.equals("brown")) return;
+
+        if (ability.contains("You may cache it")){
+            /*implement the gain 1 seed thing */
+        }else if (ability.contains("in their [wetland]")){
+            /*implement player with fewest bird draw 1 card */
+        }else if (ability.contains("Tuck 1")){
+            if (ability.contains("draw 1")){
+                /*implement draw 1 after cache */
+            }else if (ability.contains("lay 1 egg")){
+                /*implement lay egg after cache */
+            }
+        }
 
         
     }

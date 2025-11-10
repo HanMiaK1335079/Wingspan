@@ -19,15 +19,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
-    private final ArrayList<Bird> birds;
+    private final ArrayList<Bird> birds = new ArrayList<Bird>();
+;
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
     
+    /*Gamestate variables */
+
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-        birds = new ArrayList<Bird>();
-
+        
 
         //Add all buffered images here 
         try{
@@ -53,14 +55,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         startButtonRect.setBounds(x, y, btnW, btnH);
     }
 
-
-
-    
     public void addNotify() {
         super.addNotify();
         requestFocus();
             
     }
+    
     @Override
     public void mouseClicked(MouseEvent e) {
         // Only respond to clicks when we are on the start screen
@@ -99,7 +99,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         public void keyPressed(KeyEvent e) {}
         public void keyReleased(KeyEvent e) {}
 
-    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -304,6 +303,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
+
+    public void playTurn(){
+
+    }
+
 }
      
    
