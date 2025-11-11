@@ -178,27 +178,19 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         g2.setColor(new Color(255, 255, 255, 160));
                         g2.draw(rr);
 
-                        // Button text
-                        g2.setFont(buttonFont);
-                        String label = "Click to Start";
-                        FontMetrics fm = g2.getFontMetrics();
-                        int bx = startButtonRect.x + (startButtonRect.width - fm.stringWidth(label)) / 2;
-                        int by = startButtonRect.y + (startButtonRect.height - fm.getHeight()) / 2 + fm.getAscent();
-                        g2.setColor(Color.WHITE);
-                        g2.drawString(label, bx, by);
-                    break;
-                }
-                default -> {
-                
-                }
-            }
-            state.lock.notifyAll();
+        // Button text
+        g2.setFont(buttonFont);
+        String label = "Click to Start";
+        FontMetrics fm = g2.getFontMetrics();
+        int bx = startButtonRect.x + (startButtonRect.width - fm.stringWidth(label)) / 2;
+        int by = startButtonRect.y + (startButtonRect.height - fm.getHeight()) / 2 + fm.getAscent();
+        g2.setColor(Color.WHITE);
+        g2.drawString(label, bx, by);
+    }
+}
         }
     }
 
-  
-
-    
 
     public void paintSelection(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
