@@ -2,47 +2,49 @@ package src;
 import java.awt.image.BufferedImage;
 import java.util.*;
 public class Bird {
-    final private String name; // name of the bird
-    final private String[] habitats; // where the bird can live
-    final private String[] foods; // what the bird can eat
-    final private int feathers; // number of feathers the bird has
-    final private String nest; // type of nest the bird uses
-    final private int maxEggs; // maximum number of eggs the bird can hold
-    final private int wingspan; // wingspan of the bird in cm
-    final private String ability; //**** HOW WOULD THIS BE IMPLEMENTED? WHO KNOW?!!?
-    final private String[] foodRequired; //stores all diffrent combinations of food required to play the bird
-    private final BufferedImage image;
+    final private String name;
+    final private String activate;
+    final private String ability;
+    final private String abilityType;
+    final private int points;
+    final private String nest;
+    final private int maxEggs;
+    final private int wingspan;
+    final private ArrayList<String> habitats;
+    final private ArrayList<String[]> foods;
 
+    private BufferedImage image;
     private int storedEggs = 0;
-    private ArrayList<String> cachedFood = new ArrayList<>();
-    private ArrayList<Bird> flocked = new ArrayList<>();
+    private int cachedFood = 0;
+    private int flocked = 0;
 
-    public Bird(String n, String[] h, String[] f, int fo, String ne, int mE, int w, String a, String[] fr, BufferedImage img){
-        this.name = n;
-        this.habitats = h;
-        this.foods = f;
-        this.feathers = fo;
-        this.nest = ne;
-        this.maxEggs = mE;
-        this.wingspan = w;
-        this.ability = a;
-        this.foodRequired = fr;
-        this.image = img;
+    public Bird(String n, String a, String ab, String aT, int p, String ne, int m, int w, ArrayList<String> h, ArrayList<String[]> f){
+        name = n;
+        activate = a;
+        ability = ab;
+        abilityType = aT;
+        points = p;
+        nest = ne;
+        maxEggs = m;
+        wingspan = w;
+        habitats = h;
+        foods = f;
     }
 
     public String getName() {return name;}
-    public String[] getHabitats() {return habitats;}
-    public String[] getFoods() {return foods;}
-    public int getFeathers() {return feathers;}
+    public String getActivate() {return activate;}
+    public String getAbility() {return ability;}
+    public String getabilityType() {return abilityType;}
+    public int getPoints() {return points;}
     public String getNest() {return nest;}
     public int getMaxEggs() {return maxEggs;}
     public int getWingspan() {return wingspan;}
-    public String getAbility() {return ability;}
-    public String[] getFoodRequired() {return foodRequired;}
+    public ArrayList<String> getHabitats() {return habitats;}
+    public ArrayList<String[]> getFoods() {return foods;}
     public BufferedImage getImage() {return image;}
-    public int getStoredEggs() {return storedEggs;}
-    public ArrayList<String> getCachedFood() {return cachedFood;}
-    public ArrayList<Bird> getFlocked() {return flocked;}
+
+    public void setImage(BufferedImage i) {image = i;}
+    
 
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
@@ -62,20 +64,46 @@ public class Bird {
         return 0;
     }
 
-    public void cacheFood(){
-        cachedFood.add("wild");
-    }
-    public void cacheFood(String foodType){
-        if (foodType != null && !foodType.isEmpty()) {
-            cachedFood.add(foodType);
-        }
-    }
-    public void flock(Bird other){
-        if (other != null) {
-            flocked.add(other);
-        }
-    }
-}
+    public void cacheFood(){this.cachedFood++;}
+    public void flock(){this.flocked++;}
 
+    public String toString(){
+        String s = "";
+
+        s+= "*****" + name + "*****\n";
+        s+= activate+": "+"("+abilityType+") " + ability;
+        s+= "\nNest: " + nest;
+        s+= "\nHabitats: " + habitats;
+        s+= "\nPoints: " + points;
+        s+= "\nEggs: " + storedEggs + " / " + maxEggs;
+        s+= "\nWingspan: "+ wingspan;
+        s+= "\nFoods: ";
+
+        for (String[] arr: foods){
+            s+= Arrays.toString(arr)+", ";
+        }
+
+        return s;
+    }
+
+    public void playAbility(){
+        if (!abilityType.equals("brown")) return;
+
+        if (ability.contains("You may cache it")){
+            /*implement the gain 1 seed thing */
+        }else if (ability.contains("in their [wetland]")){
+            /*implement player with fewest bird draw 1 card */
+        }else if (ability.contains("Tuck 1")){
+            if (ability.contains("draw 1")){
+                /*implement draw 1 after cache */
+            }else if (ability.contains("lay 1 egg")){
+                /*implement lay egg after cache */
+            }
+        }
+
+        
+    }
+
+}
     
 
