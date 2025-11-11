@@ -1,7 +1,9 @@
 package src;
 import java.io.File;
+import java.io.IOException;
 import static java.lang.System.out;
 import java.util.*;
+import javax.imageio.ImageIO;
 
 public class Tester {
     private static ArrayList<Bird> birds = new ArrayList<Bird>();
@@ -12,7 +14,8 @@ public class Tester {
         
 
         readCSV(f);
-        out.println(bonusMap.get("Wildlife Gardener"));
+        setUpBirdPics();
+        //out.println(bonusMap.get("Wildlife Gardener"));
         // for (int i=0;i<170;i++) out.println(birds.get(i));
     }
     
@@ -133,6 +136,22 @@ public class Tester {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
         }
         
+
         
+    }
+
+
+    public static void setUpBirdPics(){
+        try{
+            for (Bird b: birds){
+                String name = b.getName().toLowerCase().replace("-","_").replace("'","").replace(" ","_");
+                //out.println(name);
+                b.setImage(ImageIO.read(Tester.class.getResource("/assets/birds/"+name+".png")));
+                
+            }
+        }catch(Exception e){
+            out.println("Exception: "+e);
+            out.println("Images couldn't be loaded.");
+        }
     }
 }

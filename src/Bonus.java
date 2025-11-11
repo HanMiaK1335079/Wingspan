@@ -1,17 +1,22 @@
 package src;
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Bonus {
     final private String name;
-    final private ArrayList<Bird> birds;
+    final private ArrayList<String> birds;
+    BufferedImage image;
 
-    public Bonus(String n, ArrayList<Bird> b){
+    public Bonus(String n, ArrayList<String> b){
         name = n;
         birds = b;
     }
 
     public String getName() {return name;}
-    public ArrayList<Bird> getBirds() {return birds;}
+    public ArrayList<String> getBirds() {return birds;}
+    public void setImage(BufferedImage i){image = i;}
+    public BufferedImage getImage() {return image;}
 
-    public boolean hasBird(Bird b) {return birds.contains(b);}
+    public boolean hasBird(Bird b) {return birds.contains(b.getName());}
+    
 }
