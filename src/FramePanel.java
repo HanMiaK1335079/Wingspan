@@ -13,7 +13,7 @@ import static java.lang.System.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton;
+    private BufferedImage cover, infoButton, bg;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -23,19 +23,26 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 ;
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
-    
+    private ArrayList<Bonus> bonusArr = new ArrayList<Bonus>();
     /*Gamestate variables */
+
+    boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+    Bird[] startOptions;
 
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
+        readCSV(new File("assets/birdInfo.csv"));
+        setUpBirdPics();
+        mockSetup();
+        
         
 
         //Add all buffered images here 
         try{
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
-        infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
-             
+            infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
+            bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
@@ -43,7 +50,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         this.repaint();
     }
-    
     // update button geometry based on current panel size
     private void updateStartButtonRect() {
         int w = getWidth() > 0 ? getWidth() : 1600;
@@ -63,6 +69,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     @Override
     public void mouseClicked(MouseEvent e) {
+        out.println("("+e.getX()+","+e.getY()+")");
         // Only respond to clicks when we are on the start screen
         if ("Game Start".equals(state.CURRENTEVENT.getLast())) {
             Point p = e.getPoint();
@@ -71,7 +78,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             if (startButtonRect.contains(p)) {
                 synchronized(state.lock) {
                     System.out.println("Start button clicked");
-                    state.CURRENTEVENT.add("Process Mouse Click Game Start");
+                    state.CURRENTEVENT.add("Select Screen");
+                    setupSelection();
                     this.repaint();
                     
                     state.lock.notifyAll();
@@ -79,6 +87,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     //  gameLogic.setUp(); //this has yet to be set up.
                 }
             }
+        }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
+
         }
     }
     public void mousePressed(MouseEvent e) {}
@@ -115,6 +125,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     paintStart(g);
                     break;
                 }
+                case "Select Screen" -> {
+                    paintSelection(g);
+                    break;
+                }
+                
                 default -> {
                 
                 }
@@ -176,6 +191,31 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g2.drawString(label, bx, by);
     }
 
+    public void paintSelection(Graphics g){
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        g.setFont(new Font("Arial", 1, 50));
+        g.drawString("Player: " + (1+state.playing), 60, 80);
+        g.setFont(new Font("Arial", 1, 30));
+        g.drawString("Select 5", 1000, 80);
+        g.drawLine(40, getHeight()/2, getWidth()-40, getHeight()/2);
+        for (int i=0;i<5;i++){
+            g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
+        }
+        g.drawImage(infoButton, 1200, 120, 100, 100, null); //fish
+        g.drawImage(infoButton, 1200, 330, 100, 100, null); //seed
+        g.drawImage(infoButton, 1430, 120, 100, 100, null); //fruit
+        g.drawImage(infoButton, 1430, 330, 100, 100, null); //rat
+        g.drawImage(infoButton, 1315, 225, 100, 100, null); //insect
+        
+
+    }
+    public void setupSelection(){
+        startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+        startOptions = new Bird[5];
+        for (int i=0;i<5;i++){
+            startOptions[i] = birds.remove(0);
+        }
+    }
     //read in birdinfo
     public void readCSV(File f){
         for (String b: bonuses) bonusMap.put(b, new ArrayList<String>());
@@ -185,7 +225,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            while (scan.hasNextLine()){
+            int readAmt = 1;
+            while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
                 if (l.contains("\"")){
@@ -282,6 +323,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     i++;
                 }
+                readAmt -= 1;
             }
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
@@ -303,11 +345,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
-
-    public void playTurn(){
-
+    public void mockSetup(){
+        Bird b = birds.get(0);
+        for (int i=0;i<169;i++){
+            birds.add(b);
+        }
     }
-
+    public void setUpBonus(){
+        for(int i=0;i<bonuses.length;i++){
+            bonusArr.add(new Bonus(bonuses[i], bonusMap.get(bonuses[i])));
+            
+            try{bonusArr.get(i).setImage(ImageIO.read(Tester.class.getResource("/assets/bonus/"+bonuses[i]+".png")));}
+            catch(Exception e){out.println("Exception: "+e);}
+        }
+    }
 }
      
    
