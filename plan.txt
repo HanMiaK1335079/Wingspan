@@ -1,0 +1,16 @@
+- start screen 
+on button click
+- setup screen
+on bird click
+- main screen
+if p2,3,4 button clicked
+- other screen
+if action button clicked
+- zoom to respective screen dedicated to specific action
+if confirm button clicked
+- animate action
+- animate move to next player
+ 
+
+ ... continue until end round, end game, etc.
+ 

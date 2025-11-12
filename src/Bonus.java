@@ -18,4 +18,5 @@ public class Bonus {
     public BufferedImage getImage() {return image;}
 
     public boolean hasBird(Bird b) {return birds.contains(b.getName());}
+    
 }

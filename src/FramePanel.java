@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -84,10 +85,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     setUpSelection();
                     this.repaint();
                     
-                    state.lock.notifyAll();
-                    GameLogic gameLogic = new GameLogic(this, state);
-                    //  gameLogic.setUp(); //this has yet to be set up.
-                }
+                        state.CURRENTEVENT.add("Process Mouse Click Game Start");
+                        this.repaint();
+                        state.canPressInfoButton=true;
+                        state.lock.notifyAll();
+                        GameLogic gameLogic = new GameLogic(this, state);
+                      //  gameLogic.setUp(); //this has yet to be set up.
+                    }
+                break;
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
             if (y>=120 && y<=420){
@@ -122,20 +127,27 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             this.repaint();
         }
     }
-    public void mousePressed(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void mouseDragged(MouseEvent e) {}
-    public void mouseMoved(MouseEvent e) {
-        // highlight the button when hovered
-        /*updateStartButtonRect();
-        boolean nowHover = startButtonRect.contains(e.getPoint());
-        if (nowHover != hover) {
-            hover = nowHover;
-            repaint();
-        }*/
     }
+        @Override
+        public void mousePressed(MouseEvent e) {}
+        @Override
+        public void mouseReleased(MouseEvent e) {}
+        @Override
+        public void mouseEntered(MouseEvent e) {}
+        @Override
+        public void mouseExited(MouseEvent e) {}
+        @Override
+        public void mouseDragged(MouseEvent e) {}
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            // highlight the button when hovered
+            updateStartButtonRect();
+            boolean nowHover = startButtonRect.contains(e.getPoint());
+            if (nowHover != hover) {
+                hover = nowHover;
+                repaint();
+            }
+        }
     public void keyTyped(KeyEvent e) {}
         public void keyPressed(KeyEvent e) {}
         public void keyReleased(KeyEvent e) {}
