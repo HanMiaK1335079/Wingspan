@@ -6,15 +6,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import static java.lang.System.*;
 import java.util.*;
 import javax.imageio.ImageIO;
-import javax.imageio.*;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-import java.util.*;
-public class FramePanel extends JPanel implements MouseListener, MouseMotionListener,KeyListener {
     private BufferedImage cover, infoButton, bg;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
@@ -89,28 +85,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     this.repaint();
                     
                     state.lock.notifyAll();
-                    return;
+                    GameLogic gameLogic = new GameLogic(this, state);
+                    //  gameLogic.setUp(); //this has yet to be set up.
                 }
             }
-<<<<<<<<< Temporary merge branch 1
-           switch(state.CURRENTEVENT.getLast()) {
-            case "Game Start" -> {
-                Point p = e.getPoint();
-                // Update rect position in case panel was resized
-                // Suchit has reached his limit on ChatGPT-4O
-                updateStartButtonRect();
-                if (startButtonRect.contains(p)) {
-                    
-                        state.CURRENTEVENT.add("Process Mouse Click Game Start");
-                        this.repaint();
-                        state.canPressInfoButton=true;
-                        state.lock.notifyAll();
-                        GameLogic gameLogic = new GameLogic(this, state);
-                      //  gameLogic.setUp(); //this has yet to be set up.
-                    }
-                break;
-            }
-=========
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
             if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
@@ -124,7 +102,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 out.println("clicked box");
                 if (canContinue()){
                     out.println("Continuing");
-                    state.players[state.playing].addCard(birds.get(0));
+                    //state.players[state.playing].addCard(birds[0])
 
                     if (state.playing == 3) {/*start game */ state.playing = 0;}
                     else {
@@ -144,27 +122,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             this.repaint();
         }
     }
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {
+        // highlight the button when hovered
+        /*updateStartButtonRect();
+        boolean nowHover = startButtonRect.contains(e.getPoint());
+        if (nowHover != hover) {
+            hover = nowHover;
+            repaint();
+        }*/
     }
-        @Override
-        public void mousePressed(MouseEvent e) {}
-        @Override
-        public void mouseReleased(MouseEvent e) {}
-        @Override
-        public void mouseEntered(MouseEvent e) {}
-        @Override
-        public void mouseExited(MouseEvent e) {}
-        @Override
-        public void mouseDragged(MouseEvent e) {}
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            // highlight the button when hovered
-            updateStartButtonRect();
-            boolean nowHover = startButtonRect.contains(e.getPoint());
-            if (nowHover != hover) {
-                hover = nowHover;
-                repaint();
-            }
-        }
     public void keyTyped(KeyEvent e) {}
         public void keyPressed(KeyEvent e) {}
         public void keyReleased(KeyEvent e) {}
@@ -200,7 +171,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void paintStart(Graphics g){
         /*Graphics2D g2 = (Graphics2D) g;
-                     Graphics2D g2 = (Graphics2D) g;
         // Smooth rendering
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -251,10 +221,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g2.setColor(Color.WHITE);
         g2.drawString(label, bx, by);*/
     }
-}
-        }
-    }
-
 
     public void paintSelection(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
