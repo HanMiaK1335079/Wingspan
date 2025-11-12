@@ -12,10 +12,6 @@ public class ProgramState {
     public volatile Player[] players = new Player[4];
     public volatile int playing = 0;
 
-    public volatile Player playerOne= new Player();
-    public volatile Player playerTwo= new Player();
-    public volatile Player playerThree= new Player();
-    public volatile Player playerFour= new Player();
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
     

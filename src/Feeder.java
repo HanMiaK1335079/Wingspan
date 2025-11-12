@@ -38,21 +38,21 @@ public class Feeder {
     public void takeDie(int index,int player){
     String food=foodDice.get(index);
     switch(player){
-        case 1 -> {ArrayList<String> temp = state.playerOne.getFoods();
+        case 1 -> {ArrayList<String> temp = state.players[0].getFoods();
             temp.add(food);
-            state.playerOne.setFoodTokens(temp);
+            state.players[0].setFoodTokens(temp);
         }
-         case 2 -> {ArrayList<String> temp = state.playerTwo.getFoods();
+         case 2 -> {ArrayList<String> temp = state.players[1].getFoods();
             temp.add(food);
-            state.playerTwo.setFoodTokens(temp);
+            state.players[1].setFoodTokens(temp);
         }
-         case 3 -> {ArrayList<String> temp = state.playerThree.getFoods();
+         case 3 -> {ArrayList<String> temp = state.players[2].getFoods();
             temp.add(food);
-            state.playerThree.setFoodTokens(temp);
+            state.players[2].setFoodTokens(temp);
         }
-         case 4 -> {ArrayList<String> temp = state.playerFour.getFoods();
+         case 4 -> {ArrayList<String> temp = state.players[3].getFoods();
             temp.add(food);
-            state.playerFour.setFoodTokens(temp);
+            state.players[3].setFoodTokens(temp);
         }
     }
 
