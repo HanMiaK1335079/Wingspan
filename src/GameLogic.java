@@ -64,4 +64,11 @@ public class GameLogic implements Runnable {
 
     }
 
+
+
+    public void gameScoring(){
+        
+      
+
+    }
 }

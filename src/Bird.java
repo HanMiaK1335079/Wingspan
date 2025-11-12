@@ -45,7 +45,13 @@ public class Bird {
 
     public void setImage(BufferedImage i) {image = i;}
     
-
+    // Methods for scoring
+    public int getEggCount() { return storedEggs; }
+    public int getCachedFoodCount() { return cachedFood; }
+    public int getTuckedCardCount() { return flocked; }
+    public void addCachedFood() { cachedFood++; }
+    public void addTuckedCard() { flocked++; }
+    
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
             storedEggs = maxEggs;
