@@ -19,9 +19,7 @@ public class ProgramState {
     public ArrayList<String> CURRENTEVENT = new ArrayList<>();
     
     public ProgramState(){
-        for (int i=0;i<4;i++){
-            players[i] = new Player();
-        }
+      
     }
 
 

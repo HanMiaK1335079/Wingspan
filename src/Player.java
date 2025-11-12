@@ -15,7 +15,7 @@ public class Player {
         this.actions = actions;
         this.foods = foods;
         
-    }*/
+    }
     
     public int score(){
         return 3;
@@ -37,6 +37,7 @@ public class Player {
     // Set Methods for the Player class
     public void addCard(Bird b) {cards.add(b);}
     public void removeCard(Bird b) {cards.remove(b);}
+    public void setFoodInHand(ArrayList<String> x) {foods = x;}
     public void addFood(String f) {foods.add(f);}
     public void removeFood(String f) {foods.remove(f);}
     public void addBonus(Bonus b) {bonus.add(b);}
