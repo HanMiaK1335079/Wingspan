@@ -89,14 +89,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         state.lock.notifyAll();
                         GameLogic gameLogic = new GameLogic(this, state);
                       //  gameLogic.setUp(); //this has yet to be set up.
+                        Thread gameThread = new Thread(gameLogic);
+                        gameThread.start(); //idk what this does tonio needs to see if this works
                     }
-                break;
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
 
         }
     }
-    }
+    
         @Override
         public void mousePressed(MouseEvent e) {}
         @Override

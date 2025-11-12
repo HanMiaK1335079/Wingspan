@@ -42,9 +42,17 @@ public class Bird {
     public ArrayList<String> getHabitats() {return habitats;}
     public ArrayList<String[]> getFoods() {return foods;}
     public BufferedImage getImage() {return image;}
+    public int getStoredEggs() {return storedEggs;}
 
     public void setImage(BufferedImage i) {image = i;}
     
+    public boolean canLiveInHabitat(String habitat) {
+        return habitats.contains(habitat.substring(0, 1).toLowerCase());
+    }
+    
+    public boolean canAfford(ArrayList<String> playerFoods) {
+        return playerFoods.size() >= 1;
+    }
 
     public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
         if (eggs>(maxEggs-storedEggs)){
@@ -105,5 +113,3 @@ public class Bird {
     }
 
 }
-    
-
