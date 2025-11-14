@@ -31,10 +31,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-        readCSV(new File("assets/birdInfo.csv"));
+        readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
         setUpBonus();
+
+        for (int i=0;i<4;i++){
+            state.players[i] = new Player();
+        }
         
         
 
@@ -90,7 +94,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
-            if (y>=120 && y<=420){
+            if (x>=1200 && x<=1300 && y>=130 && y<=220) startSelections[5] = !startSelections[5];
+            else if (x>=1200 && x<=1300 && y>=340 && y<=430) startSelections[6] = !startSelections[6];
+            else if (x>=1320 && x<=1410 && y>=230 && y<=320) startSelections[7] = !startSelections[7];
+            else if (x>=1440 && x<=1530 && y>=130 && y<=220) startSelections[8] = !startSelections[8];
+            else if (x>=1440 && x<=1530 && y>=340 && y<=430) startSelections[9] = !startSelections[9];
+            
+            else if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
                     if (x>=30+i*220 && x<=230+i*220){
                         startSelections[i] = !startSelections[i];
@@ -102,9 +112,19 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 out.println("clicked box");
                 if (canContinue()){
                     out.println("Continuing");
-                    //state.players[state.playing].addCard(birds[0])
+                    for (int i=0;i<5;i++){
+                        if (startSelections[i]) state.players[state.playing].addCard(startOptions[i]);
+                    }
+                    if (startSelections[5]) state.players[state.playing].addFood("fish");
+                    if (startSelections[6]) state.players[state.playing].addFood("seed");
+                    if (startSelections[7]) state.players[state.playing].addFood("insect");
+                    if (startSelections[8]) state.players[state.playing].addFood("fruit");
+                    if (startSelections[9]) state.players[state.playing].addFood("rat");
 
-                    if (state.playing == 3) {/*start game */ state.playing = 0;}
+                    if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
+                    else state.players[state.playing].addBonus(bonusOptions[1]);
+
+                    if (state.playing == 3) {state.CURRENTEVENT.add("Game"); state.playing = 0;}
                     else {
                         state.playing ++;
                         setUpSelection();
@@ -120,6 +140,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
             this.repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("Game")){
+
         }
     }
     public void mousePressed(MouseEvent e) {}
@@ -234,6 +256,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
         }
 
+        if (startSelections[5]) g.fillRect(1195, 115, 110, 110);
+        if (startSelections[6]) g.fillRect(1195, 325, 110, 110);
+        if (startSelections[7]) g.fillRect(1310, 220, 110, 110);
+        if (startSelections[8]) g.fillRect(1425, 115, 110, 110);
+        if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
         g.drawImage(infoButton, 1200, 120, 100, 100, null); //fish
         g.drawImage(infoButton, 1200, 330, 100, 100, null); //seed
         g.drawImage(infoButton, 1430, 120, 100, 100, null); //fruit
@@ -246,6 +273,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(bonusOptions[1].getImage(), 950, 500, 200, 300, null);
         
         g.fillRect(140, 600, 200, 80);
+        
+        /*if (canContinue()) {
+            out.println("Drawing cont. box");
+            g.setColor(Color.BLUE);
+            g.fillRect(1410, 590, 180, 60);
+        }*/
         //g.fillRect(140, 700, 200, 80);
     }
     public void setUpSelection(){

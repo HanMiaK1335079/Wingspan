@@ -8,7 +8,7 @@ public class Player {
     private int[] actions = new int[4];
     private ArrayList<String> foods = new ArrayList<>();
     
-    /*public Player(){
+    public Player(){
         this.cards = cards;
         this.board = board;
         this.bonus = bonus;
