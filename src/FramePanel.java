@@ -18,15 +18,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
-;
+    private BufferedImage ingameBg;
+
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
     private ArrayList<Bonus> bonusArr = new ArrayList<Bonus>();
     /*Gamestate variables */
 
+    //Startselection variables
     boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
     Bird[] startOptions;
     Bonus[] bonusOptions;
+
+    //Game run variables
+    
 
     public FramePanel(ProgramState state){
         this.state = state;
@@ -47,6 +52,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
+            ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
@@ -159,8 +165,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }*/
     }
     public void keyTyped(KeyEvent e) {}
-        public void keyPressed(KeyEvent e) {}
-        public void keyReleased(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {}
 
     @Override
     public void paint(Graphics g) {
@@ -180,6 +186,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 case "Select Screen" -> {
                     paintSelection(g);
+                    break;
+                }case "Game" ->{
+                    paintGame(g);
                     break;
                 }
                 
@@ -281,16 +290,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }*/
         //g.fillRect(140, 700, 200, 80);
     }
-    public void setUpSelection(){
-        startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
-        startOptions = new Bird[5];
-        for (int i=0;i<5;i++){
-            startOptions[i] = birds.remove(0);
-        }
-        bonusOptions = new Bonus[2];
-        bonusOptions[0] = bonusArr.remove(0);
-        bonusOptions[1] = bonusArr.remove(0);
-        
+    
+    public void paintGame(Graphics g){
+        g.drawImage(ingameBg, 0, 0, getWidth(), getHeight(),null);
     }
     //read in birdinfo
     public void readCSV(File f){
@@ -421,6 +423,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
+    
+    //start Selection methods
     public void mockSetup(){
         Bird b = birds.get(0);
         for (int i=0;i<169;i++){
@@ -452,6 +456,18 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         return sum==5 && sum2==1;
         
     }
+    public void setUpSelection(){
+            startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+            startOptions = new Bird[5];
+            for (int i=0;i<5;i++){
+                startOptions[i] = birds.remove(0);
+            }
+            bonusOptions = new Bonus[2];
+            bonusOptions[0] = bonusArr.remove(0);
+            bonusOptions[1] = bonusArr.remove(0);
+            
+        }
+
 }
      
    
