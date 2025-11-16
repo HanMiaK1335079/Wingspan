@@ -9,25 +9,20 @@ public class Player {
     private ArrayList<Integer> foods = new ArrayList<>();
     
     public Player(){
-        this.cards = cards;
-        this.board = board;
-        this.bonus = bonus;
-        this.actions = actions;
         for (int i=0;i<5;i++) foods.add(0);
+        System.out.println("SUP!");
         
     }
     
-    public int score(){
-        return 3;
+    // Calculate total score at game end, still needs to be refined but ts is alight for now, I need te flipping GUI first in oder to make the scoring so here they are...
+    public int calculateTotalScore() {
+        /*loop through birds in board to calc flocked, cached, points, eggs*/
+        /*loop through bonus to get bonuspoints */
     }
-
-    
-
-
-    // Get Methods for the Player class
-    public ArrayList<Integer> getFoods(){return foods;}
-    public ArrayList<Bird> getCards(){return cards;}
-    public ArrayList<Bonus> getBonus(){return bonus;}
+    // these are the setters for the Player class, its confusing but its fine
+    public ArrayList<String> getFoodInHand(){return foodInHand;}
+    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
+    public ArrayList<String> getBonusCard(){return bonusCard;}
     public Bird[][] getBoard(){return board;}
     public int[] getActionCubes(){return actions;}
     

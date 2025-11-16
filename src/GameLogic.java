@@ -18,4 +18,11 @@ private final FramePanel panel;
     }
      
 
+
+
+    public void gameScoring(){
+        
+      
+
+    }
 }
