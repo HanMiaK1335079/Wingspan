@@ -167,6 +167,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }else if (state.CURRENTEVENT.getLast().equals("Game")){
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
+            else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
             repaint();
         }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -179,7 +180,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }else if (state.CURRENTEVENT.getLast().equals("View Bonus")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("Info")){
+            if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+            repaint();
         }
+    
     }
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
@@ -216,6 +221,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Game" -> paintGame(g);
                 case "View Birds" -> paintViewBirds(g);
                 case "View Bonus" -> paintViewBonus(g);
+                case "Info" -> paintInfo(g);
                 default -> {
                 
                 }
@@ -333,6 +339,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //draw the goals
         g.setColor(Color.CYAN);
         g.fillRect(965+100*state.round, 15, 90, 90);
+        g.fillRect(1374, 615, 50, 50); //PLACEHOLDER FOR MAG GLASS
         g.setColor(Color.BLACK);
         for (int i=0;i<4;i++){
             g.drawImage(roundPics[i], 970+100*i, 20, 80, 80, null);
@@ -401,6 +408,21 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(b.getImage(), 60 + 250*i, 500, 240, 320, null);
         }
     }
+    
+    public void paintInfo(Graphics g){
+        g.drawImage(exitPic, 30, 30, 90, 90, null);
+        g.setFont(new Font("Arial", Font.BOLD, 65));
+        g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
+        BufferedImage birb;
+        try{
+            birb = ImageIO.read(FramePanel.class.getResource("/assets/yes.jpg"));
+            g.drawImage(birb, 300, 400, 700, 320, null);
+        }catch(Exception e){
+            out.println("oops");
+        }
+        
+    }
+    
     //read in birdinfo
     public void readCSV(File f){
         for (String b: bonuses) bonusMap.put(b, new ArrayList<String>());
