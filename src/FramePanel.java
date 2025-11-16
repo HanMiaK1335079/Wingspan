@@ -6,6 +6,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
 import static java.lang.System.*;
 import java.util.*;
 import javax.imageio.ImageIO;
@@ -19,6 +21,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
     private BufferedImage ingameBg;
+    private ArrayList<Integer> roundGoals = new ArrayList<Integer>();
+    private BufferedImage[] roundPics = new BufferedImage[4];
 
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
@@ -40,10 +44,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         setUpBirdPics();
         mockSetup();
         setUpBonus();
+        setUpRoundGoals();
 
         for (int i=0;i<4;i++){
             state.players[i] = new Player();
         }
+
         
         
 
@@ -100,12 +106,19 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
+            //food click
             if (x>=1200 && x<=1300 && y>=130 && y<=220) startSelections[5] = !startSelections[5];
             else if (x>=1200 && x<=1300 && y>=340 && y<=430) startSelections[6] = !startSelections[6];
             else if (x>=1320 && x<=1410 && y>=230 && y<=320) startSelections[7] = !startSelections[7];
             else if (x>=1440 && x<=1530 && y>=130 && y<=220) startSelections[8] = !startSelections[8];
             else if (x>=1440 && x<=1530 && y>=340 && y<=430) startSelections[9] = !startSelections[9];
             
+            //debug click
+            else if (x>=140 && y>=700 && x<=290 && y<=780){
+                for (int i=0;i<5;i++) startSelections[i] = true;
+                startSelections[10] = true;
+            }
+            //birb click
             else if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
                     if (x>=30+i*220 && x<=230+i*220){
@@ -114,6 +127,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         
                     }
                 } //30+i*220, 120, 200, 300
+                //continue click
             }else if (x>=140 && x<=340 && y>=600 && y<=680){
                 out.println("clicked box");
                 if (canContinue()){
@@ -138,10 +152,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
             
+                //bonus click
             }else if (y>=500 && y<=800){
-                if (x>=700 && x<=900){
+                if (x>=550 && x<=750){
                     startSelections[10] = !startSelections[10];
-                }else if (x>=950 && x<=1150){
+                }else if (x>=800 && x<=1000){
                     startSelections[11] = !startSelections[11];
                 }
             }
@@ -276,12 +291,21 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(infoButton, 1430, 330, 100, 100, null); //rat
         g.drawImage(infoButton, 1315, 225, 100, 100, null); //insect
 
-        if (startSelections[10]) g.fillRect(695, 495, 210, 310);
-        if (startSelections[11]) g.fillRect(945, 495, 210, 310);
-        g.drawImage(bonusOptions[0].getImage(), 700, 500, 200, 300, null);
-        g.drawImage(bonusOptions[1].getImage(), 950, 500, 200, 300, null);
+        if (startSelections[10]) g.fillRect(545, 495, 210, 310);
+        if (startSelections[11]) g.fillRect(795, 495, 210, 310);
+        g.drawImage(bonusOptions[0].getImage(), 550, 500, 200, 300, null);
+        g.drawImage(bonusOptions[1].getImage(), 800, 500, 200, 300, null);
         
+        //draw roundPics
+        g.drawImage(roundPics[0], 1180, 530, 80, 80, null);
+        g.drawImage(roundPics[1], 1180, 630, 80, 80, null);
+        g.drawImage(roundPics[2], 1280, 530, 80, 80, null);
+        g.drawImage(roundPics[3], 1280, 630, 80, 80, null);
+
         g.fillRect(140, 600, 200, 80);
+        
+        //DEBUG RECT: click to instantly select 5 birb cards and first bonus (only cuz im too lazy to individually select)
+        g.fillRect(140, 700, 150, 80);
         
         /*if (canContinue()) {
             out.println("Drawing cont. box");
@@ -292,7 +316,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintGame(Graphics g){
-        g.drawImage(ingameBg, 0, 0, getWidth(), getHeight(),null);
+        g.drawImage(ingameBg, 0, 0, 1532, 863,null);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 55));
+        g.drawString(state.playing+1+"", 238, 67);
     }
     //read in birdinfo
     public void readCSV(File f){
@@ -423,7 +450,26 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
-    
+    //select round goals
+    public void setUpRoundGoals(){
+        int randNum;
+        for (int i=0;i<4;i++){
+            randNum = (int)(Math.random()*16);
+            while (roundGoals.contains(randNum))
+                randNum = (int)(Math.random()*16);
+            roundGoals.add(randNum);
+            
+        }
+        for (int i=0;i<roundGoals.size();i++){
+            try {
+                out.println("/assets/round/round_"+roundGoals.get(i)+".png");
+                roundPics[i] = ImageIO.read(Tester.class.getResource("/assets/rounds/round_"+roundGoals.get(i)+".png"));
+            } catch (IOException e) { 
+                out.println("Exception: "+e);
+                out.println("Round goal pics unloaded");
+            }
+        }
+    } 
     //start Selection methods
     public void mockSetup(){
         Bird b = birds.get(0);
