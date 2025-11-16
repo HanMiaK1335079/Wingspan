@@ -21,8 +21,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
     private BufferedImage ingameBg;
+
     private ArrayList<Integer> roundGoals = new ArrayList<Integer>();
     private BufferedImage[] roundPics = new BufferedImage[4];
+    private boolean setUp = false;
 
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
@@ -44,14 +46,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         setUpBirdPics();
         mockSetup();
         setUpBonus();
-        setUpRoundGoals();
+        setRgoals();
 
         for (int i=0;i<4;i++){
             state.players[i] = new Player();
         }
-
-        
-        
 
         //Add all buffered images here 
         try{
@@ -297,10 +296,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(bonusOptions[1].getImage(), 800, 500, 200, 300, null);
         
         //draw roundPics
-        g.drawImage(roundPics[0], 1180, 530, 80, 80, null);
-        g.drawImage(roundPics[1], 1180, 630, 80, 80, null);
-        g.drawImage(roundPics[2], 1280, 530, 80, 80, null);
-        g.drawImage(roundPics[3], 1280, 630, 80, 80, null);
+        g.drawImage(roundPics[0], 1180, 530, 110, 110, null);
+        g.drawImage(roundPics[1], 1180, 660, 110, 110, null);
+        g.drawImage(roundPics[2], 1310, 530, 110, 110, null);
+        g.drawImage(roundPics[3], 1310, 660, 110, 110, null);
 
         g.fillRect(140, 600, 200, 80);
         
@@ -316,10 +315,38 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintGame(Graphics g){
-        g.drawImage(ingameBg, 0, 0, 1532, 863,null);
+        g.drawImage(ingameBg, 0, 0, 1540, 863,null);
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString(state.playing+1+"", 238, 67);
+
+        //draw the goals
+        g.setColor(Color.CYAN);
+        g.fillRect(965+100*state.round, 15, 90, 90);
+        g.setColor(Color.BLACK);
+        for (int i=0;i<4;i++){
+            g.drawImage(roundPics[i], 970+100*i, 20, 80, 80, null);
+        }
+        
+        //draw the food token nums
+        g.setFont(new Font("Arial", Font.BOLD, 35));
+        //out.println("Player foods: "+state.players[state.playing].getFoods());
+        for (int i=0;i<5;i++)
+            g.drawString(""+state.players[state.playing].getFoods().get(i), 1416, 55+78*i);
+        //g.drawString(state.players[state.playing].getFoods)
+
+        //birdpics
+        BufferedImage pic;
+        for (int i=0;i<state.players[state.playing].getCards().size();i++){
+            pic = state.players[state.playing].getCards().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getCards().size())*i, 239, 130, 185, null);
+        }
+
+        //bonuspics
+        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
+            pic = state.players[state.playing].getBonus().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getBonus().size())*i, 490, 120, 170, null);
+        }
     }
     //read in birdinfo
     public void readCSV(File f){
@@ -451,7 +478,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
     //select round goals
-    public void setUpRoundGoals(){
+    
+    public void setRgoals(){
+        out.println("Ran");
+        //if (setUp == true) return;
+        //else setUp = true;
+        roundGoals.clear();
         int randNum;
         for (int i=0;i<4;i++){
             randNum = (int)(Math.random()*16);
@@ -460,15 +492,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             roundGoals.add(randNum);
             
         }
-        for (int i=0;i<roundGoals.size();i++){
+
+        // YES I KNOW EGG IN CAVITY IS UPSIDE DOWN IDFC
+        for (int i=0;i<4;i++){
             try {
-                out.println("/assets/round/round_"+roundGoals.get(i)+".png");
-                roundPics[i] = ImageIO.read(Tester.class.getResource("/assets/rounds/round_"+roundGoals.get(i)+".png"));
-            } catch (IOException e) { 
+                roundPics[i] = ImageIO.read(FramePanel.class.getResource("/assets/round/"+roundGoals.get(i)+".png"));
+            } catch (Exception e) { 
                 out.println("Exception: "+e);
                 out.println("Round goal pics unloaded");
             }
         }
+        out.println(roundGoals);
     } 
     //start Selection methods
     public void mockSetup(){
