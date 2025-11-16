@@ -13,7 +13,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg;
+    private BufferedImage cover, infoButton, bg, exitPic;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -42,9 +42,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-        addMouseMotionListener(this);
-        readCSV(new File("assets\\birdInfo.csv"));
-        //readCSV(new File("src/birdInfo.csv"));
+        readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
         setUpBonus();
@@ -60,6 +58,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
             ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
+            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
@@ -94,7 +93,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             Point p = e.getPoint();
             // Update rect position in case panel was resized
             updateStartButtonRect();
-            if (x>=10 && x<=1500 && y>=10 && y<=900) state.CURRENTEVENT.add("Select Screen");
             if (startButtonRect.contains(p)) {
                 synchronized(state.lock) {
                     System.out.println("Start button clicked");
@@ -140,7 +138,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     if (startSelections[5]) state.players[state.playing].addFood("fish");
                     if (startSelections[6]) state.players[state.playing].addFood("seed");
                     if (startSelections[7]) state.players[state.playing].addFood("insect");
-                    if (startSelections[8]) state.players[state.playing].addFood("fruit");
+                    if (startSelections[8]) state.players[state.playing].addFood("berry");
                     if (startSelections[9]) state.players[state.playing].addFood("rat");
 
                     if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
@@ -164,7 +162,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
             this.repaint();
         }else if (state.CURRENTEVENT.getLast().equals("Game")){
-
+            if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
+            else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
+            repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("View Bonus")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
         }
     }
     public void mousePressed(MouseEvent e) {}
@@ -197,18 +203,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     state.CURRENTEVENT.removeLast();
                     break;
                 }
-                case "Game Start" -> {
-                    paintStart(g);
-                    break;
-                }
-                case "Select Screen" -> {
-                    paintSelection(g);
-                    break;
-                }case "Game" ->{
-                    paintGame(g);
-                    break;
-                }
-                
+                case "Game Start" -> paintStart(g);
+                case "Select Screen" -> paintSelection(g);
+                case "Game" -> paintGame(g);
+                case "View Birds" -> paintViewBirds(g);
+                case "View Bonus" -> paintViewBonus(g);
                 default -> {
                 
                 }
@@ -289,7 +288,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
         g.drawImage(infoButton, 1200, 120, 100, 100, null); //fish
         g.drawImage(infoButton, 1200, 330, 100, 100, null); //seed
-        g.drawImage(infoButton, 1430, 120, 100, 100, null); //fruit
+        g.drawImage(infoButton, 1430, 120, 100, 100, null); //berry
         g.drawImage(infoButton, 1430, 330, 100, 100, null); //rat
         g.drawImage(infoButton, 1315, 225, 100, 100, null); //insect
 
@@ -351,6 +350,27 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(pic, 17+(102/state.players[state.playing].getBonus().size())*i, 490, 120, 170, null);
         }
     }
+    
+    public void paintViewBirds(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Bird Cards", 600, 458);
+    }
+
+    public void paintViewBonus(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Goal Cards", 600, 458);
+        Bonus b;
+        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
+            b = state.players[state.playing].getBonus().get(i);
+            g.drawImage(b.getImage(), 60 + 250*i, 500, 240, 320, null);
+        }
+    }
     //read in birdinfo
     public void readCSV(File f){
         for (String b: bonuses) bonusMap.put(b, new ArrayList<String>());
@@ -360,7 +380,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            int readAmt = 100;
+            int readAmt = 1;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
@@ -448,7 +468,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //out.println("Got to birdmaking stuff");
                 
                 b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
-                state.birds.add(b);
+                birds.add(b);
                 //out.println("Finished birdmaking stuff");
 
                 int i=22;
@@ -469,7 +489,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     //load birdpics
     public void setUpBirdPics(){
         try{
-            for (Bird b: state.birds){
+            for (Bird b: birds){
                 String name = b.getName().toLowerCase().replace("-","_").replace("'","").replace(" ","_");
                 //out.println(name);
                 b.setImage(ImageIO.read(Tester.class.getResource("/assets/birds/"+name+".png")));
@@ -509,9 +529,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     } 
     //start Selection methods
     public void mockSetup(){
-        Bird b = state.birds.get(0);
+        Bird b = birds.get(0);
         for (int i=0;i<169;i++){
-            state.birds.add(b);
+            birds.add(b);
         }
     }
     public void setUpBonus(){
@@ -552,4 +572,5 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
 
 }
+     
    
