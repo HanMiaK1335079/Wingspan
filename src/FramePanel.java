@@ -44,7 +44,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         addMouseListener(this);
         addMouseMotionListener(this);
         readCSV(new File("assets\\birdInfo.csv"));
-        readCSV(new File("src/birdInfo.csv"));
+        //readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
         setUpBonus();
@@ -95,6 +95,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             Point p = e.getPoint();
             // Update rect position in case panel was resized
             updateStartButtonRect();
+            if (x>=10 && x<=1500 && y>=10 && y<=900) state.CURRENTEVENT.add("Select Screen");
             if (startButtonRect.contains(p)) {
                 synchronized(state.lock) {
                     System.out.println("Start button clicked");
