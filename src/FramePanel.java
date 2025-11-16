@@ -42,6 +42,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
+        addMouseMotionListener(this);
+        readCSV(new File("assets\\birdInfo.csv"));
         readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
@@ -380,7 +382,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            int readAmt = 1;
+            int readAmt = 100;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
@@ -468,7 +470,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //out.println("Got to birdmaking stuff");
                 
                 b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
-                birds.add(b);
+                state.birds.add(b);
                 //out.println("Finished birdmaking stuff");
 
                 int i=22;
@@ -489,7 +491,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     //load birdpics
     public void setUpBirdPics(){
         try{
-            for (Bird b: birds){
+            for (Bird b: state.birds){
                 String name = b.getName().toLowerCase().replace("-","_").replace("'","").replace(" ","_");
                 //out.println(name);
                 b.setImage(ImageIO.read(Tester.class.getResource("/assets/birds/"+name+".png")));
@@ -529,9 +531,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     } 
     //start Selection methods
     public void mockSetup(){
-        Bird b = birds.get(0);
+        Bird b = state.birds.get(0);
         for (int i=0;i<169;i++){
-            birds.add(b);
+            state.birds.add(b);
         }
     }
     public void setUpBonus(){
@@ -572,5 +574,4 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
 
 }
-     
    
