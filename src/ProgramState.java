@@ -12,6 +12,7 @@ public class ProgramState {
 
     public volatile Player[] players = new Player[4];
     public volatile int playing = 0;
+    public volatile int showing = 0;
     
 
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.

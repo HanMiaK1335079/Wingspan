@@ -13,7 +13,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -42,11 +42,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-        readCSV(new File("src/birdInfo.csv"));
-        setUpBirdPics();
-        mockSetup();
-        setUpBonus();
-        setRgoals();
+        
 
         for (int i=0;i<4;i++){
             state.players[i] = new Player();
@@ -61,6 +57,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
             leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
             rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -100,6 +97,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 synchronized(state.lock) {
                     System.out.println("Start button clicked");
                     state.CURRENTEVENT.add("Select Screen");
+                    startSetUp();
                     setUpSelection();
                     this.repaint();
                     
@@ -168,6 +166,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
             else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
+            else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
             repaint();
         }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -180,11 +179,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }else if (state.CURRENTEVENT.getLast().equals("View Bonus")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
+        
+        }else if (state.CURRENTEVENT.getLast().equals("View Draw Birds")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
+
         }else if (state.CURRENTEVENT.getLast().equals("Info")){
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
             repaint();
         }
-    
+
     }
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
@@ -222,6 +226,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "View Birds" -> paintViewBirds(g);
                 case "View Bonus" -> paintViewBonus(g);
                 case "Info" -> paintInfo(g);
+                case "View Draw Birds" -> paintViewDrawBird(g);
                 default -> {
                 
                 }
@@ -364,6 +369,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             pic = state.players[state.playing].getBonus().get(i).getImage();
             g.drawImage(pic, 17+(102/state.players[state.playing].getBonus().size())*i, 490, 120, 170, null);
         }
+
+        //cardTray
+        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1356, 450, 85, 120, null);
+        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 450, 85, 120, null);
+        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 577, 85, 120, null);
+        
     }
     
     int currentShowing = 0;
@@ -389,6 +400,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
+        //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
         if (currentShowing != state.players[state.playing].getCards().size()/showing) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
@@ -401,6 +413,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Bonus Cards", 600, 458);
         g.drawString(""+state.players[state.playing].getBonus().size(), 1400, 460);
+        
         if (state.players[state.playing].getBonus().size()==0) return;
         Bonus b;
         for (int i=0;i<state.players[state.playing].getBonus().size();i++){
@@ -409,6 +422,19 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
     
+    public void paintViewDrawBird(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Draw Birds", 600, 458);
+        
+        g.drawImage(birdBack, 120, 515, 215, 260, null);
+        for (int i=0;i<3;i++)
+            if (state.cardTray[i]!=null) g.drawImage(state.cardTray[i].getImage(), 475+270*i, 470, 245, 355, null);
+        
+    }
+
     public void paintInfo(Graphics g){
         g.drawImage(exitPic, 30, 30, 90, 90, null);
         g.setFont(new Font("Arial", Font.BOLD, 65));
@@ -423,6 +449,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
     
+
+    public void startSetUp(){
+        readCSV(new File("src/birdInfo.csv"));
+        setUpBirdPics();
+        mockSetup();
+        setUpBonus();
+        setRgoals();
+        updateTray();
+    }
     //read in birdinfo
     public void readCSV(File f){
         for (String b: bonuses) bonusMap.put(b, new ArrayList<String>());
@@ -552,10 +587,18 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
-    //select round goals
     
+    //update card tray
+    public void updateTray(){
+        for (int i=0;i<3;i++)
+            if (state.cardTray[i] == null) state.cardTray[i] = birds.removeFirst();
+        out.println("Updated tray");
+        
+    }
+
+    //select round goals
     public void setRgoals(){
-        out.println("Ran");
+        //out.println("Ran");
         //if (setUp == true) return;
         //else setUp = true;
         roundGoals.clear();
@@ -577,7 +620,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 out.println("Round goal pics unloaded");
             }
         }
-        out.println(roundGoals);
+        //out.println(roundGoals);
     } 
     //start Selection methods
     public void mockSetup(){
@@ -622,7 +665,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             bonusOptions[1] = bonusArr.remove(0);
             
         }
-
 }
      
    
