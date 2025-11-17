@@ -1,81 +1,48 @@
 package src;
 import java.util.*;
 public class Player {
-    // Cards and board
-    private ArrayList<Bird> cardsInHand = new ArrayList<>();
-    private Bird[][] board = new Bird[3][4]; // 3 habitats with max of 4 birds in each
-    private ArrayList<String> bonusCard = new ArrayList<>();
-    private int[] actionCubes = new int[4];
-    private ArrayList<String> foodInHand = new ArrayList<>();
-
-    // Scoring fields
-    private int birdCardPoints = 0;
-    private int bonusCardPoints = 0;
-    private int endOfRoundGoalPoints = 0;
-    private int eggCount = 0;
-    private int cachedFoodCount = 0;
-    private int tuckedCardCount = 0;
-    private int unusedFoodTokens = 0;
-    private int totalScore = 0;
-
-
     
-    public Player(){
-        System.out.println("SUP!");
+    private ArrayList<Bird> cards = new ArrayList<>();
+    private Bird[][] board = new Bird[3][4]; // 3 habitats with max of 4 birds in each
+    private ArrayList<Bonus> bonus = new ArrayList<>();
+    private int[] actions = new int[4];
+    private ArrayList<String> foods = new ArrayList<>();
+    
+    /*public Player(){
+        this.cards = cards;
+        this.board = board;
+        this.bonus = bonus;
+        this.actions = actions;
+        this.foods = foods;
         
     }
     
-    // Calculate total score at game end, still needs to be refined but ts is alight for now, I need te flipping GUI first in oder to make the scoring so here they are...
-    public int calculateTotalScore() {
-        birdCardPoints = 0;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                Bird b = board[i][j];
-                if (b != null) {
-                    birdCardPoints += b.getPoints();
-                    eggCount += b.getEggCount();
-                    cachedFoodCount += b.getCachedFoodCount();
-                    tuckedCardCount += b.getTuckedCardCount();
-                }
-            }
-        }
-        totalScore = birdCardPoints + bonusCardPoints + endOfRoundGoalPoints
-            + eggCount + cachedFoodCount + tuckedCardCount;
-        return totalScore;
+    public int score(){
+        return 3;
     }
-    // these are the setters for the Player class, its confusing but its fine
-    public void setBonusCardPoints(int points) { this.bonusCardPoints = points; }
-    public void setEndOfRoundGoalPoints(int points) { this.endOfRoundGoalPoints = points; }
-    public void setUnusedFoodTokens(int tokens) { this.unusedFoodTokens = tokens; }
-    public void setEggCount(int eggs) { this.eggCount = eggs; }
-    public void setCachedFoodCount(int food) { this.cachedFoodCount = food; }
-    public void setTuckedCardCount(int tucked) { this.tuckedCardCount = tucked; }
-
-    // Getting for the scoring methods are here while the underneath are the getters
-    public int getBirdCardPoints() { return birdCardPoints; }
-    public int getBonusCardPoints() { return bonusCardPoints; }
-    public int getEndOfRoundGoalPoints() { return endOfRoundGoalPoints; }
-    public int getEggCount() { return eggCount; }
-    public int getCachedFoodCount() { return cachedFoodCount; }
-    public int getTuckedCardCount() { return tuckedCardCount; }
-    public int getUnusedFoodTokens() { return unusedFoodTokens; }
-    public int getTotalScore() { return totalScore; }
 
     
-    //see here, they are the getters for the Player class
-    public ArrayList<String> getFoodInHand(){return foodInHand;}
-    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
-    public ArrayList<String> getBonusCard(){return bonusCard;}
+
+
+    // Get Methods for the Player class
+    public ArrayList<String> getFoods(){return foods;}
+    public ArrayList<Bird> getCards(){return cards;}
+    public ArrayList<Bonus> getBonus(){return bonus;}
     public Bird[][] getBoard(){return board;}
-    public int[] getActionCubes(){return actionCubes;}
-
+    public int[] getActionCubes(){return actions;}
     
 
-    //IDK why these are called setters when they add to the hand, but it's whatever and do we really care? no so problem and here they are and no point of them but WHO CARES!!!!
-    public void addNewCardToHand(Bird b){cardsInHand.add(b);}
-    public void setFoodInHand(ArrayList<String> x){foodInHand=x;}
-    public void addFoodToHand(String f){foodInHand.add(f);}
-    
+
+
+    // Set Methods for the Player class
+    public void addCard(Bird b) {cards.add(b);}
+    public void removeCard(Bird b) {cards.remove(b);}
+    public void setFoodInHand(ArrayList<String> x) {foods = x;}
+    public void addFood(String f) {foods.add(f);}
+    public void removeFood(String f) {foods.remove(f);}
+    public void addBonus(Bonus b) {bonus.add(b);}
+    public void removeBonus(Bonus b) {bonus.remove(b);}
+
 
 
 

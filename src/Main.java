@@ -13,6 +13,7 @@ public class Main {
         wingSpanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         wingSpanFrame.add(panel);
         wingSpanFrame.setVisible(true);
+        wingSpanFrame.setResizable(false);
         Thread gameThread = new Thread(new GameLogic(panel, state));
         gameThread.start();
      }
