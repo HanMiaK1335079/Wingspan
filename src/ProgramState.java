@@ -9,15 +9,25 @@ public class ProgramState {
     public volatile ArrayList<Bird> discardPile = new ArrayList<>();
     public volatile Bird[] cardTray = new Bird[3];
     public volatile ArrayList<Bird> birds = new ArrayList<>();
+    public volatile ArrayList<Bird> birds = new ArrayList<>();
     
     public volatile Player[] players = new Player[4];
     public volatile int playing = 0;
+    public volatile int showing = 0;
     public volatile int showing = 0;
 
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
     
     public ArrayList<String> CURRENTEVENT = new ArrayList<>();
+
+    public void makeDeckOfCards(){
+        deckOfCards.addAll(birds);
+        Collections.shuffle(birds);
+    
+    
+    
+    }
 
     public void makeDeckOfCards(){
         deckOfCards.addAll(birds);
