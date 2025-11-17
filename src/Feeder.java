@@ -5,6 +5,7 @@ public class Feeder {
      private ArrayList<String> foodDice=new ArrayList<>();
      public Feeder(ProgramState state){
         this.state = state;
+        reRoll();
     }
 
     public boolean canReroll(){
@@ -25,9 +26,9 @@ public class Feeder {
             int roll=(int)(Math.random()*6);
             switch(roll){
                 case 0 -> foodDice.add("seed");
-                case 1 -> foodDice.add("berry");
-                case 2 -> foodDice.add("insect");
-                case 3 -> foodDice.add("fish");
+                case 1 -> foodDice.add("fish");
+                case 2 -> foodDice.add("berry");
+                case 3 -> foodDice.add("insect");
                 case 4 -> foodDice.add("rat");
                 case 5 -> foodDice.add("seed/insect");
             }
