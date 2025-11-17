@@ -50,7 +50,7 @@ public class Bird {
         return habitats.contains(habitat.substring(0, 1).toLowerCase());
     }
     
-    public boolean canAfford(ArrayList<String> playerFoods) {
+    public boolean canAfford(ArrayList<Integer> playerFoods) {
         return playerFoods.size() >= 1;
     }
 

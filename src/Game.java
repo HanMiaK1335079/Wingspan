@@ -98,6 +98,11 @@ public class Game {
         return success;
     }
     
+    private boolean layEggsAction(Player player, Object[] params) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'layEggsAction'");
+    }
+
     private boolean playBirdAction(Player player, Object... params) {
         if (params.length < 2) return false;
         
@@ -108,11 +113,11 @@ public class Game {
         Bird bird = (Bird) params[0];
         String habitat = (String) params[1];
         
-        if (!player.getCardsInHand().contains(bird)) {
+        if (!player.getCards().contains(bird)) {
             return false;
         }
         
-        if (!bird.canAfford(player.getFoodTokens())) {
+        if (!bird.canAfford(player.getFoods())) {
             return false;
         }
         
@@ -122,7 +127,7 @@ public class Game {
         
         boolean played = player.playBird(bird, habitat);
         if (played) {
-            player.removeCardFromHand(bird);
+            player.removeCard(bird);
             
             if (bird.getActivate().equals("WP")) {
                 bird.playAbility();
@@ -135,26 +140,15 @@ public class Game {
     private boolean gainFoodAction(Player player, Object... params) {
         String[] foodTypes = {"Seed", "Fruit", "Invertebrate", "Fish", "Rodent"};
         String food = foodTypes[(int)(Math.random() * foodTypes.length)];
-        player.addFoodToken(food);
+        player.addFood(food);
         return true;
     }
     
-    private boolean layEggsAction(Player player, Object... params) {
-        for (int h = 0; h < 3; h++) {
-            for (int i = 0; i < player.getPlayerBoard()[h].length; i++) {
-                if (player.getPlayerBoard()[h][i] != null) {
-                    player.getPlayerBoard()[h][i].addEggs(1);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     
     private boolean drawCardsAction(Player player, Object... params) {
         if (state.deckOfCards.size() > 0) {
             Bird card = state.deckOfCards.remove(state.deckOfCards.size() - 1);
-            player.addCardToHand(card);
+            player.addCard(card);
             return true;
         }
         return false;

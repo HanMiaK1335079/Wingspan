@@ -3,14 +3,13 @@ import java.util.*;
 public class Player {
     
     private ArrayList<Bird> cards = new ArrayList<>();
-    private Bird[][] board = new Bird[3][4]; // 3 habitats with max of 4 birds in each
     private ArrayList<Bonus> bonus = new ArrayList<>();
     private int[] actions = new int[4];
     private ArrayList<Integer> foods = new ArrayList<>();
+    private int score;
     
     public Player(){
         this.cards = cards;
-        this.board = board;
         this.bonus = bonus;
         this.actions = actions;
         for (int i=0;i<5;i++) foods.add(0);
@@ -28,7 +27,6 @@ public class Player {
     public ArrayList<Integer> getFoods(){return foods;}
     public ArrayList<Bird> getCards(){return cards;}
     public ArrayList<Bonus> getBonus(){return bonus;}
-    public Bird[][] getBoard(){return board;}
     public int[] getActionCubes(){return actions;}
     
 
@@ -50,7 +48,40 @@ public class Player {
     public void addBonus(Bonus b) {bonus.add(b);}
     public void removeBonus(Bonus b) {bonus.remove(b);}
 
+    public int calculateScore(){
+        score = 0;
+        for (Bird b : cards){
+            score += b.getPoints();
+            score += b.getStoredEggs();
+        }
+        for (Bonus b : bonus){
+            score += b.calculateBonus(this);
+        }
+        return score;
+    }
 
+    public void nextRound() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'nextRound'");
+    }
+
+    public void setPlayerScore(int calculateScore) {
+        score = calculateScore;
+    }
+
+    public int getActionsRemaining() {
+        return actions[3];
+    }
+
+    public void useAction() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'useAction'");
+    }
+
+    public boolean playBird(Bird bird, String habitat) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'playBird'");
+    }
 
 
 
