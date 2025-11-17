@@ -441,8 +441,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         //cardTray
         if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1356, 450, 85, 120, null);
-        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 450, 85, 120, null);
-        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 577, 85, 120, null);
+        if (state.cardTray[1] != null) g.drawImage(state.cardTray[1].getImage(), 1446, 450, 85, 120, null);
+        if (state.cardTray[2] != null) g.drawImage(state.cardTray[2].getImage(), 1446, 577, 85, 120, null);
         
     }
     
