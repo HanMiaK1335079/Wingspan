@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -197,12 +198,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public void mouseDragged(MouseEvent e) {}
     public void mouseMoved(MouseEvent e) {
         // highlight the button when hovered
-        /*updateStartButtonRect();
+        updateStartButtonRect();
         boolean nowHover = startButtonRect.contains(e.getPoint());
         if (nowHover != hover) {
             hover = nowHover;
             repaint();
-        }*/
+        }
     }
     public void keyTyped(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
@@ -236,7 +237,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintStart(Graphics g){
-        /*Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g;
         // Smooth rendering
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -285,7 +286,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int bx = startButtonRect.x + (startButtonRect.width - fm.stringWidth(label)) / 2;
         int by = startButtonRect.y + (startButtonRect.height - fm.getHeight()) / 2 + fm.getAscent();
         g2.setColor(Color.WHITE);
-        g2.drawString(label, bx, by);*/
+        g2.drawString(label, bx, by);
     }
 
     public void paintSelection(Graphics g){
@@ -372,8 +373,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         //cardTray
         if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1356, 450, 85, 120, null);
-        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 450, 85, 120, null);
-        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 577, 85, 120, null);
+        if (state.cardTray[1] != null) g.drawImage(state.cardTray[1].getImage(), 1446, 450, 85, 120, null);
+        if (state.cardTray[2] != null) g.drawImage(state.cardTray[2].getImage(), 1446, 577, 85, 120, null);
         
     }
     
