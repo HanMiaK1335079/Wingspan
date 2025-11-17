@@ -6,43 +6,59 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
 import static java.lang.System.*;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
-;
+    private BufferedImage ingameBg;
+
+    private ArrayList<Integer> roundGoals = new ArrayList<Integer>();
+    private BufferedImage[] roundPics = new BufferedImage[4];
+    private boolean setUp = false;
+
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
     private ArrayList<Bonus> bonusArr = new ArrayList<Bonus>();
     /*Gamestate variables */
 
+    //Startselection variables
     boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
     Bird[] startOptions;
     Bonus[] bonusOptions;
 
+    //Game run variables
+    
+
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-        readCSV(new File("assets/birdInfo.csv"));
-        setUpBirdPics();
-        mockSetup();
-        setUpBonus();
         
-        
+
+        for (int i=0;i<4;i++){
+            state.players[i] = new Player();
+        }
 
         //Add all buffered images here 
         try{
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
+            ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
+            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
+
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
@@ -81,6 +97,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 synchronized(state.lock) {
                     System.out.println("Start button clicked");
                     state.CURRENTEVENT.add("Select Screen");
+                    startSetUp();
                     setUpSelection();
                     this.repaint();
                     
@@ -90,7 +107,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
-            if (y>=120 && y<=420){
+            //food click
+            if (x>=1200 && x<=1300 && y>=130 && y<=220) startSelections[5] = !startSelections[5];
+            else if (x>=1200 && x<=1300 && y>=340 && y<=430) startSelections[6] = !startSelections[6];
+            else if (x>=1320 && x<=1410 && y>=230 && y<=320) startSelections[7] = !startSelections[7];
+            else if (x>=1440 && x<=1530 && y>=130 && y<=220) startSelections[8] = !startSelections[8];
+            else if (x>=1440 && x<=1530 && y>=340 && y<=430) startSelections[9] = !startSelections[9];
+            
+            //debug click
+            else if (x>=140 && y>=700 && x<=290 && y<=780){
+                for (int i=0;i<5;i++) startSelections[i] = true;
+                startSelections[10] = true;
+            }
+            //birb click
+            else if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
                     if (x>=30+i*220 && x<=230+i*220){
                         startSelections[i] = !startSelections[i];
@@ -98,13 +128,24 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         
                     }
                 } //30+i*220, 120, 200, 300
+                //continue click
             }else if (x>=140 && x<=340 && y>=600 && y<=680){
                 out.println("clicked box");
                 if (canContinue()){
                     out.println("Continuing");
-                    //state.players[state.playing].addCard(birds[0])
+                    for (int i=0;i<5;i++){
+                        if (startSelections[i]) state.players[state.playing].addCard(startOptions[i]);
+                    }
+                    if (startSelections[5]) state.players[state.playing].addFood("fish");
+                    if (startSelections[6]) state.players[state.playing].addFood("seed");
+                    if (startSelections[7]) state.players[state.playing].addFood("insect");
+                    if (startSelections[8]) state.players[state.playing].addFood("berry");
+                    if (startSelections[9]) state.players[state.playing].addFood("rat");
 
-                    if (state.playing == 3) {/*start game */ state.playing = 0;}
+                    if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
+                    else state.players[state.playing].addBonus(bonusOptions[1]);
+
+                    if (state.playing == 3) {state.CURRENTEVENT.add("Game"); state.playing = 0;}
                     else {
                         state.playing ++;
                         setUpSelection();
@@ -112,15 +153,42 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
             
+                //bonus click
             }else if (y>=500 && y<=800){
-                if (x>=700 && x<=900){
+                if (x>=550 && x<=750){
                     startSelections[10] = !startSelections[10];
-                }else if (x>=950 && x<=1150){
+                }else if (x>=800 && x<=1000){
                     startSelections[11] = !startSelections[11];
                 }
             }
             this.repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("Game")){
+            if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
+            else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
+            else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
+            else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
+            repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCards().size()%showing)
+                currentShowing++;
+            else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+            //50, 590, 60, 60
+
+            repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("View Bonus")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
+        
+        }else if (state.CURRENTEVENT.getLast().equals("View Draw Birds")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
+
+        }else if (state.CURRENTEVENT.getLast().equals("Info")){
+            if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+            repaint();
         }
+
     }
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
@@ -137,8 +205,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }*/
     }
     public void keyTyped(KeyEvent e) {}
-        public void keyPressed(KeyEvent e) {}
-        public void keyReleased(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {}
 
     @Override
     public void paint(Graphics g) {
@@ -152,15 +220,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     state.CURRENTEVENT.removeLast();
                     break;
                 }
-                case "Game Start" -> {
-                    paintStart(g);
-                    break;
-                }
-                case "Select Screen" -> {
-                    paintSelection(g);
-                    break;
-                }
-                
+                case "Game Start" -> paintStart(g);
+                case "Select Screen" -> paintSelection(g);
+                case "Game" -> paintGame(g);
+                case "View Birds" -> paintViewBirds(g);
+                case "View Bonus" -> paintViewBonus(g);
+                case "Info" -> paintInfo(g);
+                case "View Draw Birds" -> paintViewDrawBird(g);
                 default -> {
                 
                 }
@@ -234,30 +300,163 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
         }
 
+        if (startSelections[5]) g.fillRect(1195, 115, 110, 110);
+        if (startSelections[6]) g.fillRect(1195, 325, 110, 110);
+        if (startSelections[7]) g.fillRect(1310, 220, 110, 110);
+        if (startSelections[8]) g.fillRect(1425, 115, 110, 110);
+        if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
         g.drawImage(infoButton, 1200, 120, 100, 100, null); //fish
         g.drawImage(infoButton, 1200, 330, 100, 100, null); //seed
-        g.drawImage(infoButton, 1430, 120, 100, 100, null); //fruit
+        g.drawImage(infoButton, 1430, 120, 100, 100, null); //berry
         g.drawImage(infoButton, 1430, 330, 100, 100, null); //rat
         g.drawImage(infoButton, 1315, 225, 100, 100, null); //insect
 
-        if (startSelections[10]) g.fillRect(695, 495, 210, 310);
-        if (startSelections[11]) g.fillRect(945, 495, 210, 310);
-        g.drawImage(bonusOptions[0].getImage(), 700, 500, 200, 300, null);
-        g.drawImage(bonusOptions[1].getImage(), 950, 500, 200, 300, null);
+        if (startSelections[10]) g.fillRect(545, 495, 210, 310);
+        if (startSelections[11]) g.fillRect(795, 495, 210, 310);
+        g.drawImage(bonusOptions[0].getImage(), 550, 500, 200, 300, null);
+        g.drawImage(bonusOptions[1].getImage(), 800, 500, 200, 300, null);
         
+        //draw roundPics
+        g.drawImage(roundPics[0], 1180, 530, 110, 110, null);
+        g.drawImage(roundPics[1], 1180, 660, 110, 110, null);
+        g.drawImage(roundPics[2], 1310, 530, 110, 110, null);
+        g.drawImage(roundPics[3], 1310, 660, 110, 110, null);
+
         g.fillRect(140, 600, 200, 80);
+        
+        //DEBUG RECT: click to instantly select 5 birb cards and first bonus (only cuz im too lazy to individually select)
+        g.fillRect(140, 700, 150, 80);
+        
+        /*if (canContinue()) {
+            out.println("Drawing cont. box");
+            g.setColor(Color.BLUE);
+            g.fillRect(1410, 590, 180, 60);
+        }*/
         //g.fillRect(140, 700, 200, 80);
     }
-    public void setUpSelection(){
-        startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
-        startOptions = new Bird[5];
-        for (int i=0;i<5;i++){
-            startOptions[i] = birds.remove(0);
+    
+    public void paintGame(Graphics g){
+        g.drawImage(ingameBg, 0, 0, 1540, 863,null);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 55));
+        g.drawString(state.playing+1+"", 238, 67);
+
+        //draw the goals
+        g.setColor(Color.CYAN);
+        g.fillRect(965+100*state.round, 15, 90, 90);
+        g.fillRect(1374, 615, 50, 50); //PLACEHOLDER FOR MAG GLASS
+        g.setColor(Color.BLACK);
+        for (int i=0;i<4;i++){
+            g.drawImage(roundPics[i], 970+100*i, 20, 80, 80, null);
         }
-        bonusOptions = new Bonus[2];
-        bonusOptions[0] = bonusArr.remove(0);
-        bonusOptions[1] = bonusArr.remove(0);
         
+        //draw the food token nums
+        g.setFont(new Font("Arial", Font.BOLD, 35));
+        //out.println("Player foods: "+state.players[state.playing].getFoods());
+        for (int i=0;i<5;i++)
+            g.drawString(""+state.players[state.playing].getFoods().get(i), 1416, 55+78*i);
+        //g.drawString(state.players[state.playing].getFoods)
+
+        //birdpics
+        BufferedImage pic;
+        for (int i=0;i<state.players[state.playing].getCards().size();i++){
+            pic = state.players[state.playing].getCards().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getCards().size())*i, 239, 130, 185, null);
+        }
+
+        //bonuspics
+        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
+            pic = state.players[state.playing].getBonus().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getBonus().size())*i, 490, 120, 170, null);
+        }
+
+        //cardTray
+        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1356, 450, 85, 120, null);
+        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 450, 85, 120, null);
+        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 577, 85, 120, null);
+        
+    }
+    
+    int currentShowing = 0;
+    int showing = 4;
+    public void paintViewBirds(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Bird Cards", 600, 458);
+        g.drawString(""+state.players[state.playing].getCards().size(), 1400, 460);
+        if (state.players[state.playing].getCards().size()==0) return;
+
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        int counter = 0;
+        for (Bird b: state.players[state.playing].getCards()){
+            if (counter %showing == 0) 
+                birdArrSplit.add(new ArrayList<Bird>());
+            counter ++;
+            birdArrSplit.getLast().add(b);
+        }
+
+        for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+        }
+        //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
+
+        if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
+        if (currentShowing != state.players[state.playing].getCards().size()/showing) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+    }
+
+    public void paintViewBonus(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Bonus Cards", 600, 458);
+        g.drawString(""+state.players[state.playing].getBonus().size(), 1400, 460);
+        
+        if (state.players[state.playing].getBonus().size()==0) return;
+        Bonus b;
+        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
+            b = state.players[state.playing].getBonus().get(i);
+            g.drawImage(b.getImage(), 60 + 250*i, 500, 240, 320, null);
+        }
+    }
+    
+    public void paintViewDrawBird(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Draw Birds", 600, 458);
+        
+        g.drawImage(birdBack, 120, 515, 215, 260, null);
+        for (int i=0;i<3;i++)
+            if (state.cardTray[i]!=null) g.drawImage(state.cardTray[i].getImage(), 475+270*i, 470, 245, 355, null);
+        
+    }
+
+    public void paintInfo(Graphics g){
+        g.drawImage(exitPic, 30, 30, 90, 90, null);
+        g.setFont(new Font("Arial", Font.BOLD, 65));
+        g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
+        BufferedImage birb;
+        try{
+            birb = ImageIO.read(FramePanel.class.getResource("/assets/yes.jpg"));
+            g.drawImage(birb, 300, 400, 700, 320, null);
+        }catch(Exception e){
+            out.println("oops");
+        }
+        
+    }
+    
+
+    public void startSetUp(){
+        readCSV(new File("src/birdInfo.csv"));
+        setUpBirdPics();
+        mockSetup();
+        setUpBonus();
+        setRgoals();
+        updateTray();
     }
     //read in birdinfo
     public void readCSV(File f){
@@ -388,6 +587,42 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
+    
+    //update card tray
+    public void updateTray(){
+        for (int i=0;i<3;i++)
+            if (state.cardTray[i] == null) state.cardTray[i] = birds.removeFirst();
+        out.println("Updated tray");
+        
+    }
+
+    //select round goals
+    public void setRgoals(){
+        //out.println("Ran");
+        //if (setUp == true) return;
+        //else setUp = true;
+        roundGoals.clear();
+        int randNum;
+        for (int i=0;i<4;i++){
+            randNum = (int)(Math.random()*16);
+            while (roundGoals.contains(randNum))
+                randNum = (int)(Math.random()*16);
+            roundGoals.add(randNum);
+            
+        }
+
+        // YES I KNOW EGG IN CAVITY IS UPSIDE DOWN IDFC
+        for (int i=0;i<4;i++){
+            try {
+                roundPics[i] = ImageIO.read(FramePanel.class.getResource("/assets/round/"+roundGoals.get(i)+".png"));
+            } catch (Exception e) { 
+                out.println("Exception: "+e);
+                out.println("Round goal pics unloaded");
+            }
+        }
+        //out.println(roundGoals);
+    } 
+    //start Selection methods
     public void mockSetup(){
         Bird b = birds.get(0);
         for (int i=0;i<169;i++){
@@ -419,6 +654,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         return sum==5 && sum2==1;
         
     }
+    public void setUpSelection(){
+            startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+            startOptions = new Bird[5];
+            for (int i=0;i<5;i++){
+                startOptions[i] = birds.remove(0);
+            }
+            bonusOptions = new Bonus[2];
+            bonusOptions[0] = bonusArr.remove(0);
+            bonusOptions[1] = bonusArr.remove(0);
+            
+        }
 }
      
    

@@ -13,4 +13,9 @@ if confirm button clicked
  
 
  ... continue until end round, end game, etc.
+
+
+ TO BE IMPLEMENTED
+  - other players view
+  - superzoom for cards (show individal cards one at a time)
  
