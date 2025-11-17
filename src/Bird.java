@@ -86,6 +86,10 @@ public class Bird {
         return s;
     }
 
+    public int getScore(){
+        return points + storedEggs + cachedFood + flocked;
+    }
+
     public void playAbility(){
         if (!abilityType.equals("brown")) return;
 
