@@ -35,9 +35,7 @@ public class ProgramState {
     public volatile int actionsRemaining = 8;
     
     public ProgramState(){
-        for (int i=0;i<4;i++){
-            players[i] = new Player();
-        }
+      
     }
 
 

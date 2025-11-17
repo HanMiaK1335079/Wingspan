@@ -3,14 +3,11 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.*;
 import static java.lang.System.*;
-
+import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
@@ -21,21 +18,32 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
-;
+    private BufferedImage ingameBg;
+
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
     private ArrayList<Bonus> bonusArr = new ArrayList<Bonus>();
     /*Gamestate variables */
 
+    //Startselection variables
     boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
     Bird[] startOptions;
+    Bonus[] bonusOptions;
+
+    //Game run variables
+    
 
     public FramePanel(ProgramState state){
         this.state = state;
         addMouseListener(this);
-        readCSV(new File("assets/birdInfo.csv"));
+        readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
+        setUpBonus();
+
+        for (int i=0;i<4;i++){
+            state.players[i] = new Player();
+        }
         
         
 
@@ -44,6 +52,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
+            ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
@@ -70,7 +79,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        out.println("("+e.getX()+","+e.getY()+")");
+        int x = e.getX();
+        int y = e.getY();
+        out.println("("+x+","+y+")");
         // Only respond to clicks when we are on the start screen
         if ("Game Start".equals(state.CURRENTEVENT.getLast())) {
             Point p = e.getPoint();
@@ -80,47 +91,82 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 synchronized(state.lock) {
                     System.out.println("Start button clicked");
                     state.CURRENTEVENT.add("Select Screen");
-                    setupSelection();
+                    setUpSelection();
                     this.repaint();
                     
-                        state.CURRENTEVENT.add("Process Mouse Click Game Start");
-                        this.repaint();
-                        state.canPressInfoButton=true;
-                        state.lock.notifyAll();
-                        GameLogic gameLogic = new GameLogic(this, state);
-                      //  gameLogic.setUp(); //this has yet to be set up.
-                        Thread gameThread = new Thread(gameLogic);
-                        gameThread.start(); //idk what this does tonio needs to see if this works
-                    }
+                    state.lock.notifyAll();
+                    GameLogic gameLogic = new GameLogic(this, state);
+                    //  gameLogic.setUp(); //this has yet to be set up.
+                }
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
+            if (x>=1200 && x<=1300 && y>=130 && y<=220) startSelections[5] = !startSelections[5];
+            else if (x>=1200 && x<=1300 && y>=340 && y<=430) startSelections[6] = !startSelections[6];
+            else if (x>=1320 && x<=1410 && y>=230 && y<=320) startSelections[7] = !startSelections[7];
+            else if (x>=1440 && x<=1530 && y>=130 && y<=220) startSelections[8] = !startSelections[8];
+            else if (x>=1440 && x<=1530 && y>=340 && y<=430) startSelections[9] = !startSelections[9];
+            
+            else if (y>=120 && y<=420){
+                for (int i=0;i<5;i++){
+                    if (x>=30+i*220 && x<=230+i*220){
+                        startSelections[i] = !startSelections[i];
+                        out.println("Swapped");
+                        
+                    }
+                } //30+i*220, 120, 200, 300
+            else if (x>=140 && x<=340 && y>=600 && y<=680){
+                out.println("clicked box");
+                if (canContinue()){
+                    out.println("Continuing");
+                    for (int i=0;i<5;i++){
+                        if (startSelections[i]) state.players[state.playing].addCard(startOptions[i]);
+                    }
+                    if (startSelections[5]) state.players[state.playing].addFood("fish");
+                    if (startSelections[6]) state.players[state.playing].addFood("seed");
+                    if (startSelections[7]) state.players[state.playing].addFood("insect");
+                    if (startSelections[8]) state.players[state.playing].addFood("fruit");
+                    if (startSelections[9]) state.players[state.playing].addFood("rat");
+
+                    if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
+                    else state.players[state.playing].addBonus(bonusOptions[1]);
+
+                    if (state.playing == 3) {state.CURRENTEVENT.add("Game"); state.playing = 0;}
+                    else {
+                        state.playing ++;
+                        setUpSelection();
+                        setUpBonus();
+                    }
+                }
+            
+            }else if (y>=500 && y<=800){
+                if (x>=700 && x<=900){
+                    startSelections[10] = !startSelections[10];
+                }else if (x>=950 && x<=1150){
+                    startSelections[11] = !startSelections[11];
+                }
+            }
+            this.repaint();
+        }else if (state.CURRENTEVENT.getLast().equals("Game")){
 
         }
     }
-    
-        @Override
-        public void mousePressed(MouseEvent e) {}
-        @Override
-        public void mouseReleased(MouseEvent e) {}
-        @Override
-        public void mouseEntered(MouseEvent e) {}
-        @Override
-        public void mouseExited(MouseEvent e) {}
-        @Override
-        public void mouseDragged(MouseEvent e) {}
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            // highlight the button when hovered
-            updateStartButtonRect();
-            boolean nowHover = startButtonRect.contains(e.getPoint());
-            if (nowHover != hover) {
-                hover = nowHover;
-                repaint();
-            }
-        }
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {
+        // highlight the button when hovered
+        /*updateStartButtonRect();
+        boolean nowHover = startButtonRect.contains(e.getPoint());
+        if (nowHover != hover) {
+            hover = nowHover;
+            repaint();
+        }*/
+    }
     public void keyTyped(KeyEvent e) {}
-        public void keyPressed(KeyEvent e) {}
-        public void keyReleased(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {}
 
     @Override
     public void paint(Graphics g) {
@@ -141,6 +187,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Select Screen" -> {
                     paintSelection(g);
                     break;
+                }case "Game" ->{
+                    paintGame(g);
+                    break;
                 }
                 
                 default -> {
@@ -152,7 +201,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintStart(Graphics g){
-        Graphics2D g2 = (Graphics2D) g;
+        /*Graphics2D g2 = (Graphics2D) g;
         // Smooth rendering
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -201,7 +250,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int bx = startButtonRect.x + (startButtonRect.width - fm.stringWidth(label)) / 2;
         int by = startButtonRect.y + (startButtonRect.height - fm.getHeight()) / 2 + fm.getAscent();
         g2.setColor(Color.WHITE);
-        g2.drawString(label, bx, by);
+        g2.drawString(label, bx, by);*/
     }
 
     public void paintSelection(Graphics g){
@@ -212,22 +261,38 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawString("Select 5", 1000, 80);
         g.drawLine(40, getHeight()/2, getWidth()-40, getHeight()/2);
         for (int i=0;i<5;i++){
+            if (startSelections[i]) g.fillRect(25+i*220, 115, 210, 310);
             g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
         }
+
+        if (startSelections[5]) g.fillRect(1195, 115, 110, 110);
+        if (startSelections[6]) g.fillRect(1195, 325, 110, 110);
+        if (startSelections[7]) g.fillRect(1310, 220, 110, 110);
+        if (startSelections[8]) g.fillRect(1425, 115, 110, 110);
+        if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
         g.drawImage(infoButton, 1200, 120, 100, 100, null); //fish
         g.drawImage(infoButton, 1200, 330, 100, 100, null); //seed
         g.drawImage(infoButton, 1430, 120, 100, 100, null); //fruit
         g.drawImage(infoButton, 1430, 330, 100, 100, null); //rat
         g.drawImage(infoButton, 1315, 225, 100, 100, null); //insect
-        
 
+        if (startSelections[10]) g.fillRect(695, 495, 210, 310);
+        if (startSelections[11]) g.fillRect(945, 495, 210, 310);
+        g.drawImage(bonusOptions[0].getImage(), 700, 500, 200, 300, null);
+        g.drawImage(bonusOptions[1].getImage(), 950, 500, 200, 300, null);
+        
+        g.fillRect(140, 600, 200, 80);
+        
+        /*if (canContinue()) {
+            out.println("Drawing cont. box");
+            g.setColor(Color.BLUE);
+            g.fillRect(1410, 590, 180, 60);
+        }*/
+        //g.fillRect(140, 700, 200, 80);
     }
-    public void setupSelection(){
-        startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
-        startOptions = new Bird[5];
-        for (int i=0;i<5;i++){
-            startOptions[i] = birds.remove(0);
-        }
+    
+    public void paintGame(Graphics g){
+        g.drawImage(ingameBg, 0, 0, getWidth(), getHeight(),null);
     }
     //read in birdinfo
     public void readCSV(File f){
@@ -358,6 +423,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             out.println("Images couldn't be loaded.");
         }
     }
+    
+    //start Selection methods
     public void mockSetup(){
         Bird b = birds.get(0);
         for (int i=0;i<169;i++){
@@ -366,12 +433,41 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     public void setUpBonus(){
         for(int i=0;i<bonuses.length;i++){
+
             bonusArr.add(new Bonus(bonuses[i], bonusMap.get(bonuses[i])));
-            
+            if (i==5||i==8||i==10||i==22) continue;
             try{bonusArr.get(i).setImage(ImageIO.read(Tester.class.getResource("/assets/bonus/"+bonuses[i]+".png")));}
-            catch(Exception e){out.println("Exception: "+e);}
+            catch(Exception e){out.println("Sreejit sold for " + bonuses[i]);}
         }
+        bonusArr.remove(22);
+        bonusArr.remove(10);
+        bonusArr.remove(8);
+        bonusArr.remove(5);
     }
+    public boolean canContinue(){
+        int sum = 0;
+        for (int i=0;i<10;i++){
+            if (startSelections[i]) sum++;
+        }
+
+        int sum2 = startSelections[10]?1:0;
+        sum2 += startSelections[11]?1:0;
+
+        return sum==5 && sum2==1;
+        
+    }
+    public void setUpSelection(){
+            startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+            startOptions = new Bird[5];
+            for (int i=0;i<5;i++){
+                startOptions[i] = birds.remove(0);
+            }
+            bonusOptions = new Bonus[2];
+            bonusOptions[0] = bonusArr.remove(0);
+            bonusOptions[1] = bonusArr.remove(0);
+            
+        }
+
 }
      
    

@@ -7,6 +7,8 @@ public class Player {
     private ArrayList<Bonus> bonus = new ArrayList<>();
     private int[] actions = new int[4];
     private ArrayList<String> foods = new ArrayList<>();
+    
+    public Player(){
     private int playerScore = 0;
     
     public Player() {
@@ -92,6 +94,16 @@ public class Player {
     
     public void setPlayerBonuses(ArrayList<Bonus> bonus) {
         this.bonus = bonus;
+        this.actions = actions;
+        this.foods = foods;
+        
+    }
+    
+    public int score(){
+        return 3;
+    }
+
+    
     }
     
     public void addPlayerBonus(Bonus b) {
@@ -181,6 +193,7 @@ public class Player {
     // Set Methods for the Player class
     public void addCard(Bird b) {cards.add(b);}
     public void removeCard(Bird b) {cards.remove(b);}
+    public void setFoodInHand(ArrayList<String> x) {foods = x;}
     public void addFood(String f) {foods.add(f);}
     public void removeFood(String f) {foods.remove(f);}
     public void addBonus(Bonus b) {bonus.add(b);}
