@@ -14,6 +14,16 @@ public class Feeder {
             for(int i=0;i<foodDice.size();i++){
                 if(!foodDice.get(i).equals(one)){
                     return false;
+                
+                }
+            }
+        }   
+        return true;
+        if(foodDice.size()>1){
+            String one=foodDice.get(0);
+            for(int i=0;i<foodDice.size();i++){
+                if(!foodDice.get(i).equals(one)){
+                    return false;
                 }
             }
         }
@@ -22,41 +32,30 @@ public class Feeder {
 
     public void reRoll(){
         foodDice.clear();
-    for(int i=0;i<5;i++){
-        int roll=(int)(Math.random()*6);
-    switch(roll){
-        case 0 -> foodDice.add("Seed");
-        case 1 -> foodDice.add("Fruit");
-        case 2 -> foodDice.add("Invertebrate");
-        case 3 -> foodDice.add("Fish");
-        case 4 -> foodDice.add("Rodent");
-        case 5 -> foodDice.add("Seed/Invertebrate");
-    }
-    }
-}
-
-    public void takeDie(int index,int player){
-    String food=foodDice.get(index);
-    switch(player){
-        case 1 -> {ArrayList<String> temp = state.players[0].getFoods();
-            temp.add(food);
-            state.players[0].setFoodTokens(temp);
-        }
-         case 2 -> {ArrayList<String> temp = state.players[1].getFoods();
-            temp.add(food);
-            state.players[1].setFoodTokens(temp);
-        }
-         case 3 -> {ArrayList<String> temp = state.players[2].getFoods();
-            temp.add(food);
-            state.players[2].setFoodTokens(temp);
-        }
-         case 4 -> {ArrayList<String> temp = state.players[3].getFoods();
-            temp.add(food);
-            state.players[3].setFoodTokens(temp);
+        for(int i=0;i<5;i++){
+            int roll=(int)(Math.random()*6);
+            switch(roll){
+                case 0 -> foodDice.add("seed");
+                case 1 -> foodDice.add("berry");
+                case 2 -> foodDice.add("insect");
+                case 3 -> foodDice.add("fish");
+                case 4 -> foodDice.add("rat");
+                case 5 -> foodDice.add("seed/insect");
+            }
         }
     }
 
-}
+    public void takeDie(String f,int player){
+        switch(player){
+            case 0 -> state.players[0].addFood(f);
+            case 1 -> state.players[1].addFood(f);
+            case 2 -> state.players[2].addFood(f);
+            case 3 -> state.players[3].addFood(f);
+        }
+
+    }
+
+    public ArrayList<String> getDice() {return foodDice;}
 }
     
 
