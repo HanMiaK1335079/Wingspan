@@ -5,7 +5,6 @@ public class Feeder {
      private ArrayList<String> foodDice=new ArrayList<>();
      public Feeder(ProgramState state){
         this.state = state;
-        reRoll();
     }
 
     public boolean canReroll(){
@@ -19,19 +18,9 @@ public class Feeder {
             }
         }   
         return true;
-        if(foodDice.size()>1){
-            String one=foodDice.get(0);
-            for(int i=0;i<foodDice.size();i++){
-                if(!foodDice.get(i).equals(one)){
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     public void reRoll(){
-        foodDice.clear();
         for(int i=0;i<5;i++){
             int roll=(int)(Math.random()*6);
             switch(roll){
@@ -58,7 +47,6 @@ public class Feeder {
     public ArrayList<String> getDice() {return foodDice;}
 }
     
-
 
 
 
