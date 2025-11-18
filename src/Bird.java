@@ -62,7 +62,7 @@ public class Bird {
         }
     }
     
-    public boolean canAfford(ArrayList<Integer> playerFoods) {
+    public boolean canAfford(ArrayList<String> playerFoods) {
         return playerFoods.size() >= 1;
     }
 
