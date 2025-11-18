@@ -19,6 +19,7 @@ public class ProgramState {
     
     public ArrayList<String> CURRENTEVENT = new ArrayList<>();
 
+
     public void makeDeckOfCards(){
         deckOfCards.addAll(birds);
         Collections.shuffle(birds);
@@ -26,7 +27,7 @@ public class ProgramState {
     
     
     }
-
+    
     public enum GamePhase {
         SETUP,
         PLAYER_TURN,

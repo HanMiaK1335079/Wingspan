@@ -135,7 +135,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (canContinue()){
                     out.println("Continuing");
                     for (int i=0;i<5;i++){
-                        if (startSelections[i]) state.players[state.playing].addCard(startOptions[i]);
+                        if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
                     }
                     if (startSelections[5]) state.players[state.playing].addFood("fish");
                     if (startSelections[6]) state.players[state.playing].addFood("seed");
@@ -171,7 +171,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             repaint();
         }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCards().size()%showing)
+            else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
                 currentShowing++;
             else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
             //50, 590, 60, 60
@@ -360,15 +360,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         //birdpics
         BufferedImage pic;
-        for (int i=0;i<state.players[state.playing].getCards().size();i++){
-            pic = state.players[state.playing].getCards().get(i).getImage();
-            g.drawImage(pic, 17+(102/state.players[state.playing].getCards().size())*i, 239, 130, 185, null);
+        for (int i=0;i<state.players[state.playing].getCardsInHand().size();i++){
+            pic = state.players[state.playing].getCardsInHand().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getCardsInHand().size())*i, 239, 130, 185, null);
         }
 
         //bonuspics
-        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
-            pic = state.players[state.playing].getBonus().get(i).getImage();
-            g.drawImage(pic, 17+(102/state.players[state.playing].getBonus().size())*i, 490, 120, 170, null);
+        for (int i=0;i<state.players[state.playing].getBonuses().size();i++){
+            pic = state.players[state.playing].getBonuses().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getBonuses().size())*i, 490, 120, 170, null);
         }
 
         //cardTray
@@ -386,12 +386,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Bird Cards", 600, 458);
-        g.drawString(""+state.players[state.playing].getCards().size(), 1400, 460);
-        if (state.players[state.playing].getCards().size()==0) return;
+        g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
+        if (state.players[state.playing].getCardsInHand().size()==0) return;
 
         ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
         int counter = 0;
-        for (Bird b: state.players[state.playing].getCards()){
+        for (Bird b: state.players[state.playing].getCardsInHand()){
             if (counter %showing == 0) 
                 birdArrSplit.add(new ArrayList<Bird>());
             counter ++;
@@ -404,7 +404,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
-        if (currentShowing != state.players[state.playing].getCards().size()/showing) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+        if (currentShowing != state.players[state.playing].getCardsInHand().size()/showing) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
     }
 
     public void paintViewBonus(Graphics g){
@@ -413,12 +413,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Bonus Cards", 600, 458);
-        g.drawString(""+state.players[state.playing].getBonus().size(), 1400, 460);
+        g.drawString(""+state.players[state.playing].getBonuses().size(), 1400, 460);
         
-        if (state.players[state.playing].getBonus().size()==0) return;
+        if (state.players[state.playing].getBonuses().size()==0) return;
         Bonus b;
-        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
-            b = state.players[state.playing].getBonus().get(i);
+        for (int i=0;i<state.players[state.playing].getBonuses().size();i++){
+            b = state.players[state.playing].getBonuses().get(i);
             g.drawImage(b.getImage(), 60 + 250*i, 500, 240, 320, null);
         }
     }

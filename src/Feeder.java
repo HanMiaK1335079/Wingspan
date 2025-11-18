@@ -3,8 +3,9 @@ import java.util.*;
 public class Feeder {
      private final ProgramState state;
      private ArrayList<String> foodDice=new ArrayList<>();
-     public Feeder(ProgramState state){
-        this.state = state;
+     public Feeder(ProgramState s){
+        this.state = s;
+        reRoll();
     }
 
     public boolean canReroll(){
@@ -13,14 +14,14 @@ public class Feeder {
             for(int i=0;i<foodDice.size();i++){
                 if(!foodDice.get(i).equals(one)){
                     return false;
-                
                 }
             }
-        }   
+        }
         return true;
     }
 
     public void reRoll(){
+        foodDice.clear();
         for(int i=0;i<5;i++){
             int roll=(int)(Math.random()*6);
             switch(roll){
@@ -34,8 +35,8 @@ public class Feeder {
         }
     }
 
-    public void takeDie(String f,int player){
-        switch(player){
+    public void takeDie(String f,int p){
+        switch(p){
             case 0 -> state.players[0].addFood(f);
             case 1 -> state.players[1].addFood(f);
             case 2 -> state.players[2].addFood(f);
@@ -46,7 +47,3 @@ public class Feeder {
 
     public ArrayList<String> getDice() {return foodDice;}
 }
-    
-
-
-
