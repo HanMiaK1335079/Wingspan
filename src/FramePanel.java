@@ -14,7 +14,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -43,6 +43,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
 
     public FramePanel(ProgramState state){
+        
         this.state = state;
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -67,12 +68,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
             rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
+            Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
         }
-
+        readCSV(new File("src/birdInfo.csv"));
         this.repaint();
     }
     // update button geometry based on current panel size
@@ -169,11 +171,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
             
             
-            //debug click
-                else if (x>=140 && y>=700 && x<=290 && y<=780){
-                    for (int i=0;i<5;i++) startSelections[i] = true;
-                    startSelections[10] = true;
-                }
+            // //debug click
+            //     else if (x>=140 && y>=700 && x<=290 && y<=780){
+            //         for (int i=0;i<5;i++) startSelections[i] = true;
+            //         startSelections[10] = true;
+            //     }
             //birb click
             else if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
@@ -218,20 +220,21 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //bonus click
             }else if (y>=500 && y<=800){
                 if (x>=550 && x<=750){
-                    if(numberOfBonusesSelected<1&&!startSelections[10]){
+                    if(numberOfBonusesSelected<1){
                         startSelections[10] = !startSelections[10];
                         numberOfBonusesSelected++;
-                    }else if(startSelections[10]){
+                    }else if(!startSelections[10]){ 
                         startSelections[10] = !startSelections[10];
-                        numberOfBonusesSelected--;
+                        startSelections[11] = !startSelections[11];
+                        
                     }
                 }else if (x>=800 && x<=1000){
-                    if(numberOfBonusesSelected<1&&!startSelections[11]){
+                    if(numberOfBonusesSelected<1){
                         startSelections[11] = !startSelections[11];
                         numberOfBonusesSelected++;
-                    }else if(startSelections[11]){
+                    }else if(!startSelections[11]){
+                        startSelections[10] = !startSelections[10];
                         startSelections[11] = !startSelections[11];
-                        numberOfBonusesSelected--;
                 }
             }
         }
@@ -397,10 +400,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(roundPics[2], 1310, 530, 110, 110, null);
         g.drawImage(roundPics[3], 1310, 660, 110, 110, null);
 
-        g.fillRect(140, 600, 200, 80);
+        g.drawImage(Continue_Button,140, 600, 200, 80,null);
         
         //DEBUG RECT: click to instantly select 5 birb cards and first bonus (only cuz im too lazy to individually select)
-        g.fillRect(140, 700, 150, 80);
+        //g.fillRect(140, 700, 150, 80);
         
         /*if (canContinue()) {
             out.println("Drawing cont. box");
@@ -526,7 +529,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
 
     public void startSetUp(){
-        readCSV(new File("src/birdInfo.csv"));
+        
         setUpBirdPics();
         mockSetup();
         setUpBonus();
@@ -542,7 +545,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            int readAmt = 1;
+            int readAmt = 100;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
