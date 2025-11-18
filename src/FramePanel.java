@@ -14,7 +14,8 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack;
+    private BufferedImage[] dicePics = new BufferedImage[6];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -286,6 +287,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "View Bonus" -> paintViewBonus(g);
                 case "Info" -> paintInfo(g);
                 case "View Draw Birds" -> paintViewDrawBird(g);
+                case "View Feeder" -> paintViewFeeder(g);
                 default -> {
                 
                 }
@@ -431,8 +433,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         //cardTray
         if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1356, 450, 85, 120, null);
-        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 450, 85, 120, null);
-        if (state.cardTray[0] != null) g.drawImage(state.cardTray[0].getImage(), 1446, 577, 85, 120, null);
+        if (state.cardTray[1] != null) g.drawImage(state.cardTray[1].getImage(), 1446, 450, 85, 120, null);
+        if (state.cardTray[2] != null) g.drawImage(state.cardTray[2].getImage(), 1446, 577, 85, 120, null);
         
     }
     
@@ -494,6 +496,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
 
+    public void paintViewFeeder(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Feeder", 600, 458);
+        
+    }
+
     public void paintInfo(Graphics g){
         g.drawImage(exitPic, 30, 30, 90, 90, null);
         g.setFont(new Font("Arial", Font.BOLD, 65));
@@ -510,12 +521,22 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
 
     public void startSetUp(){
+        try {
+            for (int i=0;i<6;i++){
+                dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
+            }
+        } catch (Exception e) {
+            out.println("Exception: "+e);
+            out.println("Oops diceimages dont load");
+        }
+        
         readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
         setUpBonus();
         setRgoals();
         updateTray();
+
     }
     //read in birdinfo
     public void readCSV(File f){
