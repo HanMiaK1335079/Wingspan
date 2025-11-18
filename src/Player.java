@@ -8,6 +8,7 @@ public class Player {
     private ArrayList<Bonus> bonus = new ArrayList<>();
     private int[] actions = new int[4];
     private ArrayList<Integer> foods = new ArrayList<>();
+    private int score;
     
     private int score = 0;
     
