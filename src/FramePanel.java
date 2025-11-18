@@ -35,6 +35,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     //Startselection variables
     boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
     private int numberOfItemsSelected = 0;
+    private int numberOfBonusesSelected = 0;
     Bird[] startOptions;
     Bonus[] bonusOptions;
 
@@ -62,7 +63,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             fishToken = ImageIO.read(FramePanel.class.getResource("/assets/Fish_Token.png"));
             fruitToken = ImageIO.read(FramePanel.class.getResource("/assets/Fruit_Token.png"));
             rodentToken = ImageIO.read(FramePanel.class.getResource("/assets/Rodent_Token.png"));
-            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); //placeholder cuz im lazy
             leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
             rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
@@ -193,6 +194,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (canContinue()){
                     out.println("Continuing");
                     numberOfItemsSelected = 0;
+                    numberOfBonusesSelected = 0;
                     for (int i=0;i<5;i++){
                         if (startSelections[i]) state.players[state.playing].addCard(startOptions[i]);
                     }
@@ -216,11 +218,23 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //bonus click
             }else if (y>=500 && y<=800){
                 if (x>=550 && x<=750){
-                    startSelections[10] = !startSelections[10];
+                    if(numberOfBonusesSelected<1&&!startSelections[10]){
+                        startSelections[10] = !startSelections[10];
+                        numberOfBonusesSelected++;
+                    }else if(startSelections[10]){
+                        startSelections[10] = !startSelections[10];
+                        numberOfBonusesSelected--;
+                    }
                 }else if (x>=800 && x<=1000){
-                    startSelections[11] = !startSelections[11];
+                    if(numberOfBonusesSelected<1&&!startSelections[11]){
+                        startSelections[11] = !startSelections[11];
+                        numberOfBonusesSelected++;
+                    }else if(startSelections[11]){
+                        startSelections[11] = !startSelections[11];
+                        numberOfBonusesSelected--;
                 }
             }
+        }
             this.repaint();
         
         }else if (state.CURRENTEVENT.getLast().equals("Game")){
@@ -349,21 +363,23 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void paintSelection(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        
         g.setFont(new Font("Arial", 1, 50));
         g.drawString("Player: " + (1+state.playing), 60, 80);
         g.setFont(new Font("Arial", 1, 30));
         g.drawString("Select 5", 1000, 80);
         g.drawLine(40, getHeight()/2, getWidth()-40, getHeight()/2);
+         g.setColor(new Color(173, 216, 230));
         for (int i=0;i<5;i++){
             if (startSelections[i]) g.fillRect(25+i*220, 115, 210, 310);
             g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
         }
-
-        if (startSelections[5]) g.fillRect(1195, 115, 110, 110);
-        if (startSelections[6]) g.fillRect(1195, 325, 110, 110);
-        if (startSelections[7]) g.fillRect(1310, 220, 110, 110);
-        if (startSelections[8]) g.fillRect(1425, 115, 110, 110);
-        if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
+       
+        if (startSelections[5]) g.fillOval(1195, 115, 100, 100);
+        if (startSelections[6]) g.fillOval(1195, 325, 110, 110);
+        if (startSelections[7]) g.fillOval(1310, 220, 110, 110);
+        if (startSelections[8]) g.fillOval(1425, 115, 110, 110);
+        if (startSelections[9]) g.fillOval(1425, 325, 110, 110);
         g.drawImage(fishToken, 1200, 120, 100, 100, null); //fish
         g.drawImage(wheatToken, 1200, 330, 100, 100, null); //seed
         g.drawImage(fruitToken, 1430, 120, 100, 100, null); //fruit
