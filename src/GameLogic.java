@@ -16,6 +16,11 @@ private final FramePanel panel;
         
        
     }
+
+
+    public void playerTurn(int playerNumber) {
+           
+    }
      
 
 
