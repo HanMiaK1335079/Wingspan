@@ -14,8 +14,8 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack;
-    private BufferedImage wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, feederPic, Continue_Button;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic;
+    private BufferedImage[] dicePics = new BufferedImage[6];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -69,6 +69,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/Left_Arrow.png")); 
             rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/Right_Arrow.png")); 
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
+            feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
+            Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -549,7 +551,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
 
     public void startSetUp(){
-        readCSV(new File("src/birdInfo.csv"));
+        try {
+            for (int i=0;i<6;i++){
+                dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
+            }
+        } catch (Exception e) {
+            out.println("Exception: "+e);
+            out.println("Oops diceimages dont load");
+        }
+        
+       
         setUpBirdPics();
         mockSetup();
         setUpBonus();
