@@ -64,9 +64,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             fishToken = ImageIO.read(FramePanel.class.getResource("/assets/Fish_Token.png"));
             fruitToken = ImageIO.read(FramePanel.class.getResource("/assets/Fruit_Token.png"));
             rodentToken = ImageIO.read(FramePanel.class.getResource("/assets/Rodent_Token.png"));
-            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); //placeholder cuz im lazy
-            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); 
+            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/Left_Arrow.png")); 
+            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/Right_Arrow.png")); 
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
 
@@ -191,7 +191,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                 } //30+i*220, 120, 200, 300
                 //continue click
-            }else if (x>=140 && x<=340 && y>=600 && y<=680){
+            }else if (x>=140 && x<=440 && y>=600 && y<=720){
                 out.println("clicked box");
                 if (canContinue()){
                     out.println("Continuing");
@@ -400,7 +400,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(roundPics[2], 1310, 530, 110, 110, null);
         g.drawImage(roundPics[3], 1310, 660, 110, 110, null);
 
-        g.drawImage(Continue_Button,140, 600, 200, 80,null);
+        g.drawImage(Continue_Button,140, 600, 300, 120,null);
         
         //DEBUG RECT: click to instantly select 5 birb cards and first bonus (only cuz im too lazy to individually select)
         //g.fillRect(140, 700, 150, 80);
