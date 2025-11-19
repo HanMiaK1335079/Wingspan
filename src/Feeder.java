@@ -62,8 +62,7 @@ public class Feeder {
         return -1;
     }
 
-    private ArrayList<String> getOutDice() {
-        // TODO Auto-generated method stub
+    public ArrayList<String> getOutDice() {
         return outDice;
     }
 
