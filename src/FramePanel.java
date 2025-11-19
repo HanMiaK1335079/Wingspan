@@ -14,8 +14,8 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, feederPic;
-    private BufferedImage[] dicePics = new BufferedImage[6];
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack;
+    private BufferedImage wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, feederPic, Continue_Button;
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -35,6 +35,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     //Startselection variables
     boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+    private int numberOfItemsSelected = 0;
+    private int numberOfBonusesSelected = 0;
     Bird[] startOptions;
     Bonus[] bonusOptions;
 
@@ -42,8 +44,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
 
     public FramePanel(ProgramState state){
+        
         this.state = state;
         addMouseListener(this);
+        addMouseMotionListener(this);
         
 
         for (int i=0;i<4;i++){
@@ -56,17 +60,21 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
             ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
-            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
+            wheatToken = ImageIO.read(FramePanel.class.getResource("/assets/Wheat_Token.png"));
+            invertebrateToken = ImageIO.read(FramePanel.class.getResource("/assets/Invertebrate_Token.png"));
+            fishToken = ImageIO.read(FramePanel.class.getResource("/assets/Fish_Token.png"));
+            fruitToken = ImageIO.read(FramePanel.class.getResource("/assets/Fruit_Token.png"));
+            rodentToken = ImageIO.read(FramePanel.class.getResource("/assets/Rodent_Token.png"));
+            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); 
+            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/Left_Arrow.png")); 
+            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/Right_Arrow.png")); 
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
-            feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
         }
-
+        readCSV(new File("src/birdInfo.csv"));
         this.repaint();
     }
     // update button geometry based on current panel size
@@ -88,7 +96,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
+      
+
+    }
+    public void mousePressed(MouseEvent e) {
+          int x = e.getX();
         int y = e.getY();
         out.println("("+x+","+y+")");
         // Only respond to clicks when we are on the start screen
@@ -111,31 +123,80 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
         }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
             //food click
-            if (x>=1200 && x<=1300 && y>=130 && y<=220) startSelections[5] = !startSelections[5];
-            else if (x>=1200 && x<=1300 && y>=340 && y<=430) startSelections[6] = !startSelections[6];
-            else if (x>=1320 && x<=1410 && y>=230 && y<=320) startSelections[7] = !startSelections[7];
-            else if (x>=1440 && x<=1530 && y>=130 && y<=220) startSelections[8] = !startSelections[8];
-            else if (x>=1440 && x<=1530 && y>=340 && y<=430) startSelections[9] = !startSelections[9];
-            
-            //debug click
-            else if (x>=140 && y>=700 && x<=290 && y<=780){
-                for (int i=0;i<5;i++) startSelections[i] = true;
-                startSelections[10] = true;
+             
+            if (x>=1200 && x<=1300 && y>=130 && y<=220){
+                if(numberOfItemsSelected<5&&!startSelections[5]){
+                    startSelections[5] = !startSelections[5];
+                    numberOfItemsSelected++;
+                }else if(startSelections[5]){
+                    startSelections[5] = !startSelections[5];
+                    numberOfItemsSelected--;
             }
+        }
+            else if (x>=1200 && x<=1300 && y>=340 && y<=430){
+                if(numberOfItemsSelected<5&&!startSelections[6]){
+                    startSelections[6] = !startSelections[6];
+                    numberOfItemsSelected++;
+                }else if(startSelections[6]){
+                    startSelections[6] = !startSelections[6];
+                    numberOfItemsSelected--;
+                }
+            }
+            else if (x>=1320 && x<=1410 && y>=230 && y<=320){
+                if(numberOfItemsSelected<5&&!startSelections[7]){
+                    startSelections[7] = !startSelections[7];
+                    numberOfItemsSelected++;
+                }else if(startSelections[7]){
+                    startSelections[7] = !startSelections[7];
+                    numberOfItemsSelected--;
+                }
+            }
+            else if (x>=1440 && x<=1530 && y>=130 && y<=220){
+                if(numberOfItemsSelected<5&&!startSelections[8]){
+                    startSelections[8] = !startSelections[8];
+                    numberOfItemsSelected++;
+                }else if(startSelections[8]){
+                    startSelections[8] = !startSelections[8];
+                    numberOfItemsSelected--;
+                }
+            }
+            else if (x>=1440 && x<=1530 && y>=340 && y<=430){
+                if(numberOfItemsSelected<5&&!startSelections[9]){
+                    startSelections[9] = !startSelections[9];
+                    numberOfItemsSelected++;
+                }else if(startSelections[9]){
+                    startSelections[9] = !startSelections[9];
+                    numberOfItemsSelected--;
+                }
+            }
+            
+            
+            // //debug click
+            //     else if (x>=140 && y>=700 && x<=290 && y<=780){
+            //         for (int i=0;i<5;i++) startSelections[i] = true;
+            //         startSelections[10] = true;
+            //     }
             //birb click
             else if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
                     if (x>=30+i*220 && x<=230+i*220){
-                        startSelections[i] = !startSelections[i];
-                        out.println("Swapped");
-                        
-                    }
+                       if(numberOfItemsSelected<5&&!startSelections[i]){
+                    startSelections[i] = !startSelections[i];
+                    numberOfItemsSelected++;
+                       }else if(startSelections[i]){
+                    startSelections[i] = !startSelections[i];
+                    numberOfItemsSelected--;
+                }
+            }
+
                 } //30+i*220, 120, 200, 300
                 //continue click
-            }else if (x>=140 && x<=340 && y>=600 && y<=680){
+            }else if (x>=140 && x<=440 && y>=600 && y<=720){
                 out.println("clicked box");
                 if (canContinue()){
                     out.println("Continuing");
+                    numberOfItemsSelected = 0;
+                    numberOfBonusesSelected = 0;
                     for (int i=0;i<5;i++){
                         if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
                     }
@@ -159,12 +220,26 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //bonus click
             }else if (y>=500 && y<=800){
                 if (x>=550 && x<=750){
-                    startSelections[10] = !startSelections[10];
+                    if(numberOfBonusesSelected<1){
+                        startSelections[10] = !startSelections[10];
+                        numberOfBonusesSelected++;
+                    }else if(!startSelections[10]){ 
+                        startSelections[10] = !startSelections[10];
+                        startSelections[11] = !startSelections[11];
+                        
+                    }
                 }else if (x>=800 && x<=1000){
-                    startSelections[11] = !startSelections[11];
+                    if(numberOfBonusesSelected<1){
+                        startSelections[11] = !startSelections[11];
+                        numberOfBonusesSelected++;
+                    }else if(!startSelections[11]){
+                        startSelections[10] = !startSelections[10];
+                        startSelections[11] = !startSelections[11];
                 }
             }
+        }
             this.repaint();
+        
         }else if (state.CURRENTEVENT.getLast().equals("Game")){
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
@@ -196,9 +271,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
             repaint();
         }
-
     }
-    public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
@@ -299,26 +372,28 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void paintSelection(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        
         g.setFont(new Font("Arial", 1, 50));
         g.drawString("Player: " + (1+state.playing), 60, 80);
         g.setFont(new Font("Arial", 1, 30));
         g.drawString("Select 5", 1000, 80);
         g.drawLine(40, getHeight()/2, getWidth()-40, getHeight()/2);
+         g.setColor(new Color(173, 216, 230));
         for (int i=0;i<5;i++){
             if (startSelections[i]) g.fillRect(25+i*220, 115, 210, 310);
             g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
         }
-
-        if (startSelections[5]) g.fillRect(1195, 115, 110, 110);
-        if (startSelections[6]) g.fillRect(1195, 325, 110, 110);
-        if (startSelections[7]) g.fillRect(1310, 220, 110, 110);
-        if (startSelections[8]) g.fillRect(1425, 115, 110, 110);
-        if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
-        g.drawImage(infoButton, 1200, 120, 100, 100, null); //fish
-        g.drawImage(infoButton, 1200, 330, 100, 100, null); //seed
-        g.drawImage(infoButton, 1430, 120, 100, 100, null); //berry
-        g.drawImage(infoButton, 1430, 330, 100, 100, null); //rat
-        g.drawImage(infoButton, 1315, 225, 100, 100, null); //insect
+       
+        if (startSelections[5]) g.fillOval(1195, 115, 100, 100);
+        if (startSelections[6]) g.fillOval(1195, 325, 110, 110);
+        if (startSelections[7]) g.fillOval(1310, 220, 110, 110);
+        if (startSelections[8]) g.fillOval(1425, 115, 110, 110);
+        if (startSelections[9]) g.fillOval(1425, 325, 110, 110);
+        g.drawImage(fishToken, 1200, 120, 100, 100, null); //fish
+        g.drawImage(wheatToken, 1200, 330, 100, 100, null); //seed
+        g.drawImage(fruitToken, 1430, 120, 100, 100, null); //fruit
+        g.drawImage(rodentToken, 1430, 330, 100, 100, null); //rat
+        g.drawImage(invertebrateToken, 1315, 225, 100, 100, null); //insect
 
         if (startSelections[10]) g.fillRect(545, 495, 210, 310);
         if (startSelections[11]) g.fillRect(795, 495, 210, 310);
@@ -331,10 +406,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(roundPics[2], 1310, 530, 110, 110, null);
         g.drawImage(roundPics[3], 1310, 660, 110, 110, null);
 
-        g.fillRect(140, 600, 200, 80);
+        g.drawImage(Continue_Button,140, 600, 300, 120,null);
         
         //DEBUG RECT: click to instantly select 5 birb cards and first bonus (only cuz im too lazy to individually select)
-        g.fillRect(140, 700, 150, 80);
+        //g.fillRect(140, 700, 150, 80);
         
         /*if (canContinue()) {
             out.println("Drawing cont. box");
@@ -474,15 +549,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
 
     public void startSetUp(){
-        try {
-            for (int i=0;i<6;i++){
-                dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
-            }
-        } catch (Exception e) {
-            out.println("Exception: "+e);
-            out.println("Oops diceimages dont load");
-        }
-        
         readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
@@ -500,7 +566,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            int readAmt = 1;
+            int readAmt = 100;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
