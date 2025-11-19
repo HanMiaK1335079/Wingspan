@@ -450,11 +450,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Feeder", 600, 458);
+        g.setFont(new Font("Arial", Font.BOLD, 35));
+        g.drawString("In", 900, 525);
+        g.drawString("Out", 360, 525);
 
         g.drawImage(feederPic, 1150, 430, 350, 395, null);
 
-        g.drawRect(730, 494, 425, 298);
-        g.drawRect(207, 494, 425, 298);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.drawRect(730, 494, 425, 298);
+        g2.drawRect(207, 494, 425, 298);
         
     }
 
