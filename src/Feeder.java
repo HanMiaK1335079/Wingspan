@@ -3,6 +3,7 @@ import java.util.*;
 public class Feeder {
      private final ProgramState state;
      private ArrayList<String> foodDice=new ArrayList<>();
+     private ArrayList<String> outDice=new ArrayList<>();
      public Feeder(ProgramState s){
         this.state = s;
         reRoll();
@@ -22,6 +23,7 @@ public class Feeder {
 
     public void reRoll(){
         foodDice.clear();
+        outDice.clear();
         for(int i=0;i<5;i++){
             int roll=(int)(Math.random()*6);
             switch(roll){
@@ -30,20 +32,46 @@ public class Feeder {
                 case 2 -> foodDice.add("berry");
                 case 3 -> foodDice.add("insect");
                 case 4 -> foodDice.add("rat");
-                case 5 -> foodDice.add("seed/insect");
+                case 5 -> foodDice.add("seed insect");
             }
         }
     }
 
-    public void takeDie(String f,int p){
-        switch(p){
-            case 0 -> state.players[0].addFood(f);
-            case 1 -> state.players[1].addFood(f);
-            case 2 -> state.players[2].addFood(f);
-            case 3 -> state.players[3].addFood(f);
+    public int getImageIndex(int i){
+        String k = getDice().get(i);
+        switch(k){
+            case "seed": return 0;
+            case "fish": return 1;
+            case "berry": return 2;
+            case "insect": return 3;
+            case "rat": return 4;
+            case "seed insect": return 5;
         }
+        return -1;
+    }
+    public int getOutImageIndex(int i){
+        String k = getOutDice().get(i);
+        switch(k){
+            case "seed": return 0;
+            case "fish": return 1;
+            case "berry": return 2;
+            case "insect": return 3;
+            case "rat": return 4;
+            case "seed insect": return 5;
+        }
+        return -1;
+    }
 
+    public void takeDice(int f,int player){
+        state.players[player].addFood(foodDice.get(f));
+        outDice.add(foodDice.get(f));
+        foodDice.remove(f);
     }
 
     public ArrayList<String> getDice() {return foodDice;}
 }
+    
+
+
+
+
