@@ -14,7 +14,7 @@ public class Game {
         init();
     }
     
-    private void init() {
+    public void init() {
         for (int i = 0; i < state.players.length; i++) {
             state.players[i] = new Player();
         }
@@ -38,7 +38,7 @@ public class Game {
         state.players[player].setPlayerScore(state.players[player].calculateScore());
     }
     
-    private void nextRound() {
+    public void nextRound() {
         round++;
         
         if (round > 4) {
@@ -148,14 +148,14 @@ public class Game {
         return s;
     }
     
-    private boolean food(Player p, Object... params) {
+    public boolean food(Player p, Object... params) {
         String[] types = {"seed", "berry", "insect", "fish", "rat"};
         String f = types[(int)(Math.random() * types.length)];
         p.addFood(f);
         return true;
     }
     
-    private boolean eggs(Player p, Object... params) {
+    public boolean eggs(Player p, Object... params) {
         Bird[][] board = p.getPlayerBoard();
         for (int h = 0; h < 3; h++) {
             for (int i = 0; i < board[h].length; i++) {
@@ -170,7 +170,7 @@ public class Game {
         return false;
     }
     
-    private boolean draw(Player p, Object... params) {
+    public boolean draw(Player p, Object... params) {
         if (state.deckOfCards.size() > 0) {
             Bird card = state.deckOfCards.remove(state.deckOfCards.size() - 1);
             p.addCardToHand(card);
