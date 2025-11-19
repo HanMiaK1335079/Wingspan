@@ -47,7 +47,19 @@ public class Bird {
     public void setImage(BufferedImage i) {image = i;}
     
     public boolean canLiveInHabitat(String habitat) {
-        return habitats.contains(habitat.substring(0, 1).toLowerCase());
+        String habitatsn = getHabitatNorm(habitat);
+        return habitats.contains(habitatsn);
+    }
+    
+    private String getHabitatNorm(String habitat) {
+        switch (habitat.toLowerCase()) {
+            case "forest": return "f";
+            case "plains": 
+            case "grassland": return "p";
+            case "wetlands": 
+            case "wetland": return "w";
+            default: return "";
+        }
     }
     
     public boolean canAfford(ArrayList<String> playerFoods) {
@@ -112,8 +124,5 @@ public class Bird {
                 /*implement lay egg after cache */
             }
         }
-
-        
     }
-
 }

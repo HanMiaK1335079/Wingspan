@@ -1,29 +1,30 @@
 package src;
 import java.util.*;
+
 public class Player {
     
     private ArrayList<Bird> cards = new ArrayList<>();
-    private Bird[][] board = new Bird[3][4]; // 3 habitats with max of 4 birds in each
+    private Board board;
     private ArrayList<Bonus> bonus = new ArrayList<>();
     private int[] actions = new int[4];
     private ArrayList<Integer> foods = new ArrayList<>();
     
-    public Player(){
-    private int playerScore = 0;
+    private int score = 0;
     
     public Player() {
         actions[0] = 8;
         actions[1] = 7;
         actions[2] = 6;
         actions[3] = 5;
+        
+        for (int i = 0; i < 5; i++) {
+            foods.add(0);
+        }
+        
+        board = new Board();
     }
     
-    public int score(){
-        return playerScore;
-    }
-
-    
-    public int getPlayerId() {
+    public int getId() {
         return 1;
     }
     
@@ -41,23 +42,16 @@ public class Player {
     }
     
     public void nextRound() {
+        //shorten actions by 1 since new round. No more first elem. 
         if (actions.length > 1) {
             int[] newArray = new int[actions.length - 1];
-            System.arraycopy(actions, 1, newArray, 0, newArray.length);
+            for(int i = 0; i < newArray.length; i++) {
+                int source = 1 + i;
+                int dest = 0 + i;
+                newArray[dest] = actions[source];
+            }
             actions = newArray;
         }
-    }
-    
-    public ArrayList<String> getFoodTokens() {
-        return foods;
-    }
-    
-    public void setFoodTokens(ArrayList<String> foods) {
-        this.foods = foods;
-    }
-    
-    public void addFoodToken(String f) {
-        foods.add(f);
     }
     
     public void removeFoodToken(String f) {
@@ -68,8 +62,8 @@ public class Player {
         return cards;
     }
     
-    public void setCardsInHand(ArrayList<Bird> cards) {
-        this.cards = cards;
+    public void setCardsInHand(ArrayList<Bird> c) {
+        this.cards = c;
     }
     
     public void addCardToHand(Bird b) {
@@ -81,118 +75,59 @@ public class Player {
     }
     
     public Bird[][] getPlayerBoard() {
-        return board;
+        return board.getBoard();
     }
     
-    public void setPlayerBoard(Bird[][] board) {
-        this.board = board;
+    public void setPlayerBoard(Bird[][] b) {
+        board.setBoard(b);
     }
     
-    public ArrayList<Bonus> getPlayerBonuses() {
+    public ArrayList<Bonus> getBonuses() {
         return bonus;
     }
     
-    public void setPlayerBonuses(ArrayList<Bonus> bonus) {
-        this.bonus = bonus;
-        this.actions = actions;
-        for (int i=0;i<5;i++) foods.add(0);
-        
+    public void setBonuses(ArrayList<Bonus> b) {
+        this.bonus = b;
+        for (int i=0;i<5;i++) foods.set(i, 0);
     }
     
-    public int score(){
-        return 3;
-    }
-
-    
+    public int getScore(){
+        return calculateScore();
     }
     
-    public void addPlayerBonus(Bonus b) {
+    public void addBonus(Bonus b) {
         bonus.add(b);
     }
     
-    public void removePlayerBonus(Bonus b) {
+    public void removeBonus(Bonus b) {
         bonus.remove(b);
     }
     
     public boolean playBird(Bird bird, String habitat) {
-        int habitatIndex = getHabitatIndex(habitat);
-        if (habitatIndex == -1) return false;
-        
-        for (int i = 0; i < board[habitatIndex].length; i++) {
-            if (board[habitatIndex][i] == null) {
-                board[habitatIndex][i] = bird;
-                return true;
-            }
-        }
-        return false;
+        return board.playBird(bird, habitat);
     }
     
     public ArrayList<Bird> getBirdsInHabitat(String habitat) {
-        int habitatIndex = getHabitatIndex(habitat);
-        if (habitatIndex == -1) return new ArrayList<>();
-        
-        ArrayList<Bird> birds = new ArrayList<>();
-        for (int i = 0; i < board[habitatIndex].length; i++) {
-            if (board[habitatIndex][i] != null) {
-                birds.add(board[habitatIndex][i]);
-            }
-        }
-        return birds;
-    }
-    
-    private int getHabitatIndex(String habitat) {
         switch (habitat.toLowerCase()) {
-            case "forest": return 0;
-            case "plains": return 1;
-            case "wetlands": return 2;
-            default: return -1;
+            case "forest":
+            case "plains": 
+            case "wetlands":
+                return board.getBirdsInHabitat(habitat);
+            default:
+                return new ArrayList<Bird>();
         }
     }
     
     public int calculateScore() {
-        int totalScore = playerScore;
-        
-        for (int h = 0; h < 3; h++) {
-            for (int i = 0; i < board[h].length; i++) {
-                if (board[h][i] != null) {
-                    totalScore += board[h][i].getPoints();
-                }
-            }
-        }
-        
-        for (int h = 0; h < 3; h++) {
-            for (int i = 0; i < board[h].length; i++) {
-                if (board[h][i] != null) {
-                    totalScore += board[h][i].getStoredEggs();
-                }
-            }
-        }
-        
-        for (Bonus b : bonus) {
-            totalScore += 5;
-        }
-        
-        return totalScore;
+        return board.calculateScore();
     }
     
-    public void setPlayerScore(int score) {
-        playerScore = score;
+    public void setPlayerScore(int s) {
+        score = s;
     }
-
-
-    // Get Methods for the Player class
+    
     public ArrayList<Integer> getFoods(){return foods;}
-    public ArrayList<Bird> getCards(){return cards;}
-    public ArrayList<Bonus> getBonus(){return bonus;}
-    public Bird[][] getBoard(){return board;}
-    public int[] getActionCubes(){return actions;}
     
-
-
-
-    // Set Methods for the Player class
-    public void addCard(Bird b) {cards.add(b);}
-    public void removeCard(Bird b) {cards.remove(b);}
     public void addFood(String f) {
         switch (f) {
             case "seed" -> foods.set(0, foods.get(0)+1);
@@ -202,12 +137,14 @@ public class Player {
             case "rat" -> foods.set(4, foods.get(4)+1);
         }
     }
-    public void removeFood(String f) {foods.remove(f);}
-    public void addBonus(Bonus b) {bonus.add(b);}
-    public void removeBonus(Bonus b) {bonus.remove(b);}
-
-
-
-
-
+    
+    public void removeFood(String f) {
+        switch (f) {
+            case "seed" -> foods.set(0, Math.max(0, foods.get(0)-1));
+            case "fish" -> foods.set(1, Math.max(0, foods.get(1)-1));
+            case "berry" -> foods.set(2, Math.max(0, foods.get(2)-1));
+            case "insect" -> foods.set(3, Math.max(0, foods.get(3)-1));
+            case "rat" -> foods.set(4, Math.max(0, foods.get(4)-1));
+        }
+    }
 }

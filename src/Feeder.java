@@ -3,22 +3,12 @@ import java.util.*;
 public class Feeder {
      private final ProgramState state;
      private ArrayList<String> foodDice=new ArrayList<>();
-     public Feeder(ProgramState state){
-        this.state = state;
+     public Feeder(ProgramState s){
+        this.state = s;
         reRoll();
     }
 
     public boolean canReroll(){
-        if(foodDice.size()>1){
-            String one=foodDice.get(0);
-            for(int i=0;i<foodDice.size();i++){
-                if(!foodDice.get(i).equals(one)){
-                    return false;
-                
-                }
-            }
-        }   
-        return true;
         if(foodDice.size()>1){
             String one=foodDice.get(0);
             for(int i=0;i<foodDice.size();i++){
@@ -36,17 +26,17 @@ public class Feeder {
             int roll=(int)(Math.random()*6);
             switch(roll){
                 case 0 -> foodDice.add("seed");
-                case 1 -> foodDice.add("berry");
-                case 2 -> foodDice.add("insect");
-                case 3 -> foodDice.add("fish");
+                case 1 -> foodDice.add("fish");
+                case 2 -> foodDice.add("berry");
+                case 3 -> foodDice.add("insect");
                 case 4 -> foodDice.add("rat");
                 case 5 -> foodDice.add("seed/insect");
             }
         }
     }
 
-    public void takeDie(String f,int player){
-        switch(player){
+    public void takeDie(String f,int p){
+        switch(p){
             case 0 -> state.players[0].addFood(f);
             case 1 -> state.players[1].addFood(f);
             case 2 -> state.players[2].addFood(f);
@@ -57,8 +47,3 @@ public class Feeder {
 
     public ArrayList<String> getDice() {return foodDice;}
 }
-    
-
-
-
-
