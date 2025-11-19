@@ -62,6 +62,11 @@ public class Feeder {
         return -1;
     }
 
+    private ArrayList<String> getOutDice() {
+        // TODO Auto-generated method stub
+        return outDice;
+    }
+
     public void takeDice(int f,int player){
         state.players[player].addFood(foodDice.get(f));
         outDice.add(foodDice.get(f));
