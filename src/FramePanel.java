@@ -14,7 +14,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
@@ -71,6 +71,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
             feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
+            Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -106,7 +107,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int y = e.getY();
         out.println("("+x+","+y+")");
         // Only respond to clicks when we are on the start screen
-        if ("Game Start".equals(state.CURRENTEVENT.getLast())) {
+
+        switch(state.CURRENTEVENT.getLast()) {
+        
+        case "Game Start" -> {
             Point p = e.getPoint();
             // Update rect position in case panel was resized
             updateStartButtonRect();
@@ -123,7 +127,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     //  gameLogic.setUp(); //this has yet to be set up.
                 }
             }
-        }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
+        }
+        case "Select Screen" -> {
             //food click
              
             if (x>=1200 && x<=1300 && y>=130 && y<=220){
@@ -242,14 +247,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
             this.repaint();
         
-        }else if (state.CURRENTEVENT.getLast().equals("Game")){
+        }case "Game" -> {
+        //     g.drawImage(Action_Button, 425, 200, 50,50,null);
+        // g.drawImage(Action_Button, 425, 450, 50,50,null);
+        // g.drawImage(Action_Button, 350, 725, 50,50,null);
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
             else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
             else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
             else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
+            else if (x>=425 && x<=475 && y>=200 && y<=250) state.CURRENTEVENT.add("Get Food");
+            else if (x>=425 && x<=475 && y>=450 && y<=500) state.CURRENTEVENT.add("Lay Eggs");
+            else if (x>=350 && x<=400 && y>=725 && y<=775) state.CURRENTEVENT.add("Draw Birds");
             repaint();
-        }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
+        }case "View Birds" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
                 currentShowing++;
@@ -257,21 +268,39 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //50, 590, 60, 60
 
             repaint();
-        }else if (state.CURRENTEVENT.getLast().equals("View Bonus")){
+        }case "View Bonus" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
         
-        }else if (state.CURRENTEVENT.getLast().equals("View Draw Birds")){
+        }case "View Draw Birds" -> {
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            
+            repaint();
+
+        }case "View Feeder" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
 
-        }else if (state.CURRENTEVENT.getLast().equals("View Feeder")){
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            repaint();
-
-        }else if (state.CURRENTEVENT.getLast().equals("Info")){
+        }case "Info" -> {
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
             repaint();
+        }
+        case "Draw Birds" -> {
+            if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast();repaint();return;}
+            if(y>=470 && y<=825){//This is the Y level of the cards in the draw tray
+                    if(x>=475 && x<=720){//This would be the first card
+                        out.println("Clicked first card");
+                
+                    } else if ( x >= 745 && x <= 990 ) {// This would be the second card
+                        out.println("Clicked Second card"); //475+270*i, 470, 245, 355, (xy,wh)
+                    } else if ( x >= 1015 && x <= 1260 ) {//This would be the third card
+                        out.println("Clicked Third card");
+                    }
+            }
+            if(x>=120&&x<=335&&y>=515&&y<=775){//120, 515, 215, 260,
+                out.println("Clicked the bird deck");    
+                }
+            }
         }
     }
     public void mouseReleased(MouseEvent e) {}
@@ -311,6 +340,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Info" -> paintInfo(g);
                 case "View Draw Birds" -> paintViewDrawBird(g);
                 case "View Feeder" -> paintViewFeeder(g);
+                case "Draw Birds" -> paintDrawBirds(g);
                 default -> {
                 
                 }
@@ -422,7 +452,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintGame(Graphics g){
+        //425 200, 425 450, 350 725
+       
         g.drawImage(ingameBg, 0, 0, 1540, 863,null);
+        g.drawImage(Action_Button, 425, 200, 50,50,null);
+        g.drawImage(Action_Button, 425, 450, 50,50,null);
+        g.drawImage(Action_Button, 350, 725, 50,50,null);
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString(state.playing+1+"", 238, 67);
@@ -490,6 +525,19 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
         if (currentShowing != state.players[state.playing].getCardsInHand().size()/showing) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+    }
+
+    public void paintDrawBirds(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Draw Birds", 600, 458);
+        
+        g.drawImage(birdBack, 120, 515, 215, 260, null);
+        for (int i=0;i<3;i++)
+            if (state.cardTray[i]!=null) g.drawImage(state.cardTray[i].getImage(), 475+270*i, 470, 245, 355, null);
+        
     }
 
     public void paintViewBonus(Graphics g){
