@@ -22,7 +22,6 @@ public class Bonus {
     public int calculateBonus(Player p){
         int bonus = 0;
         //TODO: implement for all bonus types
-        //place holder for future logic (by bonus type)
         for (String bName : birds){
             for (Bird b : p.getCardsInHand()){
                 if (b.getName().equals(bName)){
@@ -32,5 +31,8 @@ public class Bonus {
         }
         return bonus;
     }
+
+
+
     
 }
