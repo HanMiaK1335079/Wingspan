@@ -14,7 +14,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
@@ -72,6 +72,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
             Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
+            Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -251,6 +252,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //     g.drawImage(Action_Button, 425, 200, 50,50,null);
         // g.drawImage(Action_Button, 425, 450, 50,50,null);
         // g.drawImage(Action_Button, 350, 725, 50,50,null);
+        //g.drawImage(Action_Button, 480, 120, 50 ,50, null);
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
             else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
@@ -259,6 +261,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             else if (x>=425 && x<=475 && y>=200 && y<=250) state.CURRENTEVENT.add("Get Food");
             else if (x>=425 && x<=475 && y>=450 && y<=500) state.CURRENTEVENT.add("Lay Eggs");
             else if (x>=350 && x<=400 && y>=725 && y<=775) state.CURRENTEVENT.add("Draw Birds");
+            else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
             repaint();
         }case "View Birds" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -301,8 +304,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 out.println("Clicked the bird deck");    
                 }
             }
+        case "Play Bird" -> {
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
         }
     }
+}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
@@ -341,12 +348,18 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "View Draw Birds" -> paintViewDrawBird(g);
                 case "View Feeder" -> paintViewFeeder(g);
                 case "Draw Birds" -> paintDrawBirds(g);
+                case "Score Round" -> paintScoreRound(g);
+                case "Play Bird" -> paintPlayBird(g);
                 default -> {
                 
                 }
             }
             state.lock.notifyAll();
         }
+    }
+
+    public void paintScoreRound(Graphics g){
+        g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
     }
 
     public void paintStart(Graphics g){
@@ -455,6 +468,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //425 200, 425 450, 350 725
        
         g.drawImage(ingameBg, 0, 0, 1540, 863,null);
+        //480 150
+        //Draw possible actions
+        g.drawImage(Action_Button, 480, 120, 50 ,50, null);
         g.drawImage(Action_Button, 425, 200, 50,50,null);
         g.drawImage(Action_Button, 425, 450, 50,50,null);
         g.drawImage(Action_Button, 350, 725, 50,50,null);
@@ -500,6 +516,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     int currentShowing = 0;
     int showing = 4;
+    public void paintPlayBird(Graphics g){
+        
+        paintGame(g);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Select Slot to place bird", 600, 130);
+        
+       
+       
+        
+    }
     public void paintViewBirds(Graphics g){
         paintGame(g);
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
