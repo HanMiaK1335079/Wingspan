@@ -27,6 +27,16 @@ public class ProgramState {
     
     
     }
+        public int getHabitatIndex(String habitat) {
+            switch (habitat.toLowerCase()) {
+                case "forest": return 0;
+                case "plains": 
+                case "grassland": return 1;
+                case "wetlands": 
+                case "wetland": return 2;
+                default: return -1;
+            }
+        }
     
     public enum GamePhase {
         SETUP,
