@@ -9,17 +9,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
->>>>>>> dfa8f4ee169d60f4e47faaee895a7a97769f4d4a
 import static java.lang.System.*;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-<<<<<<< HEAD
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack;
-=======
     private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic;
->>>>>>> d785c5fdc661dcb183a7b0629489e64ce746eea9
     private BufferedImage[] dicePics = new BufferedImage[6];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
@@ -41,6 +36,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     //Startselection variables
     boolean[] startSelections; //1-5 for birds, 6-10 for foods, 11-12 for bonus
     private int numberOfItemsSelected = 0;
+    private int numberOfBonusesSelected = 0;
     Bird[] startOptions;
     Bonus[] bonusOptions;
 
@@ -69,20 +65,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             fishToken = ImageIO.read(FramePanel.class.getResource("/assets/Fish_Token.png"));
             fruitToken = ImageIO.read(FramePanel.class.getResource("/assets/Fruit_Token.png"));
             rodentToken = ImageIO.read(FramePanel.class.getResource("/assets/Rodent_Token.png"));
-<<<<<<< HEAD
-            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
-
-            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png")); //placeholder cuz im lazy
-=======
             exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); 
             leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/Left_Arrow.png")); 
             rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/Right_Arrow.png")); 
->>>>>>> d785c5fdc661dcb183a7b0629489e64ce746eea9
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
             feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
@@ -117,7 +102,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     }
     public void mousePressed(MouseEvent e) {
-        int x = e.getX();
+          int x = e.getX();
         int y = e.getY();
         out.println("("+x+","+y+")");
         // Only respond to clicks when we are on the start screen
@@ -187,14 +172,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
             
-=======
-            //food click
-            if (x>=1200 && x<=1300 && y>=130 && y<=220) startSelections[5] = !startSelections[5];
-            else if (x>=1200 && x<=1300 && y>=340 && y<=430) startSelections[6] = !startSelections[6];
-            else if (x>=1320 && x<=1410 && y>=230 && y<=320) startSelections[7] = !startSelections[7];
-            else if (x>=1440 && x<=1530 && y>=130 && y<=220) startSelections[8] = !startSelections[8];
-            else if (x>=1440 && x<=1530 && y>=340 && y<=430) startSelections[9] = !startSelections[9];
->>>>>>> dfa8f4ee169d60f4e47faaee895a7a97769f4d4a
             
             // //debug click
             //     else if (x>=140 && y>=700 && x<=290 && y<=780){
@@ -221,6 +198,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (canContinue()){
                     out.println("Continuing");
                     numberOfItemsSelected = 0;
+                    numberOfBonusesSelected = 0;
                     for (int i=0;i<5;i++){
                         if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
                     }
@@ -239,23 +217,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         setUpSelection();
                         setUpBonus();
                     }
-                } else if (!canContinue()){
-                    out.println("Cannot continue yet");
-                    // Show a brief on-screen message instead of trying to draw here
-                    showContinueError = true;
-                    continueErrorUntil = System.currentTimeMillis() + 2500; // show for 2.5s
-                    this.repaint();
                 }
             
                 //bonus click
             }else if (y>=500 && y<=800){
                 if (x>=550 && x<=750){
-<<<<<<< HEAD
-                    startSelections[10] = !startSelections[10];
-                }else if (x>=800 && x<=1000){
-                }else if (x>=800 && x<=1000){
-                    startSelections[11] = !startSelections[11];
-=======
                     if(numberOfBonusesSelected<1){
                         startSelections[10] = !startSelections[10];
                         numberOfBonusesSelected++;
@@ -353,19 +319,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    public void paintScoring(Graphics g){
-        g.drawImage(exitPic, 30, 30, 90, 90, null);
-        g.setFont(new Font("Arial", Font.BOLD, 65));
-        g.drawString("This is a PLACEHOLDER for Scoring (I'm lazy :))", 100, 300);
-        BufferedImage birb;
-        try{
-            birb = ImageIO.read(FramePanel.class.getResource("/assets/yes.jpg"));
-            g.drawImage(birb, 300, 400, 700, 320, null);
-        }catch (Exception e){
-            out.println("oops");
-        }
-    }
-
     public void paintStart(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         // Smooth rendering
@@ -421,21 +374,23 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void paintSelection(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        
         g.setFont(new Font("Arial", 1, 50));
         g.drawString("Player: " + (1+state.playing), 60, 80);
         g.setFont(new Font("Arial", 1, 30));
         g.drawString("Select 5", 1000, 80);
         g.drawLine(40, getHeight()/2, getWidth()-40, getHeight()/2);
+         g.setColor(new Color(173, 216, 230));
         for (int i=0;i<5;i++){
             if (startSelections[i]) g.fillRect(25+i*220, 115, 210, 310);
             g.drawImage(startOptions[i].getImage(), 30+i*220, 120, 200, 300,null);
         }
-
-        if (startSelections[5]) g.fillRect(1195, 115, 110, 110);
-        if (startSelections[6]) g.fillRect(1195, 325, 110, 110);
-        if (startSelections[7]) g.fillRect(1310, 220, 110, 110);
-        if (startSelections[8]) g.fillRect(1425, 115, 110, 110);
-        if (startSelections[9]) g.fillRect(1425, 325, 110, 110);
+       
+        if (startSelections[5]) g.fillOval(1195, 115, 100, 100);
+        if (startSelections[6]) g.fillOval(1195, 325, 110, 110);
+        if (startSelections[7]) g.fillOval(1310, 220, 110, 110);
+        if (startSelections[8]) g.fillOval(1425, 115, 110, 110);
+        if (startSelections[9]) g.fillOval(1425, 325, 110, 110);
         g.drawImage(fishToken, 1200, 120, 100, 100, null); //fish
         g.drawImage(wheatToken, 1200, 330, 100, 100, null); //seed
         g.drawImage(fruitToken, 1430, 120, 100, 100, null); //fruit
@@ -591,6 +546,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }catch(Exception e){
             out.println("oops");
         }
+        
+    }
+
+    public void scoringPhase(){
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         
     }
     
