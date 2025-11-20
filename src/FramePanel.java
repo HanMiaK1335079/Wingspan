@@ -358,6 +358,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    public void paintDrawBirds(Graphics g) {
+        //placeolder for now
+    }
     public void paintScoreRound(Graphics g){
         g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
     }
@@ -550,7 +553,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
-        if (currentShowing != (state.players[state.playing].getCards().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
     }
 
     public void paintViewBonus(Graphics g){
