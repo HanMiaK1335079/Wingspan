@@ -455,6 +455,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //425 200, 425 450, 350 725
        
         g.drawImage(ingameBg, 0, 0, 1540, 863,null);
+        //480 150
+        g.drawImage(Action_Button, 480, 120, 50 ,50, null);
         g.drawImage(Action_Button, 425, 200, 50,50,null);
         g.drawImage(Action_Button, 425, 450, 50,50,null);
         g.drawImage(Action_Button, 350, 725, 50,50,null);
