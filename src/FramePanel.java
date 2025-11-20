@@ -296,7 +296,26 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
         case "Play Bird" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+        //     g2.drawRect(470, 155, 628-470, 392-155);
+        // g2.drawRect(469, 403, 627-469, 637-403);
+        // g2.drawRect(470,650,626-470,866-650);
+
+        // g2.drawRect(644, 155, 800-644, 392-155);
+        // g2.drawRect(644, 403, 800-644, 637-403);
+        // g2.drawRect(644,650,800-644,866-650);
+       
+        // g2.drawRect(815, 155, 969-815, 392-155);
+        // g2.drawRect(815, 403, 969-815, 637-403);
+        // g2.drawRect(815,650,969-815,866-650);
+
+        // g2.drawRect(985, 155, 1138-985, 392-155);
+        // g2.drawRect(985, 403, 1138-985, 637-403);
+        // g2.drawRect(985,650,1138-985,866-650);
+
+        // g2.drawRect(1152, 155, 1302-1152, 392-155);
+        // g2.drawRect(1152, 403, 1302-1152, 637-403);
+        // g2.drawRect(1152,650,1302-1152,866-650);
+        
             repaint();
         }
     }
@@ -512,6 +531,28 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         paintGame(g);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Select Slot to place bird", 600, 130);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+
+        g2.drawRect(470, 155, 628-470, 392-155);
+        g2.drawRect(469, 403, 627-469, 637-403);
+        g2.drawRect(470,650,626-470,866-650);
+
+        g2.drawRect(644, 155, 800-644, 392-155);
+        g2.drawRect(644, 403, 800-644, 637-403);
+        g2.drawRect(644,650,800-644,866-650);
+       
+        g2.drawRect(815, 155, 969-815, 392-155);
+        g2.drawRect(815, 403, 969-815, 637-403);
+        g2.drawRect(815,650,969-815,866-650);
+
+        g2.drawRect(985, 155, 1138-985, 392-155);
+        g2.drawRect(985, 403, 1138-985, 637-403);
+        g2.drawRect(985,650,1138-985,866-650);
+
+        g2.drawRect(1152, 155, 1302-1152, 392-155);
+        g2.drawRect(1152, 403, 1302-1152, 637-403);
+        g2.drawRect(1152,650,1302-1152,866-650);
         
        
        
