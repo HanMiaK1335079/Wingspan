@@ -56,6 +56,7 @@ public class Bonus {
         }
     }
 
+    
     public String getName() {return name;}
     public ArrayList<String> getBirds() {return birds;}
     public void setImage(BufferedImage i){image = i;}

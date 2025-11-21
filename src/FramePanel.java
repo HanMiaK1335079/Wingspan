@@ -349,12 +349,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-<<<<<<< HEAD
-=======
+    public void paintViewBirds(Graphics g) {
+        //placeolder for now
+    }
     public void paintDrawBirds(Graphics g) {
         //placeolder for now
     }
->>>>>>> 754e980b7b1cfd9059292863ac73db1eb6f885f3
     public void paintScoreRound(Graphics g){
         g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
     }
@@ -511,6 +511,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
     
+    ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+    //placeholder so that i can commit merge errors idk whats going on here.
     int currentShowing = 0;
     int showing = 4;
     public void paintPlayBird(Graphics g){
