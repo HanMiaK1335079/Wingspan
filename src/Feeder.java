@@ -62,6 +62,8 @@ public class Feeder {
         return -1;
     }
 
+    
+
     public void takeDice(int f,int player){
         state.players[player].addFood(foodDice.get(f));
         outDice.add(foodDice.get(f));
