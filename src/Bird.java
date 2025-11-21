@@ -1,6 +1,7 @@
 package src;
 import java.awt.image.BufferedImage;
 import java.util.*;
+
 public class Bird {
     final private String name;
     final private String activate;
@@ -17,6 +18,8 @@ public class Bird {
     private int storedEggs = 0;
     private int cachedFood = 0;
     private int flocked = 0;
+    private ArrayList<Bird> tuckedCards = new ArrayList<>();
+    private boolean pinkPowerUsed = false;
 
     public Bird(String n, String a, String ab, String aT, int p, String ne, int m, int w, ArrayList<String> h, ArrayList<String[]> f){
         name = n;
@@ -42,11 +45,79 @@ public class Bird {
     public ArrayList<String> getHabitats() {return habitats;}
     public ArrayList<String[]> getFoods() {return foods;}
     public BufferedImage getImage() {return image;}
-
-    public void setImage(BufferedImage i) {image = i;}
+    public int getStoredEggs() {return storedEggs;}
+    public int getCachedFood() {return cachedFood;}
+    public ArrayList<Bird> getTuckedCards() {return tuckedCards;}
+    public boolean isPinkPowerUsed() {return pinkPowerUsed;}
     
+    public void setImage(BufferedImage i) {image = i;}
+    public void setPinkPowerUsed(boolean used) {pinkPowerUsed = used;}
+    
+    public boolean canLiveInHabitat(String habitat) {
+        String habitatsn = getHabitatNorm(habitat);
+        return habitats.contains(habitatsn);
+    }
+    
+    private String getHabitatNorm(String habitat) {
+        switch (habitat.toLowerCase()) {
+            case "forest": return "f";
+            case "plains": 
+            case "grassland": return "p";
+            case "wetlands": 
+            case "wetland": return "w";
+            default: return "";
+        }
+    }
+    
+    public boolean canAfford(ArrayList<String> playerFoods) {
+        int seedCount = 0, fishCount = 0, berryCount = 0, insectCount = 0, ratCount = 0;
+        
+        for (String food : playerFoods) {
+            switch (food) {
+                case "seed" -> seedCount++;
+                case "fish" -> fishCount++;
+                case "berry" -> berryCount++;
+                case "insect" -> insectCount++;
+                case "rat" -> ratCount++;
+            }
+        }
+        
+        if (foods.isEmpty()) {
+            return playerFoods.size() >= 1;
+        }
+        
+        for (String[] foodSet : foods) {
+            int tempSeed = seedCount;
+            int tempFish = fishCount;
+            int tempBerry = berryCount;
+            int tempInsect = insectCount;
+            int tempRat = ratCount;
+            
+            boolean canPay = true;
+            for (String foodType : foodSet) {
+                switch (foodType) {
+                    case "s" -> { if (tempSeed > 0) { tempSeed--; } else { canPay = false; } }
+                    case "f" -> { if (tempFish > 0) { tempFish--; } else { canPay = false; } }
+                    case "b" -> { if (tempBerry > 0) { tempBerry--; } else { canPay = false; } }
+                    case "i" -> { if (tempInsect > 0) { tempInsect--; } else { canPay = false; } }
+                    case "r" -> { if (tempRat > 0) { tempRat--; } else { canPay = false; } }
+                    case "a" -> { 
+                        if (tempSeed > 0) { tempSeed--; }
+                        else if (tempFish > 0) { tempFish--; }
+                        else if (tempBerry > 0) { tempBerry--; }
+                        else if (tempInsect > 0) { tempInsect--; }
+                        else if (tempRat > 0) { tempRat--; }
+                        else { canPay = false; }
+                    }
+                }
+                if (!canPay) break;
+            }
+            if (canPay) return true;
+        }
+        return false;
+    }
 
-    public int addEggs(int eggs){ //adds eggs to bird and returns unadded eggs
+    public int addEggs(int eggs){ 
         if (eggs>(maxEggs-storedEggs)){
             storedEggs = maxEggs;
             return eggs-(maxEggs-storedEggs);
@@ -55,7 +126,7 @@ public class Bird {
         return 0;
     }
     
-    public int removeEggs(int eggs){ // removes eggs and returns eggs still needed to be removed
+    public int removeEggs(int eggs){ 
         if (eggs>storedEggs){
             storedEggs = 0;
             return eggs-storedEggs;
@@ -65,7 +136,7 @@ public class Bird {
     }
 
     public void cacheFood(){this.cachedFood++;}
-    public void flock(){this.flocked++;}
+    public void tuckCard(Bird card) {this.tuckedCards.add(card);} 
 
     public String toString(){
         String s = "";
@@ -77,6 +148,8 @@ public class Bird {
         s+= "\nPoints: " + points;
         s+= "\nEggs: " + storedEggs + " / " + maxEggs;
         s+= "\nWingspan: "+ wingspan;
+        s+= "\nCached Food: " + cachedFood; 
+        s+= "\nTucked Cards: " + tuckedCards.size(); 
         s+= "\nFoods: ";
 
         for (String[] arr: foods){
@@ -84,10 +157,6 @@ public class Bird {
         }
 
         return s;
-    }
-
-    public int getScore(){
-        return points + storedEggs + cachedFood + flocked;
     }
 
     public void playAbility(){
@@ -104,10 +173,5 @@ public class Bird {
                 /*implement lay egg after cache */
             }
         }
-
-        
     }
-
 }
-    
-

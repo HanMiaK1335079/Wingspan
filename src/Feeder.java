@@ -4,8 +4,8 @@ public class Feeder {
      private final ProgramState state;
      private ArrayList<String> foodDice=new ArrayList<>();
      private ArrayList<String> outDice=new ArrayList<>();
-     public Feeder(ProgramState state){
-        this.state = state;
+     public Feeder(ProgramState s){
+        this.state = s;
         reRoll();
     }
 
@@ -15,10 +15,9 @@ public class Feeder {
             for(int i=0;i<foodDice.size();i++){
                 if(!foodDice.get(i).equals(one)){
                     return false;
-                
                 }
             }
-        }   
+        }
         return true;
     }
 
@@ -63,6 +62,10 @@ public class Feeder {
         return -1;
     }
 
+    public ArrayList<String> getOutDice() {
+        return outDice;
+    }
+
     public void takeDice(int f,int player){
         state.players[player].addFood(foodDice.get(f));
         outDice.add(foodDice.get(f));
@@ -70,7 +73,6 @@ public class Feeder {
     }
 
     public ArrayList<String> getDice() {return foodDice;}
-    public ArrayList<String> getOutDice() {return outDice;}
 }
     
 
