@@ -14,7 +14,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -22,11 +22,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
-    //this os the info button
-    private Rectangle infoButtonRect = new Rectangle(0,0,140,60);
-    //this is the rules button
-    private Rectangle rulesButtonRect = new Rectangle(0,0,140,60);
-    private final Font smallButtonFont = new Font("SansSerif", Font.BOLD, 20);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
     private BufferedImage ingameBg;
     private Feeder feeder;
@@ -68,8 +63,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
-            Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
-            Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -87,11 +80,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int x = (w - btnW) / 2;
         int y = h - btnH - Math.max(60, h / 12);
         startButtonRect.setBounds(x, y, btnW, btnH);
-        // this is the buttons for the info and like the rules ig. Its just for the starting thing
-        int sideW = Math.max(120, btnW/2);
-        int sideH = Math.max(48, btnH - 10);
-        infoButtonRect.setBounds(x - sideW - 20, y + (btnH - sideH)/2, sideW, sideH);
-        rulesButtonRect.setBounds(x + btnW + 20, y + (btnH - sideH)/2, sideW, sideH);
     }
 
     public void addNotify() {
@@ -110,10 +98,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int y = e.getY();
         out.println("("+x+","+y+")");
         // Only respond to clicks when we are on the start screen
-
-        switch(state.CURRENTEVENT.getLast()) {
-        
-        case "Game Start" -> {
+        if ("Game Start".equals(state.CURRENTEVENT.getLast())) {
             Point p = e.getPoint();
             // Update rect position in case panel was resized
             updateStartButtonRect();
@@ -130,24 +115,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     //  gameLogic.setUp(); //this has yet to be set up.
                 }
             }
-            else if (infoButtonRect.contains(p)) {
-                // show an information/help screen
-                synchronized(state.lock){
-                    state.CURRENTEVENT.add("Info");
-                    this.repaint();
-                    state.lock.notifyAll();
-                }
-            }
-            else if (rulesButtonRect.contains(p)) {
-                // show game rules screen
-                synchronized(state.lock){
-                    state.CURRENTEVENT.add("Rules");
-                    this.repaint();
-                    state.lock.notifyAll();
-                }
-            }
-        }
-        case "Select Screen" -> {
+        }else if ("Select Screen".equals(state.CURRENTEVENT.getLast())){
             //food click
              
             if (x>=1200 && x<=1300 && y>=130 && y<=220){
@@ -224,7 +192,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     numberOfItemsSelected = 0;
                     numberOfBonusesSelected = 0;
                     for (int i=0;i<5;i++){
-                        if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
+                        if (startSelections[i]) state.players[state.playing].addCard(startOptions[i]);
                     }
                     if (startSelections[5]) state.players[state.playing].addFood("fish");
                     if (startSelections[6]) state.players[state.playing].addFood("seed");
@@ -266,43 +234,34 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
             this.repaint();
         
-        }case "Game" -> {
-        //     g.drawImage(Action_Button, 425, 200, 50,50,null);
-        // g.drawImage(Action_Button, 425, 450, 50,50,null);
-        // g.drawImage(Action_Button, 350, 725, 50,50,null);
-        //g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+        }else if (state.CURRENTEVENT.getLast().equals("Game")){
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
             else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
             else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
             else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
-            else if (x>=425 && x<=475 && y>=200 && y<=250) state.CURRENTEVENT.add("Get Food");
-            else if (x>=425 && x<=475 && y>=450 && y<=500) state.CURRENTEVENT.add("Lay Eggs");
-            else if (x>=350 && x<=400 && y>=725 && y<=775) state.CURRENTEVENT.add("Draw Birds");
-            else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
             repaint();
-        }case "View Birds" -> {
+        }else if (state.CURRENTEVENT.getLast().equals("View Birds")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
+            else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCards().size()%showing)
                 currentShowing++;
             else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
             //50, 590, 60, 60
 
             repaint();
-        }case "View Bonus" -> {
+        }else if (state.CURRENTEVENT.getLast().equals("View Bonus")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
         
-        }case "View Draw Birds" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            
-            repaint();
-
-        }case "View Feeder" -> {
+        }else if (state.CURRENTEVENT.getLast().equals("View Draw Birds")){
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
 
-        }case "Info" -> {
+        }else if (state.CURRENTEVENT.getLast().equals("View Feeder")){
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            repaint();
+
+        }else if (state.CURRENTEVENT.getLast().equals("Info")){
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
             else if (x>=400 && x<=600 && y>=400 && y<=500) state.CURRENTEVENT.add("Rules");       // g.fillRect(400, 400, 200, 100);
             repaint();
@@ -313,6 +272,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
             repaint();
         }
+        
     }
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
@@ -344,7 +304,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     break;
                 }
                 case "Game Start" -> paintStart(g);
-                case "Rules" -> paintRules(g);
                 case "Select Screen" -> paintSelection(g);
                 case "Game" -> paintGame(g);
                 case "View Birds" -> paintViewBirds(g);
@@ -352,9 +311,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Info" -> paintInfo(g);
                 case "View Draw Birds" -> paintViewDrawBird(g);
                 case "View Feeder" -> paintViewFeeder(g);
-                case "Draw Birds" -> paintDrawBirds(g);
-                case "Score Round" -> paintScoreRound(g);
-                case "Play Bird" -> paintPlayBird(g);
                 case "Rules" -> paintRules(g);
                 default -> {
                 
@@ -362,16 +318,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
             state.lock.notifyAll();
         }
-    }
-
-    public void paintViewBirds(Graphics g) {
-        //placeolder for now
-    }
-    public void paintDrawBirds(Graphics g) {
-        //placeolder for now
-    }
-    public void paintScoreRound(Graphics g){
-        g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
     }
 
     public void paintStart(Graphics g){
@@ -401,9 +347,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         updateStartButtonRect();
         RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
 
-
-
-
         // Shadow
         g2.setColor(new Color(0, 0, 0, 100));
         g2.fill(new RoundRectangle2D.Float(startButtonRect.x + 4, startButtonRect.y + 6, startButtonRect.width, startButtonRect.height, 24, 24));
@@ -428,67 +371,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int by = startButtonRect.y + (startButtonRect.height - fm.getHeight()) / 2 + fm.getAscent();
         g2.setColor(Color.WHITE);
         g2.drawString(label, bx, by);
-
-        // Draw small Info and Rules buttons next to the main button
-        // Info button (left)
-        g2.setStroke(new BasicStroke(2f));
-        g2.setFont(smallButtonFont);
-        GradientPaint gpInfo = new GradientPaint(infoButtonRect.x, infoButtonRect.y, new Color(80,140,200), infoButtonRect.x, infoButtonRect.y+infoButtonRect.height, new Color(20,80,160));
-        g2.setPaint(gpInfo);
-        g2.fillRoundRect(infoButtonRect.x, infoButtonRect.y, infoButtonRect.width, infoButtonRect.height, 12, 12);
-        g2.setColor(new Color(255,255,255,160));
-        g2.drawRoundRect(infoButtonRect.x, infoButtonRect.y, infoButtonRect.width, infoButtonRect.height, 12, 12);
-        // Try drawing small icon if available
-        try{ if (infoButton!=null) g2.drawImage(infoButton, infoButtonRect.x+6, infoButtonRect.y+2, infoButtonRect.height-4, infoButtonRect.height-4, null);}catch(Exception ignored){}
-        g2.setColor(Color.WHITE);
-        String infoLabel = "Info";
-        FontMetrics fmInfo = g2.getFontMetrics();
-        int ix = infoButtonRect.x + (infoButtonRect.width - fmInfo.stringWidth(infoLabel)) / 2 + (infoButtonRect.height/6);
-        int iy = infoButtonRect.y + (infoButtonRect.height - fmInfo.getHeight()) / 2 + fmInfo.getAscent();
-        g2.drawString(infoLabel, ix, iy);
-
-        // Rules button (right)
-        GradientPaint gpRules = new GradientPaint(rulesButtonRect.x, rulesButtonRect.y, new Color(120,200,100), rulesButtonRect.x, rulesButtonRect.y+rulesButtonRect.height, new Color(40,120,40));
-        g2.setPaint(gpRules);
-        g2.fillRoundRect(rulesButtonRect.x, rulesButtonRect.y, rulesButtonRect.width, rulesButtonRect.height, 12, 12);
-        g2.setColor(new Color(255,255,255,160));
-        g2.drawRoundRect(rulesButtonRect.x, rulesButtonRect.y, rulesButtonRect.width, rulesButtonRect.height, 12, 12);
-        g2.setColor(Color.WHITE);
-        String rulesLabel = "Rules";
-        FontMetrics fmRules = g2.getFontMetrics();
-        int rx = rulesButtonRect.x + (rulesButtonRect.width - fmRules.stringWidth(rulesLabel)) / 2;
-        int ry = rulesButtonRect.y + (rulesButtonRect.height - fmRules.getHeight()) / 2 + fmRules.getAscent();
-        g2.drawString(rulesLabel, rx, ry);
-    }
-
-    //this is the paintrules method which will paint simple rules and not too advanced ones, Mia will do the advanced ones
-    public void paintRules(Graphics g){
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(new Color(40, 40, 60));
-        g2.fillRect(0,0,getWidth(),getHeight());
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("SansSerif", Font.BOLD, 48));
-        g2.drawString("Wingspan - Quick Rules", 80, 120);
-        g2.setFont(new Font("SansSerif", Font.PLAIN, 20));
-        String[] rules = new String[]{
-            "- Play birds into habitats: Forest, Grassland, Wetlands.",
-            "- Each bird has printed points. Eggs, cached food, and tucked cards are 1 point each.",
-            "- There are 4 rounds with end-of-round goals; winners get points each round.",
-            "- Bonus cards score at game end according to their rules.",
-            "- At game end, total: bird points + eggs + cached food + tucked + bonus + round goals.",
-            "- Click anywhere in the top-left back button to return."
-        };
-        int y = 180;
-        for (String line: rules){
-            g2.drawString(line, 90, y);
-            y += 40;
-        }
-        // draw back button for a player to go back to the home scrnee
-        g2.setColor(new Color(220,50,50));
-        g2.fillRoundRect(30,30,90,60,12,12);
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g2.drawString("Back", 55, 70);
     }
 
     public void paintSelection(Graphics g){
@@ -541,15 +423,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintGame(Graphics g){
-        //425 200, 425 450, 350 725
-       
         g.drawImage(ingameBg, 0, 0, 1540, 863,null);
-        //480 150
-        //Draw possible actions
-        g.drawImage(Action_Button, 480, 120, 50 ,50, null);
-        g.drawImage(Action_Button, 425, 200, 50,50,null);
-        g.drawImage(Action_Button, 425, 450, 50,50,null);
-        g.drawImage(Action_Button, 350, 725, 50,50,null);
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString(state.playing+1+"", 238, 67);
@@ -572,15 +446,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         //birdpics
         BufferedImage pic;
-        for (int i=0;i<state.players[state.playing].getCardsInHand().size();i++){
-            pic = state.players[state.playing].getCardsInHand().get(i).getImage();
-            g.drawImage(pic, 17+(102/state.players[state.playing].getCardsInHand().size())*i, 239, 130, 185, null);
+        for (int i=0;i<state.players[state.playing].getCards().size();i++){
+            pic = state.players[state.playing].getCards().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getCards().size())*i, 239, 130, 185, null);
         }
 
         //bonuspics
-        for (int i=0;i<state.players[state.playing].getBonuses().size();i++){
-            pic = state.players[state.playing].getBonuses().get(i).getImage();
-            g.drawImage(pic, 17+(102/state.players[state.playing].getBonuses().size())*i, 490, 120, 170, null);
+        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
+            pic = state.players[state.playing].getBonus().get(i).getImage();
+            g.drawImage(pic, 17+(102/state.players[state.playing].getBonus().size())*i, 490, 120, 170, null);
         }
 
         //cardTray
@@ -590,44 +464,33 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
     
-    ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
-    //placeholder so that i can commit merge errors idk whats going on here.
     int currentShowing = 0;
     int showing = 4;
-    public void paintPlayBird(Graphics g){
-        
+    public void paintViewBirds(Graphics g){
         paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
-        g.drawString("Select Slot to place bird", 600, 130);
-        Graphics2D g2 = (Graphics2D)g;
-        g2.setStroke(new BasicStroke(5.0f));
+        g.drawString("Bird Cards", 600, 458);
+        g.drawString(""+state.players[state.playing].getCards().size(), 1400, 460);
+        if (state.players[state.playing].getCards().size()==0) return;
 
-        g2.drawRect(470, 155, 628-470, 392-155);
-        g2.drawRect(469, 403, 627-469, 637-403);
-        g2.drawRect(470,650,626-470,866-650);
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        int counter = 0;
+        for (Bird b: state.players[state.playing].getCards()){
+            if (counter %showing == 0) 
+                birdArrSplit.add(new ArrayList<Bird>());
+            counter ++;
+            birdArrSplit.getLast().add(b);
+        }
 
-        g2.drawRect(644, 155, 800-644, 392-155);
-        g2.drawRect(644, 403, 800-644, 637-403);
-        g2.drawRect(644,650,800-644,866-650);
-       
-        g2.drawRect(815, 155, 969-815, 392-155);
-        g2.drawRect(815, 403, 969-815, 637-403);
-        g2.drawRect(815,650,969-815,866-650);
-
-        g2.drawRect(985, 155, 1138-985, 392-155);
-        g2.drawRect(985, 403, 1138-985, 637-403);
-        g2.drawRect(985,650,1138-985,866-650);
-
-        g2.drawRect(1152, 155, 1302-1152, 392-155);
-        g2.drawRect(1152, 403, 1302-1152, 637-403);
-        g2.drawRect(1152,650,1302-1152,866-650);
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
         //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
-        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+        if (currentShowing != (state.players[state.playing].getCards().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
     }
 
     public void paintViewBonus(Graphics g){
@@ -636,12 +499,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Bonus Cards", 600, 458);
-        g.drawString(""+state.players[state.playing].getBonuses().size(), 1400, 460);
+        g.drawString(""+state.players[state.playing].getBonus().size(), 1400, 460);
         
-        if (state.players[state.playing].getBonuses().size()==0) return;
+        if (state.players[state.playing].getBonus().size()==0) return;
         Bonus b;
-        for (int i=0;i<state.players[state.playing].getBonuses().size();i++){
-            b = state.players[state.playing].getBonuses().get(i);
+        for (int i=0;i<state.players[state.playing].getBonus().size();i++){
+            b = state.players[state.playing].getBonus().get(i);
             g.drawImage(b.getImage(), 60 + 250*i, 500, 240, 320, null);
         }
     }
@@ -712,12 +575,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if (rulePage != 0) g.drawImage(leftArrow, 100, getHeight()/2, 70, 70, null);
         if (rulePage != 12) g.drawImage(rightArrow, 1400, getHeight()/2, 70, 70, null);
        
-    }
-
-
-    public void scoringPhase(Graphics g){
-        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
-        
     }
     
 
