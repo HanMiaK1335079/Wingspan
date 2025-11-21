@@ -267,9 +267,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             repaint();
         }else if (state.CURRENTEVENT.getLast().equals("Rules")){
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
-            if (x>=1400 && x<=1470 && y>=450 &&y<=520){
-                //do the stuffs
-            }
+            else if (x>=1400 && x<=1470 && y>=450 && y<=520 && rulePage<11) rulePage ++;
+            else if (x>=100 && x<=170 && y>=450 && y<=520 && rulePage>0) rulePage --;
             repaint();
         }
         
@@ -550,7 +549,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void paintInfo(Graphics g){
         g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
-        
+        g.drawImage(exitPic, 30, 30, 90, 90, null);
         g.setFont(new Font("Arial", Font.BOLD, 40));
         //g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
         BufferedImage birb;
@@ -571,9 +570,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public void paintRules(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 30, 30, 90, 90, null);
-        g.drawImage(rulePics[rulePage], getWidth()/2-350, 10, 700, getHeight()-100, null);
+        g.drawImage(rulePics[rulePage], getWidth()/2-350, 5, 700, getHeight()-50, null);
         if (rulePage != 0) g.drawImage(leftArrow, 100, getHeight()/2, 70, 70, null);
-        if (rulePage != 12) g.drawImage(rightArrow, 1400, getHeight()/2, 70, 70, null);
+        if (rulePage != 11) g.drawImage(rightArrow, 1400, getHeight()/2, 70, 70, null);
        
     }
     
