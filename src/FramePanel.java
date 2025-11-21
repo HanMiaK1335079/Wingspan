@@ -612,6 +612,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
         
     }
+
+    public void scoringPhase(){
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        
+    }
     
 
     public void startSetUp(){
