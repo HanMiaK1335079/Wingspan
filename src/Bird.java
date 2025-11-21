@@ -17,6 +17,7 @@ public class Bird {
     private int storedEggs = 0;
     private int cachedFood = 0;
     private int flocked = 0;
+    private int tuckedCards = 0; // number of cards tucked behind this bird (1 point each)
 
     public Bird(String n, String a, String ab, String aT, int p, String ne, int m, int w, ArrayList<String> h, ArrayList<String[]> f){
         name = n;
@@ -43,6 +44,10 @@ public class Bird {
     public ArrayList<String[]> getFoods() {return foods;}
     public BufferedImage getImage() {return image;}
     public int getStoredEggs() {return storedEggs;}
+
+    public int getTuckedCards() { return tuckedCards; }
+    public void tuckCard() { this.tuckedCards++; }
+    public void untuckCard() { if (this.tuckedCards>0) this.tuckedCards--; }
 
     public void setImage(BufferedImage i) {image = i;}
     
@@ -107,7 +112,17 @@ public class Bird {
     }
 
     public int getScore(){
-        return points + storedEggs + cachedFood + flocked;
+        // Base printed points
+        int score = points;
+        // Eggs on the bird: 1 point each
+        score += storedEggs;
+        // Cached food: 1 point per cached food token
+        score += cachedFood;
+        // Tucked cards: each tucked card is worth 1 point
+        score += tuckedCards;
+        // Some abilities (flocking etc.) may add temporary counters tracked in `flocked`
+        score += flocked;
+        return score;
     }
 
     public void playAbility(){

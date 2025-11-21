@@ -21,6 +21,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
+    //this os the info button
+    private Rectangle infoButtonRect = new Rectangle(0,0,140,60);
+    //this is the rules button
+    private Rectangle rulesButtonRect = new Rectangle(0,0,140,60);
+    private final Font smallButtonFont = new Font("SansSerif", Font.BOLD, 20);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
     private BufferedImage ingameBg;
 
@@ -90,6 +95,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int x = (w - btnW) / 2;
         int y = h - btnH - Math.max(60, h / 12);
         startButtonRect.setBounds(x, y, btnW, btnH);
+        // this is the buttons for the info and like the rules ig. Its just for the starting thing
+        int sideW = Math.max(120, btnW/2);
+        int sideH = Math.max(48, btnH - 10);
+        infoButtonRect.setBounds(x - sideW - 20, y + (btnH - sideH)/2, sideW, sideH);
+        rulesButtonRect.setBounds(x + btnW + 20, y + (btnH - sideH)/2, sideW, sideH);
     }
 
     public void addNotify() {
@@ -126,6 +136,22 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     state.lock.notifyAll();
                     GameLogic gameLogic = new GameLogic(this, state);
                     //  gameLogic.setUp(); //this has yet to be set up.
+                }
+            }
+            else if (infoButtonRect.contains(p)) {
+                // show an information/help screen
+                synchronized(state.lock){
+                    state.CURRENTEVENT.add("Info");
+                    this.repaint();
+                    state.lock.notifyAll();
+                }
+            }
+            else if (rulesButtonRect.contains(p)) {
+                // show game rules screen
+                synchronized(state.lock){
+                    state.CURRENTEVENT.add("Rules");
+                    this.repaint();
+                    state.lock.notifyAll();
                 }
             }
         }
@@ -340,6 +366,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     break;
                 }
                 case "Game Start" -> paintStart(g);
+                case "Rules" -> paintRules(g);
                 case "Select Screen" -> paintSelection(g);
                 case "Game" -> paintGame(g);
                 case "View Birds" -> paintViewBirds(g);
@@ -392,6 +419,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         updateStartButtonRect();
         RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
 
+        //Buttpon for the rule and like the info
+        updateStartButtonRect();
+        RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
+
+
+
         // Shadow
         g2.setColor(new Color(0, 0, 0, 100));
         g2.fill(new RoundRectangle2D.Float(startButtonRect.x + 4, startButtonRect.y + 6, startButtonRect.width, startButtonRect.height, 24, 24));
@@ -416,6 +449,66 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int by = startButtonRect.y + (startButtonRect.height - fm.getHeight()) / 2 + fm.getAscent();
         g2.setColor(Color.WHITE);
         g2.drawString(label, bx, by);
+
+        // Draw small Info and Rules buttons next to the main button
+        // Info button (left)
+        g2.setStroke(new BasicStroke(2f));
+        g2.setFont(smallButtonFont);
+        GradientPaint gpInfo = new GradientPaint(infoButtonRect.x, infoButtonRect.y, new Color(80,140,200), infoButtonRect.x, infoButtonRect.y+infoButtonRect.height, new Color(20,80,160));
+        g2.setPaint(gpInfo);
+        g2.fillRoundRect(infoButtonRect.x, infoButtonRect.y, infoButtonRect.width, infoButtonRect.height, 12, 12);
+        g2.setColor(new Color(255,255,255,160));
+        g2.drawRoundRect(infoButtonRect.x, infoButtonRect.y, infoButtonRect.width, infoButtonRect.height, 12, 12);
+        // Try drawing small icon if available
+        try{ if (infoButton!=null) g2.drawImage(infoButton, infoButtonRect.x+6, infoButtonRect.y+2, infoButtonRect.height-4, infoButtonRect.height-4, null);}catch(Exception ignored){}
+        g2.setColor(Color.WHITE);
+        String infoLabel = "Info";
+        FontMetrics fmInfo = g2.getFontMetrics();
+        int ix = infoButtonRect.x + (infoButtonRect.width - fmInfo.stringWidth(infoLabel)) / 2 + (infoButtonRect.height/6);
+        int iy = infoButtonRect.y + (infoButtonRect.height - fmInfo.getHeight()) / 2 + fmInfo.getAscent();
+        g2.drawString(infoLabel, ix, iy);
+
+        // Rules button (right)
+        GradientPaint gpRules = new GradientPaint(rulesButtonRect.x, rulesButtonRect.y, new Color(120,200,100), rulesButtonRect.x, rulesButtonRect.y+rulesButtonRect.height, new Color(40,120,40));
+        g2.setPaint(gpRules);
+        g2.fillRoundRect(rulesButtonRect.x, rulesButtonRect.y, rulesButtonRect.width, rulesButtonRect.height, 12, 12);
+        g2.setColor(new Color(255,255,255,160));
+        g2.drawRoundRect(rulesButtonRect.x, rulesButtonRect.y, rulesButtonRect.width, rulesButtonRect.height, 12, 12);
+        g2.setColor(Color.WHITE);
+        String rulesLabel = "Rules";
+        FontMetrics fmRules = g2.getFontMetrics();
+        int rx = rulesButtonRect.x + (rulesButtonRect.width - fmRules.stringWidth(rulesLabel)) / 2;
+        int ry = rulesButtonRect.y + (rulesButtonRect.height - fmRules.getHeight()) / 2 + fmRules.getAscent();
+        g2.drawString(rulesLabel, rx, ry);
+    }
+
+    public void paintRules(Graphics g){
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(new Color(40, 40, 60));
+        g2.fillRect(0,0,getWidth(),getHeight());
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 48));
+        g2.drawString("Wingspan - Quick Rules", 80, 120);
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        String[] rules = new String[]{
+            "- Play birds into habitats: Forest, Grassland, Wetlands.",
+            "- Each bird has printed points. Eggs, cached food, and tucked cards are 1 point each.",
+            "- There are 4 rounds with end-of-round goals; winners get points each round.",
+            "- Bonus cards score at game end according to their rules.",
+            "- At game end, total: bird points + eggs + cached food + tucked + bonus + round goals.",
+            "- Click anywhere in the top-left back button to return."
+        };
+        int y = 180;
+        for (String line: rules){
+            g2.drawString(line, 90, y);
+            y += 40;
+        }
+        // draw back button
+        g2.setColor(new Color(220,50,50));
+        g2.fillRoundRect(30,30,90,60,12,12);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 18));
+        g2.drawString("Back", 55, 70);
     }
 
     public void paintSelection(Graphics g){
