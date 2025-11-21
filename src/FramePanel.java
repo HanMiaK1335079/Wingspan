@@ -296,26 +296,93 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
         case "Play Bird" -> {
-        //     g2.drawRect(470, 155, 628-470, 392-155);
-        // g2.drawRect(469, 403, 627-469, 637-403);
-        // g2.drawRect(470,650,626-470,866-650);
-
-        // g2.drawRect(644, 155, 800-644, 392-155);
-        // g2.drawRect(644, 403, 800-644, 637-403);
-        // g2.drawRect(644,650,800-644,866-650);
-       
-        // g2.drawRect(815, 155, 969-815, 392-155);
-        // g2.drawRect(815, 403, 969-815, 637-403);
-        // g2.drawRect(815,650,969-815,866-650);
-
-        // g2.drawRect(985, 155, 1138-985, 392-155);
-        // g2.drawRect(985, 403, 1138-985, 637-403);
-        // g2.drawRect(985,650,1138-985,866-650);
-
-        // g2.drawRect(1152, 155, 1302-1152, 392-155);
-        // g2.drawRect(1152, 403, 1302-1152, 637-403);
-        // g2.drawRect(1152,650,1302-1152,866-650);
         
+            if(x>=470&&x<=628){//First Column
+                if(y>=155&&y<=392){
+                    out.println("Clicked first column, first row");
+                    state.squaresClickedToPlayBird[0][0] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=403&&y<=637){
+                    out.println("Clicked first column, second row");
+                    state.squaresClickedToPlayBird[1][0] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=650&&y<=866){
+                    out.println("Clicked first column, third row");
+                    state.squaresClickedToPlayBird[2][0] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }
+            }else if(x>=644&&x<=800){//Second Column
+                if(y>=155&&y<=392){
+                    out.println("Clicked second column, first row");
+                    state.squaresClickedToPlayBird[0][1] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=403&&y<=637){
+                    out.println("Clicked second column, second row");
+                state.squaresClickedToPlayBird[1][1] = true;
+                state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=650&&y<=866){
+                    out.println("Clicked second column, third row");
+                    state.squaresClickedToPlayBird[2][1] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }
+            }else if(x>=815&&x<=969){//Third Column
+                if(y>=155&&y<=392){
+                    out.println("Clicked third column, first row");
+                state.squaresClickedToPlayBird[0][2] = true;
+                state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=403&&y<=637){
+                    out.println("Clicked third column, second row");
+                state.squaresClickedToPlayBird[1][2] = true;
+                state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=650&&y<=866){
+                    out.println("Clicked third column, third row");
+                state.squaresClickedToPlayBird[2][2] = true;
+                state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }
+            }else if(x>=985&&x<=1138){//Fourth Column
+                if(y>=155&&y<=392){
+                    out.println("Clicked fourth column, first row");
+                    state.squaresClickedToPlayBird[0][3] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=403&&y<=637){
+                    out.println("Clicked fourth column, second row");
+                    state.squaresClickedToPlayBird[1][3] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=650&&y<=866){
+                    out.println("Clicked fourth column, third row");
+                    state.squaresClickedToPlayBird[2][3] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }
+            }else if(x>=1152&&x<=1302){//Fifth Column
+                if(y>=155&&y<=392){
+                    out.println("Clicked fifth column, first row");
+                    state.squaresClickedToPlayBird[0][4] = true;
+                    state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=403&&y<=637){
+                    out.println("Clicked fifth column, second row");
+                state.squaresClickedToPlayBird[1][4] = true;
+                state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }else if(y>=650&&y<=866){
+                    out.println("Clicked fifth column, third row");
+                state.squaresClickedToPlayBird[2][4] = true;
+                state.CURRENTEVENT.removeLast();
+                state.CURRENTEVENT.add("Play Specfic Bird");
+                }
+            }
             repaint();
         }
     }
@@ -360,6 +427,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Draw Birds" -> paintDrawBirds(g);
                 case "Score Round" -> paintScoreRound(g);
                 case "Play Bird" -> paintPlayBird(g);
+                case "Play Specfic Bird" -> paintPlaySpecificBird(g);
                 default -> {
                 
                 }
@@ -371,6 +439,47 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
    
     public void paintScoreRound(Graphics g){
         g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
+    }
+
+    public void paintPlaySpecificBird(Graphics g){
+        //     g2.drawRect(470, 155, 628-470, 392-155);
+        // g2.drawRect(469, 403, 627-469, 637-403);
+        // g2.drawRect(470,650,626-470,866-650);
+
+        // g2.drawRect(644, 155, 800-644, 392-155);
+        // g2.drawRect(644, 403, 800-644, 637-403);
+        // g2.drawRect(644,650,800-644,866-650);
+       
+        // g2.drawRect(815, 155, 969-815, 392-155);
+        // g2.drawRect(815, 403, 969-815, 637-403);
+        // g2.drawRect(815,650,969-815,866-650);
+
+        // g2.drawRect(985, 155, 1138-985, 392-155);
+        // g2.drawRect(985, 403, 1138-985, 637-403);
+        // g2.drawRect(985,650,1138-985,866-650);
+
+        // g2.drawRect(1152, 155, 1302-1152, 392-155);
+        // g2.drawRect(1152, 403, 1302-1152, 637-403);
+        // g2.drawRect(1152,650,1302-1152,866-650);
+        paintGame(g);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g.setColor(new Color(173, 216, 230));
+        if(state.squaresClickedToPlayBird[0][0]) g2.drawRect(470, 155, 628-470, 392-155);
+        if(state.squaresClickedToPlayBird[1][0]) g2.drawRect(469, 403, 627-469, 637-403);
+        if(state.squaresClickedToPlayBird[2][0]) g2.drawRect(470,650,626-470,866-650);
+        if(state.squaresClickedToPlayBird[0][1]) g2.drawRect(644, 155, 800-644, 392-155);
+        if(state.squaresClickedToPlayBird[1][1]) g2.drawRect(644, 403, 800-644, 637-403);
+        if(state.squaresClickedToPlayBird[2][1]) g2.drawRect(644,650,800-644,866-650);
+        if(state.squaresClickedToPlayBird[0][2]) g2.drawRect(815, 155, 969-815, 392-155);
+        if(state.squaresClickedToPlayBird[1][2]) g2.drawRect(815, 403, 969-815, 637-403);
+        if(state.squaresClickedToPlayBird[2][2]) g2.drawRect(815,650,969-815,866-650);
+        if(state.squaresClickedToPlayBird[0][3]) g2.drawRect(985, 155, 1138-985, 392-155);
+        if(state.squaresClickedToPlayBird[1][3]) g2.drawRect(985, 403, 1138-985, 637-403);
+        if(state.squaresClickedToPlayBird[2][3]) g2.drawRect(985,650,1138-985,866-650);
+        if(state.squaresClickedToPlayBird[0][4]) g2.drawRect(1152, 155, 1302-1152, 392-155);
+        if(state.squaresClickedToPlayBird[1][4]) g2.drawRect(1152, 403, 1302-1152, 637-403);
+        if(state.squaresClickedToPlayBird[2][4]) g2.drawRect(1152,650,1302-1152,866-650);
     }
 
     public void paintStart(Graphics g){
@@ -570,25 +679,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
         if (state.players[state.playing].getCardsInHand().size()==0) return;
 
-        g2.drawRect(470, 155, 628-470, 392-155);
-        g2.drawRect(469, 403, 627-469, 637-403);
-        g2.drawRect(470,650,626-470,866-650);
-
-        g2.drawRect(644, 155, 800-644, 392-155);
-        g2.drawRect(644, 403, 800-644, 637-403);
-        g2.drawRect(644,650,800-644,866-650);
        
-        g2.drawRect(815, 155, 969-815, 392-155);
-        g2.drawRect(815, 403, 969-815, 637-403);
-        g2.drawRect(815,650,969-815,866-650);
-
-        g2.drawRect(985, 155, 1138-985, 392-155);
-        g2.drawRect(985, 403, 1138-985, 637-403);
-        g2.drawRect(985,650,1138-985,866-650);
-
-        g2.drawRect(1152, 155, 1302-1152, 392-155);
-        g2.drawRect(1152, 403, 1302-1152, 637-403);
-        g2.drawRect(1152,650,1302-1152,866-650);
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
