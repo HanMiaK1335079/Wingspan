@@ -314,6 +314,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
             repaint();
         }
+
+        case "Rules" -> {
+            if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+            repaint();
+        }
         case "Draw Birds" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast();repaint();return;}
             if(y>=470 && y<=825){//This is the Y level of the cards in the draw tray
@@ -482,6 +487,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g2.drawString(rulesLabel, rx, ry);
     }
 
+    //this is the paintrules method which will paint simple rules and not too advanced ones, Mia will do the advanced ones
     public void paintRules(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(new Color(40, 40, 60));
@@ -503,7 +509,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g2.drawString(line, 90, y);
             y += 40;
         }
-        // draw back button
+        // draw back button for a player to go back to the home scrnee
         g2.setColor(new Color(220,50,50));
         g2.fillRoundRect(30,30,90,60,12,12);
         g2.setColor(Color.WHITE);
