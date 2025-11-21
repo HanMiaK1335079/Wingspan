@@ -160,7 +160,7 @@ public class Bird {
     }
 
     public void playAbility(){
-        if (!abilityType.equals("brown")) return;
+        if (!abilityType.equals("N")) return;
 
         if (ability.contains("You may cache it")){
             /*implement the gain 1 seed thing */

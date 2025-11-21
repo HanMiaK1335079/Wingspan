@@ -16,6 +16,7 @@ import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
     private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
     private BufferedImage[] dicePics = new BufferedImage[6];
+    private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
@@ -303,35 +304,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         }case "Info" -> {
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+            else if (x>=400 && x<=600 && y>=400 && y<=500) state.CURRENTEVENT.add("Rules");       // g.fillRect(400, 400, 200, 100);
             repaint();
-        }
-
-        case "Rules" -> {
+        }else if (state.CURRENTEVENT.getLast().equals("Rules")){
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
-            repaint();
-        }
-        case "Draw Birds" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast();repaint();return;}
-            if(y>=470 && y<=825){//This is the Y level of the cards in the draw tray
-                    if(x>=475 && x<=720){//This would be the first card
-                        out.println("Clicked first card");
-                
-                    } else if ( x >= 745 && x <= 990 ) {// This would be the second card
-                        out.println("Clicked Second card"); //475+270*i, 470, 245, 355, (xy,wh)
-                    } else if ( x >= 1015 && x <= 1260 ) {//This would be the third card
-                        out.println("Clicked Third card");
-                    }
+            if (x>=1400 && x<=1470 && y>=450 &&y<=520){
+                //do the stuffs
             }
-            if(x>=120&&x<=335&&y>=515&&y<=775){//120, 515, 215, 260,
-                out.println("Clicked the bird deck");    
-                }
-            }
-        case "Play Bird" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
             repaint();
         }
     }
-}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
@@ -373,6 +355,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Draw Birds" -> paintDrawBirds(g);
                 case "Score Round" -> paintScoreRound(g);
                 case "Play Bird" -> paintPlayBird(g);
+                case "Rules" -> paintRules(g);
                 default -> {
                 
                 }
@@ -703,17 +686,32 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintInfo(Graphics g){
-        g.drawImage(exitPic, 30, 30, 90, 90, null);
-        g.setFont(new Font("Arial", Font.BOLD, 65));
-        g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
+        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        //g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
         BufferedImage birb;
-        try{
+        g.setColor(Color.CYAN);
+        g.fillRect(400, 400, 200, 100);
+        g.setColor(Color.BLACK);
+        g.drawString("Rules", 400, 480);
+        
+        /*try{
             birb = ImageIO.read(FramePanel.class.getResource("/assets/yes.jpg"));
             g.drawImage(birb, 300, 400, 700, 320, null);
         }catch(Exception e){
             out.println("oops");
-        }
-        
+        }*/
+    }
+
+    private int rulePage = 0;
+    public void paintRules(Graphics g){
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 30, 30, 90, 90, null);
+        g.drawImage(rulePics[rulePage], getWidth()/2-350, 10, 700, getHeight()-100, null);
+        if (rulePage != 0) g.drawImage(leftArrow, 100, getHeight()/2, 70, 70, null);
+        if (rulePage != 12) g.drawImage(rightArrow, 1400, getHeight()/2, 70, 70, null);
+       
     }
 
 
@@ -727,6 +725,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         try {
             for (int i=0;i<6;i++){
                 dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
+            }
+            for (int i=0;i<12;i++){
+                rulePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/rules/"+i+".png"));
             }
             ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
             wheatToken = ImageIO.read(FramePanel.class.getResource("/assets/Wheat_Token.png"));
