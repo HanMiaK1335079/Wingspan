@@ -14,7 +14,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
@@ -23,6 +23,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
     private BufferedImage ingameBg;
+    private Feeder feeder;
 
     private ArrayList<Integer> roundGoals = new ArrayList<Integer>();
     private BufferedImage[] roundPics = new BufferedImage[4];
@@ -31,6 +32,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
     private ArrayList<Bonus> bonusArr = new ArrayList<Bonus>();
+    private int[][] diceLocMap = new int[5][2];
     /*Gamestate variables */
 
     //Startselection variables
@@ -48,6 +50,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         this.state = state;
         addMouseListener(this);
         addMouseMotionListener(this);
+        feeder = new Feeder(state);
         
 
         for (int i=0;i<4;i++){
@@ -59,25 +62,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
-            ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
-            wheatToken = ImageIO.read(FramePanel.class.getResource("/assets/Wheat_Token.png"));
-            invertebrateToken = ImageIO.read(FramePanel.class.getResource("/assets/Invertebrate_Token.png"));
-            fishToken = ImageIO.read(FramePanel.class.getResource("/assets/Fish_Token.png"));
-            fruitToken = ImageIO.read(FramePanel.class.getResource("/assets/Fruit_Token.png"));
-            rodentToken = ImageIO.read(FramePanel.class.getResource("/assets/Rodent_Token.png"));
-            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); 
-            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/Left_Arrow.png")); 
-            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/Right_Arrow.png")); 
-            birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
-            feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
-            Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
             Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
+            Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
             System.out.println(e);
         }
-        readCSV(new File("src/birdInfo.csv"));
+        //readCSV(new File("src/birdInfo.csv"));
         this.repaint();
     }
     // update button geometry based on current panel size
@@ -179,10 +171,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             
             
             // //debug click
-            //     else if (x>=140 && y>=700 && x<=290 && y<=780){
-            //         for (int i=0;i<5;i++) startSelections[i] = true;
-            //         startSelections[10] = true;
-            //     }
+            else if (x>=140 && y>=700 && x<=290 && y<=780){
+                for (int i=0;i<5;i++) startSelections[i] = true;
+                startSelections[10] = true;
+            }
             //birb click
             else if (y>=120 && y<=420){
                 for (int i=0;i<5;i++){
@@ -251,6 +243,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //     g.drawImage(Action_Button, 425, 200, 50,50,null);
         // g.drawImage(Action_Button, 425, 450, 50,50,null);
         // g.drawImage(Action_Button, 350, 725, 50,50,null);
+        //g.drawImage(Action_Button, 480, 120, 50 ,50, null);
             if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
             else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
             else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
@@ -259,6 +252,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             else if (x>=425 && x<=475 && y>=200 && y<=250) state.CURRENTEVENT.add("Get Food");
             else if (x>=425 && x<=475 && y>=450 && y<=500) state.CURRENTEVENT.add("Lay Eggs");
             else if (x>=350 && x<=400 && y>=725 && y<=775) state.CURRENTEVENT.add("Draw Birds");
+            else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
             repaint();
         }case "View Birds" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -301,8 +295,31 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 out.println("Clicked the bird deck");    
                 }
             }
+        case "Play Bird" -> {
+        //     g2.drawRect(470, 155, 628-470, 392-155);
+        // g2.drawRect(469, 403, 627-469, 637-403);
+        // g2.drawRect(470,650,626-470,866-650);
+
+        // g2.drawRect(644, 155, 800-644, 392-155);
+        // g2.drawRect(644, 403, 800-644, 637-403);
+        // g2.drawRect(644,650,800-644,866-650);
+       
+        // g2.drawRect(815, 155, 969-815, 392-155);
+        // g2.drawRect(815, 403, 969-815, 637-403);
+        // g2.drawRect(815,650,969-815,866-650);
+
+        // g2.drawRect(985, 155, 1138-985, 392-155);
+        // g2.drawRect(985, 403, 1138-985, 637-403);
+        // g2.drawRect(985,650,1138-985,866-650);
+
+        // g2.drawRect(1152, 155, 1302-1152, 392-155);
+        // g2.drawRect(1152, 403, 1302-1152, 637-403);
+        // g2.drawRect(1152,650,1302-1152,866-650);
+        
+            repaint();
         }
     }
+}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
@@ -341,12 +358,18 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "View Draw Birds" -> paintViewDrawBird(g);
                 case "View Feeder" -> paintViewFeeder(g);
                 case "Draw Birds" -> paintDrawBirds(g);
+                case "Score Round" -> paintScoreRound(g);
+                case "Play Bird" -> paintPlayBird(g);
                 default -> {
                 
                 }
             }
             state.lock.notifyAll();
         }
+    }
+
+    public void paintScoreRound(Graphics g){
+        g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
     }
 
     public void paintStart(Graphics g){
@@ -441,7 +464,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(Continue_Button,140, 600, 300, 120,null);
         
         //DEBUG RECT: click to instantly select 5 birb cards and first bonus (only cuz im too lazy to individually select)
-        //g.fillRect(140, 700, 150, 80);
+        g.fillRect(140, 700, 150, 80);
         
         /*if (canContinue()) {
             out.println("Drawing cont. box");
@@ -455,6 +478,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //425 200, 425 450, 350 725
        
         g.drawImage(ingameBg, 0, 0, 1540, 863,null);
+        //480 150
+        //Draw possible actions
+        g.drawImage(Action_Button, 480, 120, 50 ,50, null);
         g.drawImage(Action_Button, 425, 200, 50,50,null);
         g.drawImage(Action_Button, 425, 450, 50,50,null);
         g.drawImage(Action_Button, 350, 725, 50,50,null);
@@ -500,6 +526,38 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     int currentShowing = 0;
     int showing = 4;
+    public void paintPlayBird(Graphics g){
+        
+        paintGame(g);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Select Slot to place bird", 600, 130);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+
+        g2.drawRect(470, 155, 628-470, 392-155);
+        g2.drawRect(469, 403, 627-469, 637-403);
+        g2.drawRect(470,650,626-470,866-650);
+
+        g2.drawRect(644, 155, 800-644, 392-155);
+        g2.drawRect(644, 403, 800-644, 637-403);
+        g2.drawRect(644,650,800-644,866-650);
+       
+        g2.drawRect(815, 155, 969-815, 392-155);
+        g2.drawRect(815, 403, 969-815, 637-403);
+        g2.drawRect(815,650,969-815,866-650);
+
+        g2.drawRect(985, 155, 1138-985, 392-155);
+        g2.drawRect(985, 403, 1138-985, 637-403);
+        g2.drawRect(985,650,1138-985,866-650);
+
+        g2.drawRect(1152, 155, 1302-1152, 392-155);
+        g2.drawRect(1152, 403, 1302-1152, 637-403);
+        g2.drawRect(1152,650,1302-1152,866-650);
+        
+       
+       
+        
+    }
     public void paintViewBirds(Graphics g){
         paintGame(g);
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
@@ -575,11 +633,23 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Feeder", 600, 458);
+        g.setFont(new Font("Arial", Font.BOLD, 35));
+        g.drawString("In", 900, 525);
+        g.drawString("Out", 360, 525);
 
         g.drawImage(feederPic, 1150, 430, 350, 395, null);
 
-        g.drawRect(730, 494, 425, 298);
-        g.drawRect(207, 494, 425, 298);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.drawRect(730, 494, 425, 298);
+        g2.drawRect(207, 494, 425, 298);
+
+        for (int i=0;i<feeder.getDice().size();i++){
+            g.drawImage(dicePics[feeder.getImageIndex(i)], diceLocMap[i][0], diceLocMap[i][1], 90, 90, null);
+        }
+        for (int i=0;i<feeder.getOutDice().size();i++){
+            g.drawImage(dicePics[feeder.getOutImageIndex(i)], diceLocMap[i][0]-520, diceLocMap[i][1], 90, 90, null);
+        }
         
     }
 
@@ -603,12 +673,28 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             for (int i=0;i<6;i++){
                 dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
             }
+            ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
+            wheatToken = ImageIO.read(FramePanel.class.getResource("/assets/Wheat_Token.png"));
+            invertebrateToken = ImageIO.read(FramePanel.class.getResource("/assets/Invertebrate_Token.png"));
+            fishToken = ImageIO.read(FramePanel.class.getResource("/assets/Fish_Token.png"));
+            fruitToken = ImageIO.read(FramePanel.class.getResource("/assets/Fruit_Token.png"));
+            rodentToken = ImageIO.read(FramePanel.class.getResource("/assets/Rodent_Token.png"));
+            exitPic = ImageIO.read(FramePanel.class.getResource("/assets/Exit_Button.png")); 
+            leftArrow = ImageIO.read(FramePanel.class.getResource("/assets/Left_Arrow.png")); 
+            rightArrow = ImageIO.read(FramePanel.class.getResource("/assets/Right_Arrow.png")); 
+            birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
+            feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
+            Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
         } catch (Exception e) {
             out.println("Exception: "+e);
-            out.println("Oops diceimages dont load");
+            out.println("Oops pics dont load");
         }
-        
-       
+        diceLocMap[0][0] = 769;diceLocMap[0][1] = 550;
+        diceLocMap[1][0] = 925;diceLocMap[1][1] = 550;
+        diceLocMap[2][0] = 1046;diceLocMap[2][1] = 550;
+        diceLocMap[3][0] = 827;diceLocMap[3][1] = 670;
+        diceLocMap[4][0] = 989;diceLocMap[4][1] = 670;
+        readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
         mockSetup();
         setUpBonus();
@@ -625,7 +711,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            int readAmt = 100;
+            int readAmt = 1;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
@@ -823,6 +909,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             bonusOptions[1] = bonusArr.remove(0);
             
         }
+
 }
      
    
