@@ -26,6 +26,7 @@ public class ProgramState {
         deckOfCards.addAll(birds);
         Collections.shuffle(deckOfCards);
     }
+        
     
     public enum GamePhase {
         SETUP,

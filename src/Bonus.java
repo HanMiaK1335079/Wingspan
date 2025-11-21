@@ -372,6 +372,9 @@ public class Bonus {
         
         return bonus;
     }
+
+
+
     
     public int getBonusPoints(Player p) {
         int count = calculateBonus(p);
