@@ -418,9 +418,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         updateStartButtonRect();
         RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
 
-        //Buttpon for the rule and like the info
-        updateStartButtonRect();
-        RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
 
 
 
