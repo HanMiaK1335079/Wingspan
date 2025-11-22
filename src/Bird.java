@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Bird model: immutable metadata with lightweight mutable in-play state.
- * Includes a static create(...) helper so calling code (CSV parser) can
- * construct birds without a separate factory class.
- */
+
 public class Bird {
     private final String name;
     private final Ability ability;
@@ -27,7 +23,6 @@ public class Bird {
     private int flocked = 0;
     private int tuckedCards = 0;
 
-    // package-private primary constructor
     Bird(String name, Ability ability, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<String[]> foods){
         this.name = name;
         this.ability = ability == null ? new Ability(Ability.Trigger.NONE, "") : ability;
@@ -40,9 +35,7 @@ public class Bird {
         this.foods = foods == null ? new ArrayList<>() : foods;
     }
 
-    /**
-     * Static factory to keep CSV parsing and Bird creation in one class without adding a separate factory file.
-     */
+    
     public static Bird create(String name, String abilityActivate, String abilityText, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<String[]> foods){
         Ability.Trigger trig = Ability.Trigger.NONE;
         if (abilityActivate != null){
@@ -99,9 +92,7 @@ public class Bird {
         return false;
     }
 
-    /**
-     * Add eggs; returns number of eggs that could not be added (leftover).
-     */
+    
     public int addEggs(int eggs){
         if (eggs <= 0) return 0;
         int space = maxEggs - storedEggs;
@@ -110,9 +101,10 @@ public class Bird {
         return eggs - toAdd; // leftover
     }
 
-    /**
-     * Remove eggs; returns number of eggs still needed to be removed (if caller requested to remove more than present).
-     */
+    public int getEggs() {
+        return storedEggs;
+    }
+  
     public int removeEggs(int eggs){
         if (eggs <= 0) return 0;
         int removed = Math.min(storedEggs, eggs);
@@ -153,10 +145,9 @@ public class Bird {
         return getScoreBreakdown().total();
     }
 
-    /**
-     * Minimal wrapper for ability activation. Game logic should call this method
-     * when an ability should be executed; it keeps Bird.java free of heavy game logic.
-     */
+    
+
+    
     public void playAbility(ProgramState state){
         if (ability == null) return;
         if (ability.mentionsCache()) {
