@@ -418,10 +418,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         updateStartButtonRect();
         RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
 
-        //Buttpon for the rule and like the info
-        updateStartButtonRect();
-        RoundRectangle2D.Float rr = new RoundRectangle2D.Float(startButtonRect.x, startButtonRect.y, startButtonRect.width, startButtonRect.height, 24, 24);
-
 
 
         // Shadow
@@ -503,12 +499,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g2.drawString(line, 90, y);
             y += 40;
         }
-        // draw back button for a player to go back to the home scrnee
-        g2.setColor(new Color(220,50,50));
-        g2.fillRoundRect(30,30,90,60,12,12);
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g2.drawString("Back", 55, 70);
+        // draw back button for a player to go back to the home screen (use exitPic if available)
+        try { if (exitPic != null) g2.drawImage(exitPic, 30, 30, 90, 90, null); else {
+            g2.setColor(new Color(220,50,50));
+            g2.fillRoundRect(30,30,90,60,12,12);
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("SansSerif", Font.BOLD, 18));
+            g2.drawString("Back", 55, 70);
+        }} catch (Exception ignored) {}
     }
 
     public void paintSelection(Graphics g){
@@ -850,7 +848,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                 //out.println("Got to birdmaking stuff");
                 
-                b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
+                b = Bird.create(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
                 birds.add(b);
                 //out.println("Finished birdmaking stuff");
 
