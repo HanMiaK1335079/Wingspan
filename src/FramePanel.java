@@ -198,8 +198,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                             if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
                         }
                         if (startSelections[5]) state.players[state.playing].addFood("fish");
-                        if (startSelections[6]) state.players[state.playing].addFood("seed");
-                        if (startSelections[7]) state.players[state.playing].addFood("insect");
+                        if (startSelections[6]) state.players[state.playing].addFood("seed"); //why doubleadded?
+                        if (startSelections[7]) state.players[state.playing].addFood("insect"); //why double added?
                         if (startSelections[8]) state.players[state.playing].addFood("berry");
                         if (startSelections[9]) state.players[state.playing].addFood("rat");
                         if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
@@ -254,7 +254,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
                 repaint();
             
-            }case "View Draw birds" ->{
+            }case "View Draw Birds" ->{
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
                 repaint();
 
@@ -267,6 +267,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 else if (x>=400 && x<=600 && y>=400 && y<=500) state.CURRENTEVENT.add("Rules");       // g.fillRect(400, 400, 200, 100);
                 repaint();
             
+            }case "Rules" ->{
+                if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+                else if (x>=1400 && x<=1470 && y>=450 && y<=520 && rulePage<11) rulePage ++;
+                else if (x>=100 && x<=170 && y>=450 && y<=520 && rulePage>0) rulePage --;
+                repaint();
             }case "Draw Birds" -> {
                 if (x>=20 && x<=70 && y>=400 && y<=450){ 
                     state.CURRENTEVENT.removeLast();
@@ -333,6 +338,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Draw Birds" -> paintDrawBirds(g);
                 case "Score Round" -> paintScoreRound(g);
                 case "Play Bird" -> paintPlayBird(g);
+                case "Rules" -> paintRules(g);
             }
             state.lock.notifyAll();
         }
@@ -893,16 +899,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
     public void setUpSelection(){
-            startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
-            startOptions = new Bird[5];
-            for (int i=0;i<5;i++){
-                startOptions[i] = birds.remove(0);
-            }
-            bonusOptions = new Bonus[2];
-            bonusOptions[0] = bonusArr.remove(0);
-            bonusOptions[1] = bonusArr.remove(0);
-            
+        startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+        startOptions = new Bird[5];
+        for (int i=0;i<5;i++){
+            startOptions[i] = birds.remove(0);
         }
+        bonusOptions = new Bonus[2];
+        bonusOptions[0] = bonusArr.remove(0);
+        bonusOptions[1] = bonusArr.remove(0);
+        
+    }
 
 }
      
