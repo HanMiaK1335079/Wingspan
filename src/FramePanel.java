@@ -512,6 +512,27 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if(state.squaresClickedToPlayBird[0][4]) g2.drawRect(1152, 155, 1302-1152, 392-155);
         if(state.squaresClickedToPlayBird[1][4]) g2.drawRect(1152, 403, 1302-1152, 637-403);
         if(state.squaresClickedToPlayBird[2][4]) g2.drawRect(1152,650,1302-1152,866-650);
+        try{
+            Thread.sleep(100);
+        }catch(Exception ignored){}
+        
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Play A Bird Card", 600, 458);
+        g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
+        if (state.players[state.playing].getCardsInHand().size()==0) return;
+
+       
+         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
+             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+         }
+        //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
+
+        if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
+        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+        
+
     }
 
     public void paintStart(Graphics g){
