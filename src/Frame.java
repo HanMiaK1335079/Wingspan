@@ -21,9 +21,6 @@ public class Frame extends JFrame {
         JLayeredPane layered = new JLayeredPane();
         layered.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
-        FramePanel backgroundPanel = new FramePanel(state);
-        backgroundPanel.setBounds(0, 0, WIDTH, HEIGHT);
-        layered.add(backgroundPanel, JLayeredPane.DEFAULT_LAYER);
 
         
         add(layered, BorderLayout.CENTER);
