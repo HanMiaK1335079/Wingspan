@@ -16,16 +16,12 @@ import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
     private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
     private BufferedImage[] dicePics = new BufferedImage[6];
+    private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
-    //this os the info button
-    private Rectangle infoButtonRect = new Rectangle(0,0,140,60);
-    //this is the rules button
-    private Rectangle rulesButtonRect = new Rectangle(0,0,140,60);
-    private final Font smallButtonFont = new Font("SansSerif", Font.BOLD, 20);
     private final ArrayList<Bird> birds = new ArrayList<Bird>();
     private BufferedImage ingameBg;
     private Feeder feeder;
@@ -67,8 +63,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
-            Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
-            Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -86,11 +80,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int x = (w - btnW) / 2;
         int y = h - btnH - Math.max(60, h / 12);
         startButtonRect.setBounds(x, y, btnW, btnH);
-        // this is the buttons for the info and like the rules ig. Its just for the starting thing
-        int sideW = Math.max(120, btnW/2);
-        int sideH = Math.max(48, btnH - 10);
-        infoButtonRect.setBounds(x - sideW - 20, y + (btnH - sideH)/2, sideW, sideH);
-        rulesButtonRect.setBounds(x + btnW + 20, y + (btnH - sideH)/2, sideW, sideH);
     }
 
     public void addNotify() {
@@ -109,210 +98,187 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int y = e.getY();
         out.println("("+x+","+y+")");
         // Only respond to clicks when we are on the start screen
+        switch(state.CURRENTEVENT.getLast()){
 
-        switch(state.CURRENTEVENT.getLast()) {
-        
-        case "Game Start" -> {
-            Point p = e.getPoint();
-            // Update rect position in case panel was resized
-            updateStartButtonRect();
-            if (startButtonRect.contains(p)) {
-                synchronized(state.lock) {
-                    System.out.println("Start button clicked");
-                    state.CURRENTEVENT.add("Select Screen");
-                    startSetUp();
-                    setUpSelection();
-                    this.repaint();
-                    
-                    state.lock.notifyAll();
-                    GameLogic gameLogic = new GameLogic(this, state);
-                    //  gameLogic.setUp(); //this has yet to be set up.
-                }
-            }
-            else if (infoButtonRect.contains(p)) {
-                // show an information/help screen
-                synchronized(state.lock){
-                    state.CURRENTEVENT.add("Info");
-                    this.repaint();
-                    state.lock.notifyAll();
-                }
-            }
-            else if (rulesButtonRect.contains(p)) {
-                // show game rules screen
-                synchronized(state.lock){
-                    state.CURRENTEVENT.add("Rules");
-                    this.repaint();
-                    state.lock.notifyAll();
-                }
-            }
-        }
-        case "Select Screen" -> {
-            //food click
-             
-            if (x>=1200 && x<=1300 && y>=130 && y<=220){
-                if(numberOfItemsSelected<5&&!startSelections[5]){
-                    startSelections[5] = !startSelections[5];
-                    numberOfItemsSelected++;
-                }else if(startSelections[5]){
-                    startSelections[5] = !startSelections[5];
-                    numberOfItemsSelected--;
-            }
-        }
-            else if (x>=1200 && x<=1300 && y>=340 && y<=430){
-                if(numberOfItemsSelected<5&&!startSelections[6]){
-                    startSelections[6] = !startSelections[6];
-                    numberOfItemsSelected++;
-                }else if(startSelections[6]){
-                    startSelections[6] = !startSelections[6];
-                    numberOfItemsSelected--;
-                }
-            }
-            else if (x>=1320 && x<=1410 && y>=230 && y<=320){
-                if(numberOfItemsSelected<5&&!startSelections[7]){
-                    startSelections[7] = !startSelections[7];
-                    numberOfItemsSelected++;
-                }else if(startSelections[7]){
-                    startSelections[7] = !startSelections[7];
-                    numberOfItemsSelected--;
-                }
-            }
-            else if (x>=1440 && x<=1530 && y>=130 && y<=220){
-                if(numberOfItemsSelected<5&&!startSelections[8]){
-                    startSelections[8] = !startSelections[8];
-                    numberOfItemsSelected++;
-                }else if(startSelections[8]){
-                    startSelections[8] = !startSelections[8];
-                    numberOfItemsSelected--;
-                }
-            }
-            else if (x>=1440 && x<=1530 && y>=340 && y<=430){
-                if(numberOfItemsSelected<5&&!startSelections[9]){
-                    startSelections[9] = !startSelections[9];
-                    numberOfItemsSelected++;
-                }else if(startSelections[9]){
-                    startSelections[9] = !startSelections[9];
-                    numberOfItemsSelected--;
-                }
-            }
-            
-            
-            // //debug click
-            else if (x>=140 && y>=700 && x<=290 && y<=780){
-                for (int i=0;i<5;i++) startSelections[i] = true;
-                startSelections[10] = true;
-            }
-            //birb click
-            else if (y>=120 && y<=420){
-                for (int i=0;i<5;i++){
-                    if (x>=30+i*220 && x<=230+i*220){
-                       if(numberOfItemsSelected<5&&!startSelections[i]){
-                    startSelections[i] = !startSelections[i];
-                    numberOfItemsSelected++;
-                       }else if(startSelections[i]){
-                    startSelections[i] = !startSelections[i];
-                    numberOfItemsSelected--;
-                }
-            }
-
-                } //30+i*220, 120, 200, 300
-                //continue click
-            }else if (x>=140 && x<=440 && y>=600 && y<=720){
-                out.println("clicked box");
-                if (canContinue()){
-                    out.println("Continuing");
-                    numberOfItemsSelected = 0;
-                    numberOfBonusesSelected = 0;
-                    for (int i=0;i<5;i++){
-                        if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
-                    }
-                    if (startSelections[5]) state.players[state.playing].addFood("fish");
-                    if (startSelections[6]) state.players[state.playing].addFood("seed");
-                    if (startSelections[7]) state.players[state.playing].addFood("insect");
-                    if (startSelections[8]) state.players[state.playing].addFood("berry");
-                    if (startSelections[9]) state.players[state.playing].addFood("rat");
-
-                    if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
-                    else state.players[state.playing].addBonus(bonusOptions[1]);
-
-                    if (state.playing == 3) {state.CURRENTEVENT.add("Game"); state.playing = 0;}
-                    else {
-                        state.playing ++;
+            case "Game Start" -> {
+                Point p = e.getPoint();
+                // Update rect position in case panel was resized
+                updateStartButtonRect();
+                if (startButtonRect.contains(p)) {
+                    synchronized(state.lock) {
+                        System.out.println("Start button clicked");
+                        state.CURRENTEVENT.add("Select Screen");
+                        startSetUp();
                         setUpSelection();
-                        setUpBonus();
+                        this.repaint();
+                        
+                        state.lock.notifyAll();
+                        GameLogic gameLogic = new GameLogic(this, state);
+                        //  gameLogic.setUp(); //this has yet to be set up.
+                    }
+                }
+            }
+            //food click
+            case "Select Screen" ->{
+                if (x>=1200 && x<=1300 && y>=130 && y<=220){
+                    if(numberOfItemsSelected<5&&!startSelections[5]){
+                        startSelections[5] = !startSelections[5];
+                        numberOfItemsSelected++;
+                    }else if(startSelections[5]){
+                        startSelections[5] = !startSelections[5];
+                        numberOfItemsSelected--;
                     }
                 }
             
-                //bonus click
-            }else if (y>=500 && y<=800){
-                if (x>=550 && x<=750){
-                    if(numberOfBonusesSelected<1){
-                        startSelections[10] = !startSelections[10];
-                        numberOfBonusesSelected++;
-                    }else if(!startSelections[10]){ 
-                        startSelections[10] = !startSelections[10];
-                        startSelections[11] = !startSelections[11];
-                        
+                else if (x>=1200 && x<=1300 && y>=340 && y<=430){
+                    if(numberOfItemsSelected<5&&!startSelections[6]){
+                        startSelections[6] = !startSelections[6];
+                        numberOfItemsSelected++;
+                    }else if(startSelections[6]){
+                        startSelections[6] = !startSelections[6];
+                        numberOfItemsSelected--;
                     }
-                }else if (x>=800 && x<=1000){
-                    if(numberOfBonusesSelected<1){
-                        startSelections[11] = !startSelections[11];
-                        numberOfBonusesSelected++;
-                    }else if(!startSelections[11]){
-                        startSelections[10] = !startSelections[10];
-                        startSelections[11] = !startSelections[11];
                 }
-            }
-        }
+                else if (x>=1320 && x<=1410 && y>=230 && y<=320){
+                    if(numberOfItemsSelected<5&&!startSelections[7]){
+                        startSelections[7] = !startSelections[7];
+                        numberOfItemsSelected++;
+                    }else if(startSelections[7]){
+                        startSelections[7] = !startSelections[7];
+                        numberOfItemsSelected--;
+                    }
+                }
+                else if (x>=1440 && x<=1530 && y>=130 && y<=220){
+                    if(numberOfItemsSelected<5&&!startSelections[8]){
+                        startSelections[8] = !startSelections[8];
+                        numberOfItemsSelected++;
+                    }else if(startSelections[8]){
+                        startSelections[8] = !startSelections[8];
+                        numberOfItemsSelected--;
+                    }
+                }
+                else if (x>=1440 && x<=1530 && y>=340 && y<=430){
+                    if(numberOfItemsSelected<5&&!startSelections[9]){
+                        startSelections[9] = !startSelections[9];
+                        numberOfItemsSelected++;
+                    }else if(startSelections[9]){
+                        startSelections[9] = !startSelections[9];
+                        numberOfItemsSelected--;
+                    }
+                }
+                
+                
+                // //debug click
+                else if (x>=140 && y>=700 && x<=290 && y<=780){
+                    for (int i=0;i<5;i++) startSelections[i] = true;
+                    startSelections[10] = true;
+                }
+                //birb click
+                else if (y>=120 && y<=420){
+                    for (int i=0;i<5;i++){
+                        if (x>=30+i*220 && x<=230+i*220){
+                            if(numberOfItemsSelected<5&&!startSelections[i]){
+                                startSelections[i] = !startSelections[i];
+                                numberOfItemsSelected++;
+                            }else if(startSelections[i]){
+                                startSelections[i] = !startSelections[i];
+                                numberOfItemsSelected--;
+                            }
+                        }
+                    } //30+i*220, 120, 200, 300
+                }
+                //continue click
+                else if (x>=140 && x<=440 && y>=600 && y<=720){
+                    out.println("clicked box");
+                    if (canContinue()){
+                        out.println("Continuing");
+                        numberOfItemsSelected = 0;
+                        numberOfBonusesSelected = 0;
+                        for (int i=0;i<5;i++){
+                            if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
+                        }
+                        if (startSelections[5]) state.players[state.playing].addFood("fish");
+                        if (startSelections[6]) state.players[state.playing].addFood("seed"); //why doubleadded?
+                        if (startSelections[7]) state.players[state.playing].addFood("insect"); //why double added?
+                        if (startSelections[8]) state.players[state.playing].addFood("berry");
+                        if (startSelections[9]) state.players[state.playing].addFood("rat");
+                        if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
+                        else state.players[state.playing].addBonus(bonusOptions[1]);
+                        if (state.playing == 3) {state.CURRENTEVENT.add("Game"); state.playing = 0;}
+                        else {
+                            state.playing ++;
+                            setUpSelection();
+                            setUpBonus();
+                        }
+                    }
+                
+                    //bonus click
+                }else if (y>=500 && y<=800){
+                    if (x>=550 && x<=750){
+                        if(numberOfBonusesSelected<1){
+                            startSelections[10] = !startSelections[10];
+                            numberOfBonusesSelected++;
+                        }else if(!startSelections[10]){ 
+                            startSelections[10] = !startSelections[10];
+                            startSelections[11] = !startSelections[11];
+                            
+                        }
+                    }else if (x>=800 && x<=1000){
+                        if(numberOfBonusesSelected<1){
+                            startSelections[11] = !startSelections[11];
+                            numberOfBonusesSelected++;
+                        }else if(!startSelections[11]){
+                            startSelections[10] = !startSelections[10];
+                            startSelections[11] = !startSelections[11];
+                        }
+                    }
+                }
             this.repaint();
         
-        }case "Game" -> {
-        //     g.drawImage(Action_Button, 425, 200, 50,50,null);
-        // g.drawImage(Action_Button, 425, 450, 50,50,null);
-        // g.drawImage(Action_Button, 350, 725, 50,50,null);
-        //g.drawImage(Action_Button, 480, 120, 50 ,50, null);
-            if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
-            else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
-            else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
-            else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
-            else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
-            else if (x>=425 && x<=475 && y>=200 && y<=250) state.CURRENTEVENT.add("Get Food");
-            else if (x>=425 && x<=475 && y>=450 && y<=500) state.CURRENTEVENT.add("Lay Eggs");
-            else if (x>=350 && x<=400 && y>=725 && y<=775) state.CURRENTEVENT.add("Draw Birds");
-            else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
-            repaint();
-        }case "View Birds" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
-                currentShowing++;
-            else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
-            //50, 590, 60, 60
+            }case "Game" -> {
+                if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
+                else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
+                else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
+                else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
+                else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
+                repaint();
+            }case "View Birds" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
+                    currentShowing++;
+                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+                //50, 590, 60, 60
 
-            repaint();
-        }case "View Bonus" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            repaint();
-        
-        }case "View Draw Birds" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                repaint();
+            }case "View Bonus" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                repaint();
             
-            repaint();
+            }case "View Draw Birds" ->{
+                if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                repaint();
 
-        }case "View Feeder" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
-            repaint();
+            }case "View Feeder" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                repaint();
 
-        }case "Info" -> {
-            if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
-            repaint();
-        }
-
-        case "Rules" -> {
-            if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
-            repaint();
-        }
-        case "Draw Birds" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast();repaint();return;}
-            if(y>=470 && y<=825){//This is the Y level of the cards in the draw tray
+            }case "Info" ->{
+                if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+                else if (x>=400 && x<=600 && y>=400 && y<=500) state.CURRENTEVENT.add("Rules");       // g.fillRect(400, 400, 200, 100);
+                repaint();
+            
+            }case "Rules" ->{
+                if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
+                else if (x>=1400 && x<=1470 && y>=450 && y<=520 && rulePage<11) rulePage ++;
+                else if (x>=100 && x<=170 && y>=450 && y<=520 && rulePage>0) rulePage --;
+                repaint();
+            }case "Draw Birds" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450){ 
+                    state.CURRENTEVENT.removeLast();
+                    repaint();
+                    return;
+                }
+                if (y>=470 && y<=825){//This is the Y level of the cards in the draw tray
                     if(x>=475 && x<=720){//This would be the first card
                         out.println("Clicked first card");
                 
@@ -321,103 +287,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     } else if ( x >= 1015 && x <= 1260 ) {//This would be the third card
                         out.println("Clicked Third card");
                     }
+                }
+                if(x>=120&&x<=335&&y>=515&&y<=775){//120, 515, 215, 2 60,
+                    out.println("Clicked the bird deck");    
+                }
+            }case "Play Bird" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                repaint();
             }
-            if(x>=120&&x<=335&&y>=515&&y<=775){//120, 515, 215, 260,
-                out.println("Clicked the bird deck");    
-                }
-            }
-        case "Play Bird" -> {
-        
-            if(x>=470&&x<=628){//First Column
-                if(y>=155&&y<=392){
-                    out.println("Clicked first column, first row");
-                    state.squaresClickedToPlayBird[0][0] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=403&&y<=637){
-                    out.println("Clicked first column, second row");
-                    state.squaresClickedToPlayBird[1][0] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=650&&y<=866){
-                    out.println("Clicked first column, third row");
-                    state.squaresClickedToPlayBird[2][0] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }
-            }else if(x>=644&&x<=800){//Second Column
-                if(y>=155&&y<=392){
-                    out.println("Clicked second column, first row");
-                    state.squaresClickedToPlayBird[0][1] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=403&&y<=637){
-                    out.println("Clicked second column, second row");
-                state.squaresClickedToPlayBird[1][1] = true;
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=650&&y<=866){
-                    out.println("Clicked second column, third row");
-                    state.squaresClickedToPlayBird[2][1] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }
-            }else if(x>=815&&x<=969){//Third Column
-                if(y>=155&&y<=392){
-                    out.println("Clicked third column, first row");
-                state.squaresClickedToPlayBird[0][2] = true;
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=403&&y<=637){
-                    out.println("Clicked third column, second row");
-                state.squaresClickedToPlayBird[1][2] = true;
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=650&&y<=866){
-                    out.println("Clicked third column, third row");
-                state.squaresClickedToPlayBird[2][2] = true;
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }
-            }else if(x>=985&&x<=1138){//Fourth Column
-                if(y>=155&&y<=392){
-                    out.println("Clicked fourth column, first row");
-                    state.squaresClickedToPlayBird[0][3] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=403&&y<=637){
-                    out.println("Clicked fourth column, second row");
-                    state.squaresClickedToPlayBird[1][3] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=650&&y<=866){
-                    out.println("Clicked fourth column, third row");
-                    state.squaresClickedToPlayBird[2][3] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }
-            }else if(x>=1152&&x<=1302){//Fifth Column
-                if(y>=155&&y<=392){
-                    out.println("Clicked fifth column, first row");
-                    state.squaresClickedToPlayBird[0][4] = true;
-                    state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=403&&y<=637){
-                    out.println("Clicked fifth column, second row");
-                state.squaresClickedToPlayBird[1][4] = true;
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }else if(y>=650&&y<=866){
-                    out.println("Clicked fifth column, third row");
-                state.squaresClickedToPlayBird[2][4] = true;
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Play Specfic Bird");
-                }
-            }
-            repaint();
         }
+        
     }
-}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
@@ -448,27 +328,22 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     break;
                 }
                 case "Game Start" -> paintStart(g);
-                case "Rules" -> paintRules(g);
                 case "Select Screen" -> paintSelection(g);
                 case "Game" -> paintGame(g);
                 case "View Birds" -> paintViewBirds(g);
                 case "View Bonus" -> paintViewBonus(g);
                 case "Info" -> paintInfo(g);
-                case "View Draw Birds" -> paintViewDrawBird(g);
+                case "View Draw Birds" -> paintViewDrawBirds(g);
                 case "View Feeder" -> paintViewFeeder(g);
                 case "Draw Birds" -> paintDrawBirds(g);
                 case "Score Round" -> paintScoreRound(g);
                 case "Play Bird" -> paintPlayBird(g);
-                case "Play Specfic Bird" -> paintPlaySpecificBird(g);
-                default -> {
-                
-                }
+                case "Rules" -> paintRules(g);
             }
             state.lock.notifyAll();
         }
     }
 
-   
     public void paintScoreRound(Graphics g){
         g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
     }
@@ -703,11 +578,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintGame(Graphics g){
-        //425 200, 425 450, 350 725
-       
         g.drawImage(ingameBg, 0, 0, 1540, 863,null);
-        //480 150
-        //Draw possible actions
         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
         g.drawImage(Action_Button, 425, 200, 50,50,null);
         g.drawImage(Action_Button, 425, 450, 50,50,null);
@@ -753,9 +624,35 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
-    //placeholder so that i can commit merge errors idk whats going on here.
     int currentShowing = 0;
     int showing = 4;
+    public void paintViewBirds(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Bird Cards", 600, 458);
+        g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
+        if (state.players[state.playing].getCardsInHand().size()==0) return;
+
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        int counter = 0;
+        for (Bird b: state.players[state.playing].getCardsInHand()){
+            if (counter %showing == 0) 
+                birdArrSplit.add(new ArrayList<Bird>());
+            counter ++;
+            birdArrSplit.getLast().add(b);
+        }
+
+        for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+        }
+        //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
+
+        if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
+        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+    }
+
     public void paintPlayBird(Graphics g){
         
         paintGame(g);
@@ -783,21 +680,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g2.drawRect(1152, 155, 1302-1152, 392-155);
         g2.drawRect(1152, 403, 1302-1152, 637-403);
         g2.drawRect(1152,650,1302-1152,866-650);
-        
-       
-       
-        
-    }
-    public void paintViewBirds(Graphics g){
-        paintGame(g);
-        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
-        g.drawImage(exitPic, 20, 400, 50, 50, null);
-        g.setFont(new Font("Arial", Font.BOLD, 50));
-        g.drawString("Bird Cards", 600, 458);
-        g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
-        if (state.players[state.playing].getCardsInHand().size()==0) return;
-
-       
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
@@ -806,6 +688,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
         if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
     }
+
+
+    
 
     public void paintDrawBirds(Graphics g){
         paintGame(g);
@@ -836,7 +721,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
     
-    public void paintViewDrawBird(Graphics g){
+    public void paintViewDrawBirds(Graphics g){
         paintGame(g);
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 20, 400, 50, 50, null);
@@ -876,17 +761,32 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintInfo(Graphics g){
+        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 30, 30, 90, 90, null);
-        g.setFont(new Font("Arial", Font.BOLD, 65));
-        g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        //g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
         BufferedImage birb;
-        try{
+        g.setColor(Color.CYAN);
+        g.fillRect(400, 400, 200, 100);
+        g.setColor(Color.BLACK);
+        g.drawString("Rules", 400, 480);
+        
+        /*try{
             birb = ImageIO.read(FramePanel.class.getResource("/assets/yes.jpg"));
             g.drawImage(birb, 300, 400, 700, 320, null);
         }catch(Exception e){
             out.println("oops");
-        }
-        
+        }*/
+    }
+
+    private int rulePage = 0;
+    public void paintRules(Graphics g){
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 30, 30, 90, 90, null);
+        g.drawImage(rulePics[rulePage], getWidth()/2-350, 5, 700, getHeight()-50, null);
+        if (rulePage != 0) g.drawImage(leftArrow, 100, getHeight()/2, 70, 70, null);
+        if (rulePage != 11) g.drawImage(rightArrow, 1400, getHeight()/2, 70, 70, null);
+       
     }
     
 
@@ -894,6 +794,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         try {
             for (int i=0;i<6;i++){
                 dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
+            }
+            for (int i=0;i<12;i++){
+                rulePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/rules/"+i+".png"));
             }
             ingameBg = ImageIO.read(FramePanel.class.getResource("/assets/ingamebg.png"));
             wheatToken = ImageIO.read(FramePanel.class.getResource("/assets/Wheat_Token.png"));
@@ -907,6 +810,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             birdBack = ImageIO.read(FramePanel.class.getResource("/assets/blue_back.png"));
             feederPic = ImageIO.read(FramePanel.class.getResource("/assets/feeder.png"));
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
+            Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
+            Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
         } catch (Exception e) {
             out.println("Exception: "+e);
             out.println("Oops pics dont load");
@@ -1121,16 +1026,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
     public void setUpSelection(){
-            startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
-            startOptions = new Bird[5];
-            for (int i=0;i<5;i++){
-                startOptions[i] = birds.remove(0);
-            }
-            bonusOptions = new Bonus[2];
-            bonusOptions[0] = bonusArr.remove(0);
-            bonusOptions[1] = bonusArr.remove(0);
-            
+        startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
+        startOptions = new Bird[5];
+        for (int i=0;i<5;i++){
+            startOptions[i] = birds.remove(0);
         }
+        bonusOptions = new Bonus[2];
+        bonusOptions[0] = bonusArr.remove(0);
+        bonusOptions[1] = bonusArr.remove(0);
+        
+    }
 
 }
      
