@@ -137,27 +137,19 @@ public class Bird {
         return s.toString();
     }
 
-    public ScoreBreakdown getScoreBreakdown(){
-        return new ScoreBreakdown(points, storedEggs, cachedFood, tuckedCards, flocked);
-    }
+    public void playAbility(){
+        if (!abilityType.equals("N")) return;
 
-    public int getScore(){
-        return getScoreBreakdown().total();
-    }
-
-    
-
-    
-    public void playAbility(ProgramState state){
-        if (ability == null) return;
-        if (ability.mentionsCache()) {
-            this.cacheFood();
-        }
-        if (ability.mentionsTuck()){
-            this.tuckCard();
-        }
-        if (ability.mentionsLayEgg()){
-            this.addEggs(1);
+        if (ability.contains("You may cache it")){
+            /*implement the gain 1 seed thing */
+        }else if (ability.contains("in their [wetland]")){
+            /*implement player with fewest bird draw 1 card */
+        }else if (ability.contains("Tuck 1")){
+            if (ability.contains("draw 1")){
+                /*implement draw 1 after cache */
+            }else if (ability.contains("lay 1 egg")){
+                /*implement lay egg after cache */
+            }
         }
     }
 }
