@@ -18,9 +18,19 @@ public class ProgramState {
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
     
     public ArrayList<String> CURRENTEVENT = new ArrayList<>();
-    
+
+
+    public volatile boolean[][] squaresClickedToPlayBird = new boolean[3][5];
     private int[] roundGoals = new int[4];
     private int[] roundWinners = new int[4];
+
+    public void resetSquaresClickedToPlayBird() {
+        for (int i = 0; i < squaresClickedToPlayBird.length; i++) {
+            for (int j = 0; j < squaresClickedToPlayBird[i].length; j++) {
+                squaresClickedToPlayBird[i][j] = false;
+            }
+        }
+    }
 
     public void makeDeckOfCards(){
         deckOfCards.addAll(birds);
