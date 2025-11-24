@@ -570,25 +570,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
         if (state.players[state.playing].getCardsInHand().size()==0) return;
 
-        g2.drawRect(470, 155, 628-470, 392-155);
-        g2.drawRect(469, 403, 627-469, 637-403);
-        g2.drawRect(470,650,626-470,866-650);
-
-        g2.drawRect(644, 155, 800-644, 392-155);
-        g2.drawRect(644, 403, 800-644, 637-403);
-        g2.drawRect(644,650,800-644,866-650);
-       
-        g2.drawRect(815, 155, 969-815, 392-155);
-        g2.drawRect(815, 403, 969-815, 637-403);
-        g2.drawRect(815,650,969-815,866-650);
-
-        g2.drawRect(985, 155, 1138-985, 392-155);
-        g2.drawRect(985, 403, 1138-985, 637-403);
-        g2.drawRect(985,650,1138-985,866-650);
-
-        g2.drawRect(1152, 155, 1302-1152, 392-155);
-        g2.drawRect(1152, 403, 1302-1152, 637-403);
-        g2.drawRect(1152,650,1302-1152,866-650);
+        
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
