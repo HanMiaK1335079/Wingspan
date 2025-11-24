@@ -3,14 +3,14 @@ import java.util.*;
 public class Player {
     
     private ArrayList<Bird> cards = new ArrayList<>();
-    private Bird[][] board = new Bird[3][4]; // 3 habitats with max of 4 birds in each
+    private Board board = new Board(); // 3 habitats with max of 4 birds in each
     private ArrayList<Bonus> bonus = new ArrayList<>();
     private int[] actions = new int[4];
     private ArrayList<Integer> foods = new ArrayList<>();
     
     public Player(){
         for (int i=0;i<5;i++) foods.add(0);
-        System.out.println("SUP!");
+        //System.out.println("SUP!");
         
     }
     
@@ -18,12 +18,12 @@ public class Player {
     public int calculateTotalScore() {
         /*loop through birds in board to calc flocked, cached, points, eggs*/
         /*loop through bonus to get bonuspoints */
+        return 0;
     }
     // these are the setters for the Player class, its confusing but its fine
-    public ArrayList<String> getFoodInHand(){return foodInHand;}
-    public ArrayList<Bird> getCardsInHand(){return cardsInHand;}
-    public ArrayList<String> getBonusCard(){return bonusCard;}
-    public Bird[][] getBoard(){return board;}
+    public ArrayList<Bird> getCards() {return cards;}
+    public ArrayList<Bonus> getBonus() {return bonus;}
+    public ArrayList<Integer> getFoods() {return foods;}
     public int[] getActionCubes(){return actions;}
     
 
