@@ -68,6 +68,7 @@ public class ProgramState {
     
     public volatile GamePhase currentPhase = GamePhase.SETUP;
     public volatile int actionsRemaining = 8;
+    public volatile String habitatToPlayBird = "";
     
     public volatile int[][] playerActionCounts = new int[4][4]; 
     public volatile int[] playerRoundScores = new int[4]; 
@@ -76,6 +77,8 @@ public class ProgramState {
     public ProgramState(){
       
     }
+
+
     
     public void incrementPlayerActionCount(int playerIndex, int actionType) {
         if (playerIndex >= 0 && playerIndex < 4 && actionType >= 0 && actionType < 4) {
