@@ -372,6 +372,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     out.println("Clicked Fourth card to play");
                     state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird);
                     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
+                     state.CURRENTEVENT.removeLast();
                 }
                     
                     state.habitatToPlayBird = "";

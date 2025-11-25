@@ -118,6 +118,7 @@ public class Player {
     }
     
     public boolean canPlayBird(Bird bird, String habitat) {
+        
         if (!bird.canAfford(getFoodTokens())) {
             return false;
         }

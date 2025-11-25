@@ -1,7 +1,7 @@
 package src;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -81,7 +81,7 @@ public class Bird {
         }
     }
 
-    public boolean canAfford(List<String> playerFoods) {
+    public boolean canAfford(ArrayList<String> playerFoods) {
         if (playerFoods == null) return false;
         if (foods == null || foods.isEmpty()) return false;
         for (String[] option : foods){
