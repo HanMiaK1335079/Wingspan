@@ -340,9 +340,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             state.CURRENTEVENT.removeLast();
             paintPlaySpecificBirdSecondPart(this.getGraphics());
         }
+        case "Choose Bird" -> {
+            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
+                    currentShowing++;
+                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+
+                repaint();
     }
         
     }
+}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
@@ -385,6 +393,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Play Bird" -> paintPlayBird(g);
                 case "Play Specific Bird" -> paintPlaySpecificBird(g);
                 case "Rules" -> paintRules(g);
+                case "Choose Bird" -> paintPlaySpecificBirdSecondPart(g);
             }
             state.lock.notifyAll();
         }
@@ -433,14 +442,34 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if(state.squaresClickedToPlayBird[0][4]) g2.drawRect(1152, 155, 1302-1152, 392-155);
         if(state.squaresClickedToPlayBird[1][4]) g2.drawRect(1152, 403, 1302-1152, 637-403);
         if(state.squaresClickedToPlayBird[2][4]) g2.drawRect(1152,650,1302-1152,866-650);
-        
+        currentShowing=0;
         state.CURRENTEVENT.add("Wait For Second Part Play Specific Bird");
         
 
     }
 
     public void paintPlaySpecificBirdSecondPart(Graphics g){
-        
+        paintGame(g);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g.setColor(new Color(173, 216, 230));
+        if(state.squaresClickedToPlayBird[0][0]) g2.drawRect(470, 155, 628-470, 392-155);
+        if(state.squaresClickedToPlayBird[1][0]) g2.drawRect(469, 403, 627-469, 637-403);
+        if(state.squaresClickedToPlayBird[2][0]) g2.drawRect(470,650,626-470,866-650);
+        if(state.squaresClickedToPlayBird[0][1]) g2.drawRect(644, 155, 800-644, 392-155);
+        if(state.squaresClickedToPlayBird[1][1]) g2.drawRect(644, 403, 800-644, 637-403);
+        if(state.squaresClickedToPlayBird[2][1]) g2.drawRect(644,650,800-644,866-650);
+        if(state.squaresClickedToPlayBird[0][2]) g2.drawRect(815, 155, 969-815, 392-155);
+        if(state.squaresClickedToPlayBird[1][2]) g2.drawRect(815, 403, 969-815, 637-403);
+        if(state.squaresClickedToPlayBird[2][2]) g2.drawRect(815,650,969-815,866-650);
+        if(state.squaresClickedToPlayBird[0][3]) g2.drawRect(985, 155, 1138-985, 392-155);
+        if(state.squaresClickedToPlayBird[1][3]) g2.drawRect(985, 403, 1138-985, 637-403);
+        if(state.squaresClickedToPlayBird[2][3]) g2.drawRect(985,650,1138-985,866-650);
+        if(state.squaresClickedToPlayBird[0][4]) g2.drawRect(1152, 155, 1302-1152, 392-155);
+        if(state.squaresClickedToPlayBird[1][4]) g2.drawRect(1152, 403, 1302-1152, 637-403);
+        if(state.squaresClickedToPlayBird[2][4]) g2.drawRect(1152,650,1302-1152,866-650);
+    state.CURRENTEVENT.add("Choose Bird");
+     g.setColor(new Color(0, 0, 0));
        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
