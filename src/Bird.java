@@ -1,7 +1,7 @@
 package src;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -81,7 +81,7 @@ public class Bird {
         }
     }
 
-    public boolean canAfford(List<String> playerFoods) {
+    public boolean canAfford(ArrayList<String> playerFoods) {
         if (playerFoods == null) return false;
         if (foods == null || foods.isEmpty()) return false;
         for (String[] option : foods){
@@ -136,20 +136,20 @@ public class Bird {
         }
         return s.toString();
     }
+            //THIS SHOULD WORK LATER
+    // public void playAbility(){
+    //     if (!abilityType.equals("N")) return;
 
-    public void playAbility(){
-        if (!abilityType.equals("N")) return;
-
-        if (ability.contains("You may cache it")){
-            /*implement the gain 1 seed thing */
-        }else if (ability.contains("in their [wetland]")){
-            /*implement player with fewest bird draw 1 card */
-        }else if (ability.contains("Tuck 1")){
-            if (ability.contains("draw 1")){
-                /*implement draw 1 after cache */
-            }else if (ability.contains("lay 1 egg")){
-                /*implement lay egg after cache */
-            }
-        }
-    }
+    //     if (ability.contains("You may cache it")){
+    //         /*implement the gain 1 seed thing */
+    //     }else if (ability.contains("in their [wetland]")){
+    //         /*implement player with fewest bird draw 1 card */
+    //     }else if (ability.contains("Tuck 1")){
+    //         if (ability.contains("draw 1")){
+    //             /*implement draw 1 after cache */
+    //         }else if (ability.contains("lay 1 egg")){
+    //             /*implement lay egg after cache */
+    //         }
+    //     }
+    // }
 }
