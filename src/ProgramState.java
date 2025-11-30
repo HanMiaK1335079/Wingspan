@@ -7,6 +7,8 @@ public class ProgramState {
     public volatile int playerTurn=0;
     public volatile ArrayList<Bird> deckOfCards = new ArrayList<>();
     public volatile ArrayList<Bird> discardPile = new ArrayList<>();
+    public volatile ArrayList<Bonus> bonusDeck = new ArrayList<>();
+    public volatile ArrayList<Bonus> discardedBonusCards = new ArrayList<>();
     public volatile Bird[] cardTray = new Bird[3];
     public volatile ArrayList<Bird> birds = new ArrayList<>();
     
@@ -17,8 +19,33 @@ public class ProgramState {
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
     
-    public ArrayList<String> CURRENTEVENT = new ArrayList<>();
+    public enum GameEvent {
+        GAME_START,
+        SELECT_SCREEN,
+        GAME,
+        VIEW_BIRDS,
+        VIEW_BONUS,
+        VIEW_DRAW_BIRDS,
+        VIEW_FEEDER,
+        INFO,
+        RULES,
+        DRAW_CARDS,
+        PLAY_BIRD,
+        GAIN_FOOD,
+        LAY_EGGS,
+        PROCESS_MOUSE_CLICK_GAME_START,
+        SCORE_ROUND
+    }
 
+    public volatile GameEvent currentEvent = GameEvent.GAME_START;
+
+    public GameEvent getCurrentEvent() {
+        return currentEvent;
+    }
+
+    public void setCurrentEvent(GameEvent event) {
+        this.currentEvent = event;
+    }
 
     public volatile boolean[][] squaresClickedToPlayBird = new boolean[3][5];
     private int[] roundGoals = new int[4];
@@ -36,10 +63,19 @@ public class ProgramState {
         deckOfCards.addAll(birds);
         Collections.shuffle(deckOfCards);
     }
+
+    public ArrayList<Bird> getDeck() {
+        return deckOfCards;
+    }
+
+    public ArrayList<Bonus> getBonuses() {
+        return bonusDeck;
+    }
         
     
     public enum GamePhase {
         SETUP,
+        INITIAL_SELECTION,
         PLAYER_TURN,
         END_OF_ROUND,
         GAME_OVER
@@ -49,7 +85,9 @@ public class ProgramState {
         PLAY_BIRD,
         GAIN_FOOD,
         LAY_EGGS,
-        DRAW_CARDS
+        DRAW_CARDS,
+        PREDATOR_SUCCESS,
+        ACTIVATE_BROWN_POWER
     }
     
     public enum DetailedAction {
@@ -65,7 +103,6 @@ public class ProgramState {
     }
     
     public volatile GamePhase currentPhase = GamePhase.SETUP;
-    public volatile int actionsRemaining = 8;
     
     public volatile int[][] playerActionCounts = new int[4][4]; 
     public volatile int[] playerRoundScores = new int[4]; 

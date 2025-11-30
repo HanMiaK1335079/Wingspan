@@ -1,6 +1,7 @@
 package src;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Bonus {
     final private String name;
@@ -17,6 +18,36 @@ public class Bonus {
     }
     
     private BonusType type;
+    private static final Map<String, BonusType> bonusTypeMap = new HashMap<>();
+
+    static {
+        bonusTypeMap.put("Anatomist", BonusType.ANATOMIST);
+        bonusTypeMap.put("Cartographer", BonusType.CARTOGRAPHER);
+        bonusTypeMap.put("Historian", BonusType.HISTORIAN);
+        bonusTypeMap.put("Photographer", BonusType.PHOTOGRAPHER);
+        bonusTypeMap.put("Backyard Birder", BonusType.BACKYARD_BIRDER);
+        bonusTypeMap.put("Bird Bander", BonusType.BIRD_BANDER);
+        bonusTypeMap.put("Bird Counter", BonusType.BIRD_COUNTER);
+        bonusTypeMap.put("Bird Feeder", BonusType.BIRD_FEEDER);
+        bonusTypeMap.put("Diet Specialist", BonusType.DIET_SPECIALIST);
+        bonusTypeMap.put("Enclosure Builder", BonusType.ENCLOSURE_BUILDER);
+        bonusTypeMap.put("Species Protector", BonusType.SPECIES_PROTECTOR);
+        bonusTypeMap.put("Falconer", BonusType.FALCONER);
+        bonusTypeMap.put("Fishery Manager", BonusType.FISHERY_MANAGER);
+        bonusTypeMap.put("Food Web Expert", BonusType.FOOD_WEB_EXPERT);
+        bonusTypeMap.put("Forester", BonusType.FORESTER);
+        bonusTypeMap.put("Large Bird Specialist", BonusType.LARGE_BIRD_SPECIALIST);
+        bonusTypeMap.put("Nest Box Builder", BonusType.NEST_BOX_BUILDER);
+        bonusTypeMap.put("Omnivore Expert", BonusType.OMNIVORE_EXPERT);
+        bonusTypeMap.put("Passerine Specialist", BonusType.PASSERINE_SPECIALIST);
+        bonusTypeMap.put("Platform Builder", BonusType.PLATFORM_BUILDER);
+        bonusTypeMap.put("Prairie Manager", BonusType.PRAIRIE_MANAGER);
+        bonusTypeMap.put("Rodentologist", BonusType.RODENTOLOGIST);
+        bonusTypeMap.put("Small Clutch Specialist", BonusType.SMALL_CLUTCH_SPECIALIST);
+        bonusTypeMap.put("Viticulturalist", BonusType.VITICULTURALIST);
+        bonusTypeMap.put("Wetland Scientist", BonusType.WETLAND_SCIENTIST);
+        bonusTypeMap.put("Wildlife Gardener", BonusType.WILDLIFE_GARDENER);
+    }
 
     public Bonus(String n, ArrayList<String> b){
         name = n;
@@ -25,35 +56,7 @@ public class Bonus {
     }
     
     private void determineBonusType() {
-        switch(name) {
-            case "Anatomist": type = BonusType.ANATOMIST; break;
-            case "Cartographer": type = BonusType.CARTOGRAPHER; break;
-            case "Historian": type = BonusType.HISTORIAN; break;
-            case "Photographer": type = BonusType.PHOTOGRAPHER; break;
-            case "Backyard Birder": type = BonusType.BACKYARD_BIRDER; break;
-            case "Bird Bander": type = BonusType.BIRD_BANDER; break;
-            case "Bird Counter": type = BonusType.BIRD_COUNTER; break;
-            case "Bird Feeder": type = BonusType.BIRD_FEEDER; break;
-            case "Diet Specialist": type = BonusType.DIET_SPECIALIST; break;
-            case "Enclosure Builder": type = BonusType.ENCLOSURE_BUILDER; break;
-            case "Species Protector": type = BonusType.SPECIES_PROTECTOR; break;
-            case "Falconer": type = BonusType.FALCONER; break;
-            case "Fishery Manager": type = BonusType.FISHERY_MANAGER; break;
-            case "Food Web Expert": type = BonusType.FOOD_WEB_EXPERT; break;
-            case "Forester": type = BonusType.FORESTER; break;
-            case "Large Bird Specialist": type = BonusType.LARGE_BIRD_SPECIALIST; break;
-            case "Nest Box Builder": type = BonusType.NEST_BOX_BUILDER; break;
-            case "Omnivore Expert": type = BonusType.OMNIVORE_EXPERT; break;
-            case "Passerine Specialist": type = BonusType.PASSERINE_SPECIALIST; break;
-            case "Platform Builder": type = BonusType.PLATFORM_BUILDER; break;
-            case "Prairie Manager": type = BonusType.PRAIRIE_MANAGER; break;
-            case "Rodentologist": type = BonusType.RODENTOLOGIST; break;
-            case "Small Clutch Specialist": type = BonusType.SMALL_CLUTCH_SPECIALIST; break;
-            case "Viticulturalist": type = BonusType.VITICULTURALIST; break;
-            case "Wetland Scientist": type = BonusType.WETLAND_SCIENTIST; break;
-            case "Wildlife Gardener": type = BonusType.WILDLIFE_GARDENER; break;
-            default: type = BonusType.BACKYARD_BIRDER; break;
-        }
+        type = bonusTypeMap.getOrDefault(name, BonusType.BACKYARD_BIRDER);
     }
 
     
@@ -65,35 +68,35 @@ public class Bonus {
 
     public boolean hasBird(Bird b) {return birds.contains(b.getName());}
 
+    private int countBirds(Player p, Predicate<Bird> condition) {
+        int count = 0;
+        for (Bird b : p.getCardsInHand()) {
+            if (condition.test(b)) {
+                count++;
+            }
+        }
+        for (Bird b : p.getAllBirdsOnBoard()) {
+            if (condition.test(b)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public int calculateBonus(Player p){
         int bonus = 0;
         
         switch(type) {
             case ANATOMIST:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getWingspan() >= 65) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getWingspan() >= 65) bonus++;
-                }
+                bonus = countBirds(p, b -> b.getWingspan() >= 65);
                 break;
                 
             case CARTOGRAPHER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getMaxEggs() >= 4) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getMaxEggs() >= 4) bonus++;
-                }
+                bonus = countBirds(p, b -> b.getMaxEggs() >= 4);
                 break;
                 
             case HISTORIAN:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getPoints() >= 5) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getPoints() >= 5) bonus++;
-                }
+                bonus = countBirds(p, b -> b.getPoints() >= 5);
                 break;
                 
             case PHOTOGRAPHER:
@@ -114,260 +117,64 @@ public class Bonus {
                 break;
                 
             case BIRD_FEEDER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
-                break;
-                
             case DIET_SPECIALIST:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
-                break;
-                
             case ENCLOSURE_BUILDER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
-                break;
-                
             case SPECIES_PROTECTOR:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
+            case OMNIVORE_EXPERT:
+            case PASSERINE_SPECIALIST:
+            case FOOD_WEB_EXPERT:
+                bonus = countBirds(p, this::hasBird);
                 break;
                 
             case FALCONER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getabilityType().equals("predator")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getabilityType().equals("predator")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.getabilityType().equals("predator") && hasBird(b));
                 break;
                 
             case FISHERY_MANAGER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.canLiveInHabitat("wetlands")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.canLiveInHabitat("wetlands")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                break;
-                
-            case FOOD_WEB_EXPERT:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
+                bonus = countBirds(p, b -> b.canLiveInHabitat("wetlands") && hasBird(b));
                 break;
                 
             case FORESTER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.canLiveInHabitat("forest")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.canLiveInHabitat("forest")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.canLiveInHabitat("forest") && hasBird(b));
                 break;
                 
             case LARGE_BIRD_SPECIALIST:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getWingspan() >= 100) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getWingspan() >= 100) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.getWingspan() >= 100 && hasBird(b));
                 break;
                 
             case NEST_BOX_BUILDER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getNest().equals("cavity")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getNest().equals("cavity")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                break;
-                
-            case OMNIVORE_EXPERT:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
-                break;
-                
-            case PASSERINE_SPECIALIST:
-                for (Bird b : p.getCardsInHand()) {
-                    if (hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (hasBird(b)) bonus++;
-                }
+                bonus = countBirds(p, b -> b.getNest().equals("cavity") && hasBird(b));
                 break;
                 
             case PLATFORM_BUILDER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getNest().equals("platform")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getNest().equals("platform")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.getNest().equals("platform") && hasBird(b));
                 break;
                 
             case PRAIRIE_MANAGER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.canLiveInHabitat("plains")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.canLiveInHabitat("plains")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.canLiveInHabitat("plains") && hasBird(b));
                 break;
                 
             case RODENTOLOGIST:
-                for (Bird b : p.getCardsInHand()) {
-                    ArrayList<String[]> foods = b.getFoods();
-                    boolean hasRat = false;
-                    for (String[] foodSet : foods) {
-                        for (String food : foodSet) {
-                            if (food.equals("r")) {
-                                hasRat = true;
-                                break;
-                            }
-                        }
-                        if (hasRat) break;
-                    }
-                    if (hasRat && hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    ArrayList<String[]> foods = b.getFoods();
-                    boolean hasRat = false;
-                    for (String[] foodSet : foods) {
-                        for (String food : foodSet) {
-                            if (food.equals("r")) {
-                                hasRat = true;
-                                break;
-                            }
-                        }
-                        if (hasRat) break;
-                    }
-                    if (hasRat && hasBird(b)) bonus++;
-                }
+                bonus = countBirds(p, b -> hasBird(b) && b.getFoods().stream().flatMap(Arrays::stream).anyMatch(food -> food.equals("r")));
                 break;
                 
             case SMALL_CLUTCH_SPECIALIST:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getMaxEggs() <= 2) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getMaxEggs() <= 2) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.getMaxEggs() <= 2 && hasBird(b));
                 break;
                 
             case VITICULTURALIST:
-                for (Bird b : p.getCardsInHand()) {
-                    ArrayList<String[]> foods = b.getFoods();
-                    boolean hasBerry = false;
-                    for (String[] foodSet : foods) {
-                        for (String food : foodSet) {
-                            if (food.equals("b")) {
-                                hasBerry = true;
-                                break;
-                            }
-                        }
-                        if (hasBerry) break;
-                    }
-                    if (hasBerry && hasBird(b)) bonus++;
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    ArrayList<String[]> foods = b.getFoods();
-                    boolean hasBerry = false;
-                    for (String[] foodSet : foods) {
-                        for (String food : foodSet) {
-                            if (food.equals("b")) {
-                                hasBerry = true;
-                                break;
-                            }
-                        }
-                        if (hasBerry) break;
-                    }
-                    if (hasBerry && hasBird(b)) bonus++;
-                }
+                bonus = countBirds(p, b -> hasBird(b) && b.getFoods().stream().flatMap(Arrays::stream).anyMatch(food -> food.equals("b")));
                 break;
                 
             case WETLAND_SCIENTIST:
-                for (Bird b : p.getCardsInHand()) {
-                    ArrayList<String> habitats = b.getHabitats();
-                    if (habitats.size() == 1 && habitats.contains("w")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    ArrayList<String> habitats = b.getHabitats();
-                    if (habitats.size() == 1 && habitats.contains("w")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> {
+                    List<String> habitats = b.getHabitats();
+                    return habitats.size() == 1 && habitats.contains("w") && hasBird(b);
+                });
                 break;
                 
             case WILDLIFE_GARDENER:
-                for (Bird b : p.getCardsInHand()) {
-                    if (b.getNest().equals("bowl")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
-                for (Bird b : p.getAllBirdsOnBoard()) {
-                    if (b.getNest().equals("bowl")) {
-                        if (hasBird(b)) bonus++;
-                    }
-                }
+                bonus = countBirds(p, b -> b.getNest().equals("bowl") && hasBird(b));
                 break;
         }
         
