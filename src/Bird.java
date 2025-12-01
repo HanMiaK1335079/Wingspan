@@ -1,11 +1,15 @@
 package src;
 
 import java.awt.image.BufferedImage;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.*;
 import java.util.Map;
+=======
+import java.util.*;
+>>>>>>> e5181e672eeeb8ccc794e20a81b70e3b166675f8
 
 
 public class Bird {
