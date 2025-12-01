@@ -1,10 +1,6 @@
 package src;
 
 import java.util.*;
-import src.Bird;
-import src.Player;
-import src.Bonus;
-import src.Food;
 
 public class GameLogic implements Runnable {
     private final FramePanel panel;
@@ -30,7 +26,7 @@ public class GameLogic implements Runnable {
     }
     
     public void endTurn() {
-        game.next();
+        game.next(null);
     }
     
     public void rerollFeeder() {
