@@ -5,7 +5,7 @@ public class Main {
      public static void main(String[]args){
        ProgramState state = new ProgramState();
        FramePanel panel = new FramePanel(state);
-       state.setCurrentEvent(ProgramState.GameEvent.GAME_START);
+       state.CURRENTEVENT.add("Game Start");
        Frame wingSpanFrame = new Frame("Wingspan");
      
         wingSpanFrame.setSize(1600, 900);        
