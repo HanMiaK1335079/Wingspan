@@ -115,8 +115,16 @@ public class Tester {
                 //out.println("Habitats: "+habitats);
 
                 //out.println("Got to birdmaking stuff");
-                
-                b = new Bird(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodArr);
+                ArrayList<Food.FoodType[]> foodList = new ArrayList<>();
+                for (String[] foodOption : foodArr) {
+                    Food.FoodType[] foodTypes = new Food.FoodType[foodOption.length];
+                    for (int i = 0; i < foodOption.length; i++) {
+                        foodTypes[i] = Food.FoodType.valueOf(foodOption[i].toUpperCase());
+                    }
+                    foodList.add(foodTypes);
+                }
+
+                b = Bird.create(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodList);
                 birds.add(b);
                 //out.println("Finished birdmaking stuff");
 

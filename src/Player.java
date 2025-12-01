@@ -1,57 +1,89 @@
 package src;
 import java.util.*;
 
+
+
 public class Player {
     
+    private String name;
     private ArrayList<Bird> cards = new ArrayList<>();
     private Board board;
     private ArrayList<Bonus> bonus = new ArrayList<>();
-    private int[] actions = new int[4];
-    private ArrayList<Integer> foods = new ArrayList<>();
+    private Map<Integer, Integer> actions = new HashMap<>();
+    private Food food;
+    private boolean needsToDiscard = false;
+    private int tuckedCards = 0;
     
     private int score = 0;
+    private ScoreBreakdown finalScore;
     
-    public Player() {
-        actions[0] = 8;
-        actions[1] = 7;
-        actions[2] = 6;
-        actions[3] = 5;
-        
-        for (int i = 0; i < 5; i++) {
-            foods.add(0);
+    public Player(String name, int food, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
+        this.name = name;
+        this.food = new Food();
+        this.cards.addAll(startingCards);
+        this.bonus.addAll(startingBonuses);
+        this.id = id;
+        this.board = new Board();
+        for (int i = 1; i <= 4; i++) {
+            actions.put(i, 8 - (i - 1));
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Player() {
+        actions.put(1, 8);
+        actions.put(2, 7);
+        actions.put(3, 6);
+        actions.put(4, 5);
         
+        food = new Food();
         board = new Board();
     }
     
+    private int id = -1;
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public int getId() {
-        return 1;
+        return id;
     }
     
-    public int getActionsRemaining() {
-        if (actions.length > 0) {
-            return actions[0];
-        }
-        return 0;
+    public int getActionsRemaining(int round) {
+        return actions.getOrDefault(round, 0);
     }
     
-    public void useAction() {
-        if (actions.length > 0 && actions[0] > 0) {
-            actions[0]--;
+    public void useAction(int round) {
+        if (actions.containsKey(round) && actions.get(round) > 0) {
+            actions.put(round, actions.get(round) - 1);
         }
     }
     
+    public ArrayList<Bird> getCardsInHand() {
+        return cards;
+    }
+    
+    public void addBonusCard(Bonus card) {
+        bonus.add(card);
+    }
+
+    public String getHabitatOfBird(Bird b) {
+        return board.getHabitatOfBird(b);
+    }
+
+    public boolean canDrawBonusCard() {
+        return true;
+    }
+
+    public void addPoints(int points) {
+        score += points;
+    }
+
     public void nextRound() {
-        //shorten actions by 1 since new round. No more first elem. 
-        if (actions.length > 1) {
-            int[] newArray = new int[actions.length - 1];
-            for(int i = 0; i < newArray.length; i++) {
-                int source = 1 + i;
-                int dest = 0 + i;
-                newArray[dest] = actions[source];
-            }
-            actions = newArray;
-        }
     }
     
     public void resetPinkPowers() {
@@ -61,77 +93,167 @@ public class Player {
         }
     }
     
-    public void removeFoodToken(String f) {
-        switch (f) {
-            case "seed" -> {
-                if (foods.get(0) > 0) foods.set(0, foods.get(0) - 1);
-            }
-            case "fish" -> {
-                if (foods.get(1) > 0) foods.set(1, foods.get(1) - 1);
-            }
-            case "berry" -> {
-                if (foods.get(2) > 0) foods.set(2, foods.get(2) - 1);
-            }
-            case "insect" -> {
-                if (foods.get(3) > 0) foods.set(3, foods.get(3) - 1);
-            }
-            case "rat" -> {
-                if (foods.get(4) > 0) foods.set(4, foods.get(4) - 1);
-            }
+    public void removeFood(Food.FoodType f, int amount) {
+        food.removeFood(f, amount);
+    }
+
+    public Map<Food.FoodType, Integer> getPlayerFoodCounts() {
+        Map<Food.FoodType, Integer> counts = new HashMap<>();
+        for (Food.FoodType type : Food.FoodType.values()) {
+            counts.put(type, food.getFoodCount(type));
         }
+        return counts;
     }
     
-    public ArrayList<String> getFoodTokens() {
-        ArrayList<String> foodList = new ArrayList<>();
-        String[] types = {"seed", "fish", "berry", "insect", "rat"};
-        
-        for (int i = 0; i < foods.size() && i < types.length; i++) {
-            int count = foods.get(i);
-            for (int j = 0; j < count; j++) {
-                foodList.add(types[i]);
-            }
-        }
-        
-        return foodList;
+    public ArrayList<Food.FoodType> getFoodTokens() {
+        return food.getFoodTokens();
     }
     
-    public boolean hasFoodType(String foodType) {
-        switch (foodType) {
-            case "seed": return foods.get(0) > 0;
-            case "fish": return foods.get(1) > 0;
-            case "berry": return foods.get(2) > 0;
-            case "insect": return foods.get(3) > 0;
-            case "rat": return foods.get(4) > 0;
-            default: return false;
-        }
+    public boolean hasFoodType(Food.FoodType foodType) {
+        return food.hasFood(foodType, 1);
     }
     
-    public int getFoodCount(String foodType) {
-        switch (foodType) {
-            case "seed": return foods.get(0);
-            case "fish": return foods.get(1);
-            case "berry": return foods.get(2);
-            case "insect": return foods.get(3);
-            case "rat": return foods.get(4);
-            default: return 0;
-        }
+    public int getFoodCount(Food.FoodType foodType) {
+        return food.getFoodCount(foodType);
     }
     
-    public boolean canPlayBird(Bird bird, String habitat) {
-        
-        if (!bird.canAfford(getFoodTokens())) {
+    public boolean playBird(Bird bird, String habitat, int position, Object... params) {
+        if (!canPlayBird(bird, habitat, position)) {
             return false;
         }
         
-        return board.canPlayBird(habitat);
-    }
-    
-    public boolean playBird(Bird bird, String habitat) {
-        if (!canPlayBird(bird, habitat)) {
+        spendFoodForBird(bird, params);
+        int eggCost = getEggCostForPlacement(habitat);
+        if (!spendEggs(eggCost)) {
             return false;
         }
-        
-        return board.playBird(bird, habitat);
+        return board.playBird(bird, habitat, position);
+    }
+    
+    public boolean canPlayBird(Bird bird, String habitat, int position) {
+        if (!canAffordBird(bird)) {
+            return false;
+        }
+        int eggCost = getEggCostForPlacement(habitat);
+        if (getEggCount() < eggCost) {
+            return false;
+        }
+        return board.canPlayBird(habitat, position);
+    }
+
+    private void spendFoodForBird(Bird bird, Object... params) {
+        if (bird.getFoods() == null || bird.getFoods().size() == 0) {
+            return;
+        }
+
+        if (params != null && params.length > 0 && params[0] instanceof Map) {
+            spendFoodFromMap((Map<Food.FoodType, Integer>) params[0]);
+        } else {
+            spendFirstAffordableOption(bird);
+        }
+    }
+
+    private void spendFoodFromMap(Map<Food.FoodType, Integer> chosenFoods) {
+        for (Map.Entry<Food.FoodType, Integer> entry : chosenFoods.entrySet()) {
+            food.removeFood(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void spendFirstAffordableOption(Bird bird) {
+        for (Food.FoodType[] option : bird.getFoods()) {
+            if (canAffordOption(option)) {
+                spendFoodForOption(option);
+                return;
+            }
+        }
+    }
+
+    public boolean canAffordBird(Bird bird) {
+        if (bird.getFoods() == null || bird.getFoods().size() == 0) {
+            return true;
+        }
+        for (Food.FoodType[] option : bird.getFoods()) {
+            if (canAffordOption(option)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean canAffordOption(Food.FoodType[] option) {
+        Map<Food.FoodType, Integer> requiredFoodCounts = new HashMap<>();
+        int wildRequired = 0;
+        for (Food.FoodType food : option) {
+            if (food == Food.FoodType.SEED_INSECT) {
+                wildRequired++;
+            } else {
+                requiredFoodCounts.put(food, requiredFoodCounts.getOrDefault(food, 0) + 1);
+            }
+        }
+
+        Map<Food.FoodType, Integer> playerFoodCounts = getPlayerFoodCounts();
+        for (Map.Entry<Food.FoodType, Integer> entry : requiredFoodCounts.entrySet()) {
+            if (playerFoodCounts.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                return false;
+            }
+        }
+
+        int leftovers = 0;
+        for (Food.FoodType t : Food.FoodType.values()) {
+            if (t != Food.FoodType.SEED_INSECT) {
+                leftovers += Math.max(0, playerFoodCounts.getOrDefault(t, 0) - requiredFoodCounts.getOrDefault(t, 0));
+            }
+        }
+
+        return leftovers >= wildRequired;
+    }
+
+    private void spendFoodForOption(Food.FoodType[] option) {
+        Map<Food.FoodType, Integer> requiredFoodCounts = new HashMap<>();
+        int wildRequired = 0;
+        for (Food.FoodType food : option) {
+            if (food == Food.FoodType.SEED_INSECT) {
+                wildRequired++;
+            } else {
+                requiredFoodCounts.put(food, requiredFoodCounts.getOrDefault(food, 0) + 1);
+            }
+        }
+
+        for (Map.Entry<Food.FoodType, Integer> entry : requiredFoodCounts.entrySet()) {
+            food.removeFood(entry.getKey(), entry.getValue());
+        }
+        for (int i = 0; i < wildRequired; i++) {
+            spendAnyFood();
+        }
+    }
+
+    private void spendAnyFood() {
+        for (Food.FoodType t : Food.FoodType.values()) {
+            if (t != Food.FoodType.SEED_INSECT && hasFoodType(t)) {
+                removeFood(t, 1);
+                break;
+            }
+        }
+    }
+
+    private int getEggCostForPlacement(String habitat) {
+        return board.getBirdsInHabitat(habitat).size();
+    }
+
+    public boolean spendEggs(int eggs) {
+        if (eggs <= 0) return true;
+        if (getEggCount() < eggs) return false;
+        int remaining = eggs;
+        Bird[][] boardArray = board.getBoard();
+        for (int h = 0; h < 3 && remaining > 0; h++) {
+            for (int i = 0; i < boardArray[h].length && remaining > 0; i++) {
+                Bird b = boardArray[h][i];
+                if (b != null) {
+                    remaining = b.removeEggs(remaining);
+                }
+            }
+        }
+        return remaining == 0;
     }
     
     public boolean layEggsOnBird(Bird bird, int eggs) {
@@ -151,31 +273,32 @@ public class Player {
     }
     
     public boolean layEggsOnAnyBird() {
-        Bird[][] boardArray = board.getBoard();
-        for (int h = 0; h < 3; h++) {
-            for (int i = 0; i < boardArray[h].length; i++) {
-                if (boardArray[h][i] != null) {
-                    Bird bird = boardArray[h][i];
-                    if (bird.getStoredEggs() < bird.getMaxEggs()) {
-                        bird.addEggs(1);
-                        return true;
-                    }
-                }
+        return board.layEggsOnAnyBird();
+    }
+
+    public int getFirstEmptySlotIndex(String habitat) {
+        return board.getFirstEmptySlotIndex(habitat);
+    }
+    
+    public boolean canLayEggsOnAnyBird() {
+        for (Bird bird : getAllBirdsOnBoard()) {
+            if (!bird.hasMaxEggs()) {
+                return true;
             }
         }
         return false;
+    }
+
+    public ArrayList<Bird> getBirdsInHabitat(String habitat) {
+        return board.getBirdsInHabitat(habitat);
     }
     
     public int getBirdCount() {
         return board.getBirdCount();
     }
-    
+
     public int getEggCount() {
         return board.getEggCount();
-    }
-    
-    public ArrayList<Bird> getCardsInHand() {
-        return cards;
     }
     
     public void setCardsInHand(ArrayList<Bird> c) {
@@ -211,7 +334,7 @@ public class Player {
     }
     
     public int getScore(){
-        return calculateScore();
+        return calculateScore().total();
     }
     
     public void addBonus(Bonus b) {
@@ -222,48 +345,72 @@ public class Player {
         bonus.remove(b);
     }
     
-    public ArrayList<Bird> getBirdsInHabitat(String habitat) {
-        switch (habitat.toLowerCase()) {
-            case "forest":
-            case "plains": 
-            case "wetlands":
-                return board.getBirdsInHabitat(habitat);
-            default:
-                return new ArrayList<Bird>();
-        }
-    }
-    
     public ArrayList<Bird> getAllBirdsOnBoard() {
         return board.getAllBirds();
     }
     
-    public int calculateScore() {
+    public ScoreBreakdown calculateScore() {
         return board.calculateScore();
     }
     
     public void setPlayerScore(int s) {
         score = s;
     }
-    
-    public ArrayList<Integer> getFoods(){return foods;}
-    
-    public void addFood(String f) {
-        switch (f) {
-            case "seed" -> foods.set(0, foods.get(0)+1);
-            case "fish" -> foods.set(1, foods.get(1)+1);
-            case "berry" -> foods.set(2, foods.get(2)+1);
-            case "insect" -> foods.set(3, foods.get(3)+1);
-            case "rat" -> foods.set(4, foods.get(4)+1);
-        }
+
+    public void setFinalScore(ScoreBreakdown s) {
+        finalScore = s;
     }
     
-    public void removeFood(String f) {
-        switch (f) {
-            case "seed" -> foods.set(0, Math.max(0, foods.get(0)-1));
-            case "fish" -> foods.set(1, Math.max(0, foods.get(1)-1));
-            case "berry" -> foods.set(2, Math.max(0, foods.get(2)-1));
-            case "insect" -> foods.set(3, Math.max(0, foods.get(3)-1));
-            case "rat" -> foods.set(4, Math.max(0, foods.get(4)-1));
-        }
+    public Food getFood(){
+        return food;
+    }
+    
+    public void addFood(Food.FoodType foodType, int amount) {
+        food.addFood(foodType, amount);
+    }
+
+    public void tuckCard() {
+        tuckedCards++;
+    }
+    
+    public ArrayList<Bird> getBirdsByNestType(String nestType) {
+        return board.getBirdsByNestType(nestType);
+    }
+    
+    public boolean hasBirdWithNestType(String nestType) {
+        ArrayList<Bird> birds = getBirdsByNestType(nestType);
+        return !birds.isEmpty();
+    }
+    
+    public Bird getRightmostBirdInHabitat(String habitat) {
+        return board.getRightmostBirdInHabitat(habitat);
+    }
+
+    public boolean isHabitatFull(String habitat) {
+        return board.isHabitatFull(habitat);
+    }
+
+    public boolean isBirdRightmostInHabitat(Bird b, String habitat) {
+        return board.isBirdRightmostInHabitat(b, habitat);
+    }
+
+    public void layEggsInNestType(String nestType) {
+        board.layEggsInNestType(nestType);
+    }
+
+    public void setNeedsToDiscard(boolean needsToDiscard) {
+        this.needsToDiscard = needsToDiscard;
+    }
+
+    public boolean getNeedsToDiscard() {
+        return needsToDiscard;
+    }
+    
+    public boolean canAffordFood(Food.FoodType f, int amount) {
+        return food.hasFood(f, amount);
+    }
+    
+    public void spendFood(Food.FoodType f, int amount) {
+        food.removeFood(f, amount);
     }
 }
