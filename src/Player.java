@@ -13,11 +13,16 @@ public class Player {
     private Food food;
     private boolean needsToDiscard = false;
     private int tuckedCards = 0;
+    private int seedNum=0;
+    private int fishNum=0;
+    private int berryNum=0;
+    private int invertebrateNum=0;
+    private int rodentNum=0;
     
     private int score = 0;
     private ScoreBreakdown finalScore;
     
-    public Player(String name, int food, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
+    public Player(String name, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
         this.name = name;
         this.food = new Food();
         this.cards.addAll(startingCards);
@@ -141,6 +146,7 @@ public class Player {
         return board.canPlayBird(habitat, position);
     }
 
+    @SuppressWarnings("unchecked")
     private void spendFoodForBird(Bird bird, Object... params) {
         if (bird.getFoods() == null || bird.getFoods().size() == 0) {
             return;

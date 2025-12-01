@@ -342,7 +342,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             paintPlaySpecificBirdSecondPart(this.getGraphics());
         }
         case "Choose Bird" -> {
-            if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+            if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();
+                for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+            }
                 else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
                     currentShowing++;
                 else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
@@ -350,29 +352,41 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //(504,504)->(740,825)
                 //(755,504)->(991,825)
                 //(100,504)->(1237,825)
-                
+                int position=0;
+                for(int i=0;i<3;i++){
+                    for(int j=0;j<5;j++){
+                        if(!state.squaresClickedToPlayBird[i][j]){
+                            position=j;
+                        }
+                    }
+                }
                 if(x>=253 && x<=489 && y>=504 && y<=825){
                     out.println("Clicked first card to play");
-                    state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird, 0);
-                    state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
+                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
                     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
                     state.CURRENTEVENT.removeLast();
                 } else if ( x >= 504 && x <= 740 && y >= 504 && y <= 825 ) {
                     out.println("Clicked Second card to play");
-                    state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+1),state.habitatToPlayBird, 0);
-                    state.players[state.playing].getCardsInHand().remove(currentShowing*showing+1);
+                   if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+1),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+1);
                     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
                     state.CURRENTEVENT.removeLast();
                 } else if ( x >= 755 && x <= 991 && y >= 504 && y <= 825 ) {
                     out.println("Clicked Third card to play");
-                    state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+2),state.habitatToPlayBird, 0);
-                    state.players[state.playing].getCardsInHand().remove(currentShowing*showing+2);
+                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+2),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+2);
                     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
                     state.CURRENTEVENT.removeLast();
                 } else if ( x >= 1000 && x <= 1237 && y >= 504 && y <= 825 ) {
                     out.println("Clicked Fourth card to play");
-                    state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird, 0);
-                    state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
+                   if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                     state.CURRENTEVENT.removeLast();
                      state.CURRENTEVENT.removeLast();
                     endTurn(ProgramState.PlayerAction.PLAY_BIRD);
                 }
@@ -676,6 +690,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString(state.playing+1+"", 238, 67);
+        for (int i=0;i<3;i++){
+           for(int j=0;j<5;j++){
+               if(state.players[state.playing].getBoard().getBoard()[i][j]!=null){
+                   g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 470+154*j, 155+248*i, 150, 240, null);
+               }
+           }
+        }
 
         //draw the goals
         g.setColor(Color.CYAN);
@@ -689,7 +710,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //draw the food token nums
         g.setFont(new Font("Arial", Font.BOLD, 35));
         //out.println("Player foods: "+state.players[state.playing].getFoods());
-        for (int i=0;i<5;i++)
+        for (int i=0;i<state.players[state.playing].getFoodTokens().size();i++)
         g.drawString(""+state.players[state.playing].getFoodCount(state.players[state.playing].getFoodTokens().get(i)), 1416, 55+78*i);
         //g.drawString(state.players[state.playing].getFoods)
 
@@ -915,7 +936,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             //out.println("Read the scanner");
             Bird b;
             String[] items;
-            int readAmt = 1;
+            int readAmt = 100;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);

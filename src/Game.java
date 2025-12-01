@@ -24,7 +24,7 @@ public class Game {
     
     public void init() {
         for (int i = 0; i < state.players.length; i++) {
-            state.players[i] = new Player("Player " + (i + 1), 0, new ArrayList<>(), new ArrayList<>(), i);
+            state.players[i] = new Player("Player " + (i + 1), new ArrayList<>(), new ArrayList<>(), i);
         }
         
         state.makeDeckOfCards();
