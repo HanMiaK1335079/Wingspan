@@ -179,36 +179,65 @@ public class Player {
         }
         return false;
     }
-    
-    public boolean hasFoodType(String foodType) {
-        switch (foodType) {
-            case "seed": return foods.get(0) > 0;
-            case "fish": return foods.get(1) > 0;
-            case "berry": return foods.get(2) > 0;
-            case "insect": return foods.get(3) > 0;
-            case "rat": return foods.get(4) > 0;
-            default: return false;
+
+    private boolean canAffordOption(Food.FoodType[] option) {
+        Map<Food.FoodType, Integer> requiredFoodCounts = new HashMap<>();
+        int wildRequired = 0;
+        for (Food.FoodType food : option) {
+            if (food == Food.FoodType.SEED_INSECT) {
+                wildRequired++;
+            } else {
+                requiredFoodCounts.put(food, requiredFoodCounts.getOrDefault(food, 0) + 1);
+            }
+        }
+
+        Map<Food.FoodType, Integer> playerFoodCounts = getPlayerFoodCounts();
+        for (Map.Entry<Food.FoodType, Integer> entry : requiredFoodCounts.entrySet()) {
+            if (playerFoodCounts.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                return false;
+            }
+        }
+
+        int leftovers = 0;
+        for (Food.FoodType t : Food.FoodType.values()) {
+            if (t != Food.FoodType.SEED_INSECT) {
+                leftovers += Math.max(0, playerFoodCounts.getOrDefault(t, 0) - requiredFoodCounts.getOrDefault(t, 0));
+            }
+        }
+
+        return leftovers >= wildRequired;
+    }
+
+    private void spendFoodForOption(Food.FoodType[] option) {
+        Map<Food.FoodType, Integer> requiredFoodCounts = new HashMap<>();
+        int wildRequired = 0;
+        for (Food.FoodType food : option) {
+            if (food == Food.FoodType.SEED_INSECT) {
+                wildRequired++;
+            } else {
+                requiredFoodCounts.put(food, requiredFoodCounts.getOrDefault(food, 0) + 1);
+            }
+        }
+
+        for (Map.Entry<Food.FoodType, Integer> entry : requiredFoodCounts.entrySet()) {
+            food.removeFood(entry.getKey(), entry.getValue());
+        }
+        for (int i = 0; i < wildRequired; i++) {
+            spendAnyFood();
         }
     }
-    
-    public int getFoodCount(String foodType) {
-        switch (foodType) {
-            case "seed": return foods.get(0);
-            case "fish": return foods.get(1);
-            case "berry": return foods.get(2);
-            case "insect": return foods.get(3);
-            case "rat": return foods.get(4);
-            default: return 0;
+
+    private void spendAnyFood() {
+        for (Food.FoodType t : Food.FoodType.values()) {
+            if (t != Food.FoodType.SEED_INSECT && hasFoodType(t)) {
+                removeFood(t, 1);
+                break;
+            }
         }
     }
-    
-    public boolean canPlayBird(Bird bird, String habitat) {
-        
-        if (!bird.canAfford(getFoodTokens())) {
-            return false;
-        }
-        
-        return board.canPlayBird(habitat);
+
+    private int getEggCostForPlacement(String habitat) {
+        return board.getBirdsInHabitat(habitat).size();
     }
 
     public boolean spendEggs(int eggs) {
