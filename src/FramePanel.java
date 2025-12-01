@@ -272,6 +272,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }else if (state.CURRENTEVENT.getLast().equals("Info")){
             if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
             repaint();
+        } else if (state.CURRENTEVENT.getLast().equals("Scoring Phase")){
+            //if (x>=30 && x<=120 && y>=30 && y<=120) state.CURRENTEVENT.removeLast();
         }
     }
     public void mouseReleased(MouseEvent e) {}
@@ -549,7 +551,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
 
-    public void scoringPhase(){
+    public void scoringPhase(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         
     }
