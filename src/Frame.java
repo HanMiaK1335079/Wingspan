@@ -15,8 +15,7 @@ public class Frame extends JFrame {
         setResizable(false);
 
         ProgramState state = new ProgramState();
-        state.CURRENTEVENT.add("BASE");
-        state.CURRENTEVENT.add("Game Start");
+        state.setCurrentEvent(ProgramState.GameEvent.GAME_START);
 
         JLayeredPane layered = new JLayeredPane();
         layered.setPreferredSize(new Dimension(WIDTH, HEIGHT));
