@@ -384,13 +384,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             
 
                 repaint();
-            }case "Ability" -> {
-                switch (currentBird.getAbility()){
-                    case "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird." ->{
-                        if (x>=510 && x<=790 && y>=385 && y<=515) currentBird.cacheFood();
-                        else if (x>=810 && x<=1090 && y>=385 && y<=515) state.players[state.playing].addFood("seed");
-                    }
-                }
             }case "Select Food" -> {
                 if (selectingSeedInsect){
                     if (x>=510 && x<=790 && y>=385 && y<=515) state.players[state.playing].addFood("seed");
@@ -459,11 +452,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Play Specific Bird" -> paintPlaySpecificBird(g);
                 case "Rules" -> paintRules(g);
                 case "Choose Bird" -> paintPlaySpecificBirdSecondPart(g);
-                case "Ability" ->{
-                    switch (currentBird.getAbility()){
-                        case "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird." -> paintYesNo(g, "Cache 1 seed?");
-                    }
-                }
+                
             }
             state.lock.notifyAll();
         }
@@ -641,7 +630,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     //this is the paintrules method which will paint simple rules and not too advanced ones, Mia will do the advanced ones
-    public void paintRules(Graphics g){
+    /*public void paintRules(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(new Color(40, 40, 60));
         g2.fillRect(0,0,getWidth(),getHeight());
@@ -670,7 +659,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g2.setFont(new Font("SansSerif", Font.BOLD, 18));
             g2.drawString("Back", 55, 70);
         }} catch (Exception ignored) {}
-    }
+    }*/
 
     public void paintSelection(Graphics g){
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
