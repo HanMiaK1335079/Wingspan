@@ -689,7 +689,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setFont(new Font("Arial", Font.BOLD, 35));
         //out.println("Player foods: "+state.players[state.playing].getFoods());
         for (int i=0;i<5;i++)
-            g.drawString(""+state.players[state.playing].getFoods().get(i), 1416, 55+78*i);
+        g.drawString(""+state.players[state.playing].getFoodCount(state.players[state.playing].getFoodTokens().get(i)), 1416, 55+78*i);
         //g.drawString(state.players[state.playing].getFoods)
 
         //birdpics

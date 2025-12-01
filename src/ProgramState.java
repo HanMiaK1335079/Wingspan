@@ -20,6 +20,7 @@ public class ProgramState {
 
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
+    public volatile ArrayList<String> CURRENTEVENT=new ArrayList<>();
     
     public enum GameEvent {
         GAME_START,
