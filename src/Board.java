@@ -1,6 +1,5 @@
 package src;
 import java.util.*;
-import src.ScoreBreakdown;
 
 public class Board {
     //replace arraylist of each habitat with 2D array as follows
