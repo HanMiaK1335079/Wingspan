@@ -365,6 +365,15 @@ public class Player {
         return food;
     }
     
+    public ArrayList<Integer> getFoods() {
+        ArrayList<Integer> foodCounts = new ArrayList<>();
+        for (Food.FoodType type : Food.FoodType.values()) {
+            if(type != Food.FoodType.SEED_INSECT)
+                foodCounts.add(food.getFoodCount(type));
+        }
+        return foodCounts;
+    }
+    
     public void addFood(Food.FoodType foodType, int amount) {
         food.addFood(foodType, amount);
     }
