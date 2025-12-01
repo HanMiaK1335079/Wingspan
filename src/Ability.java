@@ -44,7 +44,9 @@ public class Ability {
         return lowerText.contains("gain") && 
                (lowerText.contains("[seed]") || 
                 lowerText.contains("[fish]") || 
-                lowerText.contains("[rodent]") ||
+                lowerText.contains("[berry]") || 
+                lowerText.contains("[insect]") || 
+                lowerText.contains("[rat]") ||
                 lowerText.contains("[invertebrate]") || 
                 lowerText.contains("[fruit]") ||
                 lowerText.contains("[wild]"));
@@ -88,7 +90,8 @@ public class Ability {
     }
     
     public boolean isRepeatAbility(){
-        return rawText.toLowerCase(Locale.ROOT).contains("repeat");
+        return rawText.toLowerCase(Locale.ROOT).contains("repeat") || 
+               rawText.toLowerCase(Locale.ROOT).contains("activate again");
     }
     
     public boolean isTradeAbility(){
@@ -99,8 +102,8 @@ public class Ability {
         return rawText.toLowerCase(Locale.ROOT).contains("look at a [card]");
     }
     
-    public boolean isDiscard(){
-        return rawText.toLowerCase(Locale.ROOT).contains("discard");
+    public boolean isDiscardEggAbility(){
+        return rawText.toLowerCase(Locale.ROOT).contains("discard") && rawText.toLowerCase(Locale.ROOT).contains("[egg]");
     }
     
     public boolean isRollDiceAbility(){
@@ -109,7 +112,7 @@ public class Ability {
     
     public int getFoodCount(Food.FoodType foodType){
         String lowerText = rawText.toLowerCase(Locale.ROOT);
-        if (lowerText.contains("gain") || lowerText.contains("draw") ) {
+        if (lowerText.contains("gain")) {
             int gainIndex = lowerText.indexOf("gain");
             int bracketIndex = lowerText.indexOf("[" + foodType.getName().toLowerCase() + "]", gainIndex);
             if (bracketIndex > gainIndex) {
