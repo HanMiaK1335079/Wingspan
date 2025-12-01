@@ -634,9 +634,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
 
-
-    
-
     public void paintDrawBirds(Graphics g){
         paintGame(g);
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
