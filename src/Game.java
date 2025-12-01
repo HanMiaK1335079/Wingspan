@@ -1,11 +1,5 @@
 package src;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.*;
-import src.Bird;
-import src.Food;
 
 public class Game {
     private ProgramState state;
@@ -94,8 +88,10 @@ public class Game {
         }
     }
     
-    public void next() {
+    public void next(ProgramState.PlayerAction action) {
         player = (player + 1) % 4;
+        
+        activatePinkPowers(state.players[player], action);
         
         if (player == (state.firstPlayerToken - 1)) {
             nextRound();
@@ -104,6 +100,20 @@ public class Game {
         state.players[player].setPlayerScore(state.players[player].calculateScore().total());
     }
     
+    //TODO: check, ai gen placeholder
+    public void activatePinkPowers(Player p, ProgramState.PlayerAction action) {
+        for (int i = 0; i < state.players.length; i++) {
+            if (i == player) continue;
+            Player other = state.players[i];
+            ArrayList<Bird> birds = other.getAllBirdsOnBoard();
+            for (Bird b : birds) {
+                if (!b.isPinkPowerUsed() && b.triggersOnAction(action)) {
+                    handlePinkPower(other, b, action);
+                    b.setPinkPowerUsed(true);
+                }
+            }
+        }
+    }
     public void nextRound() {
         determineRoundWinner(round);
         

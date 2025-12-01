@@ -16,8 +16,16 @@ public class ProgramState {
     public volatile int playing = 0;
     public volatile int showing = 0;
 
+    public volatile int birdNumArrayForChoosingSpecificBirds=0;
+
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
+
+        public ArrayList<String> CURRENTEVENT = new ArrayList<>();
+
+        public Game game;
+
+        
     
     public enum GameEvent {
         GAME_START,
@@ -103,6 +111,8 @@ public class ProgramState {
     }
     
     public volatile GamePhase currentPhase = GamePhase.SETUP;
+    public volatile int actionsRemaining = 8;
+    public volatile String habitatToPlayBird = "";
     
     public volatile int[][] playerActionCounts = new int[4][4]; 
     public volatile int[] playerRoundScores = new int[4]; 
