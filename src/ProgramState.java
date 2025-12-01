@@ -11,7 +11,7 @@ public class ProgramState {
     public volatile ArrayList<Bonus> discardedBonusCards = new ArrayList<>();
     public volatile Bird[] cardTray = new Bird[3];
     public volatile ArrayList<Bird> birds = new ArrayList<>();
-    
+
     public volatile Player[] players = new Player[4];
     public volatile int playing = 0;
     public volatile int showing = 0;
@@ -121,6 +121,8 @@ public class ProgramState {
     public ProgramState(){
       
     }
+
+
     
     public void incrementPlayerActionCount(int playerIndex, int actionType) {
         if (playerIndex >= 0 && playerIndex < 4 && actionType >= 0 && actionType < 4) {
