@@ -199,11 +199,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         for (int i=0;i<5;i++){
                             if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
                         }
-                        if (startSelections[5]) state.players[state.playing].addFood("fish");
-                        if (startSelections[6]) state.players[state.playing].addFood("seed"); //why doubleadded?
-                        if (startSelections[7]) state.players[state.playing].addFood("insect"); //why double added?
-                        if (startSelections[8]) state.players[state.playing].addFood("berry");
-                        if (startSelections[9]) state.players[state.playing].addFood("rat");
+                        if (startSelections[5]) state.players[state.playing].addFood(Food.FoodType.FISH, 1);
+                        if (startSelections[6]) state.players[state.playing].addFood(Food.FoodType.SEED, 1); //why doubleadded?
+                        if (startSelections[7]) state.players[state.playing].addFood(Food.FoodType.INSECT, 1); //why double added?
+                        if (startSelections[8]) state.players[state.playing].addFood(Food.FoodType.BERRY, 1);
+                        if (startSelections[9]) state.players[state.playing].addFood(Food.FoodType.RAT, 1);
                         if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
                         else state.players[state.playing].addBonus(bonusOptions[1]);
 
@@ -265,6 +265,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             
             }case "View Draw Birds" ->{
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+                endTurn(ProgramState.PlayerAction.DRAW_CARDS);
                 repaint();
 
             }case "View Feeder" -> {
@@ -774,7 +775,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             if (counter %showing == 0) 
                 birdArrSplit.add(new ArrayList<Bird>());
             counter ++;
-            birdArrSplit.getLast().add(b);
+            birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
 
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
@@ -813,6 +814,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g2.drawRect(1152, 155, 1302-1152, 392-155);
         g2.drawRect(1152, 403, 1302-1152, 637-403);
         g2.drawRect(1152,650,1302-1152,866-650);
+        
         
     }
 
@@ -990,7 +992,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 Map<Integer, String> foodMap = new HashMap<Integer, String>();
                 String[] foodtypes = {"i", "s", "f", "b", "r", "","a"};
                 for (int i=13;i<20;i++) foodMap.put(i, foodtypes[i-13]);
-                ArrayList<String[]> foodArr = new ArrayList<String[]>();
+                ArrayList<Food.FoodType[]> foodArr = new ArrayList<Food.FoodType[]>();
                 ArrayList<String> foods = new ArrayList<String>();
                 //out.println("Food stuff instantiated");
                 if (items[20].equals("/")){
@@ -1000,7 +1002,18 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                     for (String fo: foods){
                         String[] foo = {fo};
-                        foodArr.add(foo);
+                        //convert foo to Food.FoodType[] then add to foodArr
+                        Food.FoodType[] foodFoo = new Food.FoodType[foo.length];
+                        for (int i=0;i<foo.length;i++){
+                            switch (foo[i]){
+                                case "i" -> foodFoo[i] = Food.FoodType.INSECT;
+                                case "s" -> foodFoo[i] = Food.FoodType.SEED;
+                                case "f" -> foodFoo[i] = Food.FoodType.FISH;
+                                case "b" -> foodFoo[i] = Food.FoodType.BERRY;
+                                case "r" -> foodFoo[i] = Food.FoodType.RAT;
+                            }
+                        }
+                        foodArr.add(foodFoo);
                     }
                     
                 }else{
@@ -1018,7 +1031,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     String[] foox = new String[foo.size()];
                     for (int i=0;i<foo.size();i++) foox[i] = foo.get(i);
                     //out.println(Arrays.toString(foox));
-                    foodArr.add(foox);
+                    Food.FoodType[] foodFoods = new Food.FoodType[foox.length];
+                        for (int i=0;i<foox.length;i++){
+                            switch (foox[i]){
+                                case "i" -> foodFoods[i] = Food.FoodType.INSECT;
+                                case "s" -> foodFoods[i] = Food.FoodType.SEED;
+                                case "f" -> foodFoods[i] = Food.FoodType.FISH;
+                                case "b" -> foodFoods[i] = Food.FoodType.BERRY;
+                                case "r" -> foodFoods[i] = Food.FoodType.RAT;
+                            }
+                        }
+                    foodArr.add(foodFoods);
                 }
 
                 // Ability type stuff
@@ -1161,26 +1184,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         bonusOptions[1] = bonusArr.remove(0);
         
     }
-    
 
-    /*public void playAbility(Bird b){
-        if (!b.getAbilityType.equals("N")) return;
-
-        String ability = b.getAbility();
-        int p = state.playing;
-        if (ability.contains("You may cache it")){
-            
-        }else if (ability.contains("in their [wetland]")){
-            //implement player with fewest bird draw 1 card 
-        }else if (ability.contains("Tuck 1")){
-            if (ability.contains("draw 1")){
-                //implement draw 1 after cache 
-            }else if (ability.contains("lay 1 egg")){
-                //implement lay egg after cache 
-            }
-        }
+    public void endTurn(ProgramState.PlayerAction action) {
+        state.game.next(action);
     }
-    */
 
 }
      
