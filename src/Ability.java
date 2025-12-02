@@ -110,11 +110,21 @@ public class Ability {
         return rawText.toLowerCase(Locale.ROOT).contains("roll all dice");
     }
     
-    public int getFoodCount(Food.FoodType foodType){
+    public int getFoodCount(String foodType){
+        String foodNameMap = switch(foodType) {
+            case "s" -> "seed";
+            case "f" -> "fish";
+            case "b" -> "berry";
+            case "i" -> "insect";
+            case "r" -> "rat";
+            case "a" -> "wild";
+            default -> foodType;
+        };
+        
         String lowerText = rawText.toLowerCase(Locale.ROOT);
         if (lowerText.contains("gain")) {
             int gainIndex = lowerText.indexOf("gain");
-            int bracketIndex = lowerText.indexOf("[" + foodType.getName().toLowerCase() + "]", gainIndex);
+            int bracketIndex = lowerText.indexOf("[" + foodNameMap + "]", gainIndex);
             if (bracketIndex > gainIndex) {
                 String substring = lowerText.substring(gainIndex + 4, bracketIndex).trim();
                 StringBuilder numberBuilder = new StringBuilder();

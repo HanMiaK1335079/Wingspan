@@ -1,18 +1,12 @@
 package src;
 
 import java.util.*;
-import src.Bird;
-import src.Player;
-import src.Bonus;
-import src.Food;
 
 public class GameLogic implements Runnable {
-    private final FramePanel panel;
     private final ProgramState state;
-    private Game game;
+    private final Game game;
     
     public GameLogic(FramePanel panel, ProgramState state) {
-        this.panel = panel;
         this.state = state;
         this.game = new Game(state);
     }
@@ -30,7 +24,7 @@ public class GameLogic implements Runnable {
     }
     
     public void endTurn() {
-        game.next();
+        game.next(null);
     }
     
     public void rerollFeeder() {
@@ -69,7 +63,7 @@ public class GameLogic implements Runnable {
         return game.getPlayer(game.getCurrentPlayerIndex()).getBonuses();
     }
 
-    public int getFoodCount(Food.FoodType type) {
+    public int getFoodCount(String type) {
         return game.getPlayer(game.getCurrentPlayerIndex()).getFoodCount(type);
     }
 
