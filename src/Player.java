@@ -10,7 +10,7 @@ public class Player {
     private Board board;
     private ArrayList<Bonus> bonus = new ArrayList<>();
     private Map<Integer, Integer> actions = new HashMap<>();
-    private Food food;
+    private ArrayList<Integer> foods = new ArrayList<>();
     private boolean needsToDiscard = false;
     private int tuckedCards = 0;
     private int seedNum=0;
@@ -24,7 +24,7 @@ public class Player {
     
     public Player(String name, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
         this.name = name;
-        this.food = new Food();
+        this.foods = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0));
         this.cards.addAll(startingCards);
         this.bonus.addAll(startingBonuses);
         this.id = id;
@@ -44,7 +44,7 @@ public class Player {
         actions.put(3, 6);
         actions.put(4, 5);
         
-        food = new Food();
+        this.foods = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0));
         board = new Board();
     }
     
@@ -98,28 +98,50 @@ public class Player {
         }
     }
     
-    public void removeFood(Food.FoodType f, int amount) {
-        food.removeFood(f, amount);
+    public void removeFood(String foodType, int amount) {
+        switch (foodType) {
+            case "s" -> foods.set(0, Math.max(0, foods.get(0) - amount));
+            case "f" -> foods.set(1, Math.max(0, foods.get(1) - amount));
+            case "b" -> foods.set(2, Math.max(0, foods.get(2) - amount));
+            case "i" -> foods.set(3, Math.max(0, foods.get(3) - amount));
+            case "r" -> foods.set(4, Math.max(0, foods.get(4) - amount));
+        }
     }
 
-    public Map<Food.FoodType, Integer> getPlayerFoodCounts() {
-        Map<Food.FoodType, Integer> counts = new HashMap<>();
-        for (Food.FoodType type : Food.FoodType.values()) {
-            counts.put(type, food.getFoodCount(type));
-        }
+    public Map<String, Integer> getPlayerFoodCounts() {
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put("s", foods.get(0));
+        counts.put("f", foods.get(1));
+        counts.put("b", foods.get(2));
+        counts.put("i", foods.get(3));
+        counts.put("r", foods.get(4));
         return counts;
     }
     
-    public ArrayList<Food.FoodType> getFoodTokens() {
-        return food.getFoodTokens();
+    public ArrayList<String> getFoodTokens() {
+        ArrayList<String> foodList = new ArrayList<>();
+        String[] types = {"s", "f", "b", "i", "r"};
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < foods.get(i); j++) {
+                foodList.add(types[i]);
+            }
+        }
+        return foodList;
     }
     
-    public boolean hasFoodType(Food.FoodType foodType) {
-        return food.hasFood(foodType, 1);
+    public boolean hasFoodType(String foodType) {
+        return getFoodCount(foodType) >= 1;
     }
     
-    public int getFoodCount(Food.FoodType foodType) {
-        return food.getFoodCount(foodType);
+    public int getFoodCount(String foodType) {
+        switch (foodType) {
+            case "s" -> { return foods.get(0); }
+            case "f" -> { return foods.get(1); }
+            case "b" -> { return foods.get(2); }
+            case "i" -> { return foods.get(3); }
+            case "r" -> { return foods.get(4); }
+            default -> { return 0; }
+        }
     }
     
     public boolean playBird(Bird bird, String habitat, int position, Object... params) {
@@ -153,20 +175,20 @@ public class Player {
         }
 
         if (params != null && params.length > 0 && params[0] instanceof Map) {
-            spendFoodFromMap((Map<Food.FoodType, Integer>) params[0]);
+            spendFoodFromMap((Map<String, Integer>) params[0]);
         } else {
             spendFirstAffordableOption(bird);
         }
     }
 
-    private void spendFoodFromMap(Map<Food.FoodType, Integer> chosenFoods) {
-        for (Map.Entry<Food.FoodType, Integer> entry : chosenFoods.entrySet()) {
-            food.removeFood(entry.getKey(), entry.getValue());
+    private void spendFoodFromMap(Map<String, Integer> chosenFoods) {
+        for (Map.Entry<String, Integer> entry : chosenFoods.entrySet()) {
+            removeFood(entry.getKey(), entry.getValue());
         }
     }
 
     private void spendFirstAffordableOption(Bird bird) {
-        for (Food.FoodType[] option : bird.getFoods()) {
+        for (String[] option : bird.getFoods()) {
             if (canAffordOption(option)) {
                 spendFoodForOption(option);
                 return;
@@ -178,7 +200,7 @@ public class Player {
         if (bird.getFoods() == null || bird.getFoods().size() == 0) {
             return true;
         }
-        for (Food.FoodType[] option : bird.getFoods()) {
+        for (String[] option : bird.getFoods()) {
             if (canAffordOption(option)) {
                 return true;
             }
@@ -186,47 +208,45 @@ public class Player {
         return false;
     }
 
-    private boolean canAffordOption(Food.FoodType[] option) {
-        Map<Food.FoodType, Integer> requiredFoodCounts = new HashMap<>();
+    private boolean canAffordOption(String[] option) {
+        Map<String, Integer> requiredFoodCounts = new HashMap<>();
         int wildRequired = 0;
-        for (Food.FoodType food : option) {
-            if (food == Food.FoodType.SEED_INSECT) {
+        for (String food : option) {
+            if (food.equals("a")) {
                 wildRequired++;
             } else {
                 requiredFoodCounts.put(food, requiredFoodCounts.getOrDefault(food, 0) + 1);
             }
         }
 
-        Map<Food.FoodType, Integer> playerFoodCounts = getPlayerFoodCounts();
-        for (Map.Entry<Food.FoodType, Integer> entry : requiredFoodCounts.entrySet()) {
+        Map<String, Integer> playerFoodCounts = getPlayerFoodCounts();
+        for (Map.Entry<String, Integer> entry : requiredFoodCounts.entrySet()) {
             if (playerFoodCounts.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
                 return false;
             }
         }
 
         int leftovers = 0;
-        for (Food.FoodType t : Food.FoodType.values()) {
-            if (t != Food.FoodType.SEED_INSECT) {
-                leftovers += Math.max(0, playerFoodCounts.getOrDefault(t, 0) - requiredFoodCounts.getOrDefault(t, 0));
-            }
+        for (String t : new String[]{"s", "f", "b", "i", "r"}) {
+            leftovers += Math.max(0, playerFoodCounts.getOrDefault(t, 0) - requiredFoodCounts.getOrDefault(t, 0));
         }
 
         return leftovers >= wildRequired;
     }
 
-    private void spendFoodForOption(Food.FoodType[] option) {
-        Map<Food.FoodType, Integer> requiredFoodCounts = new HashMap<>();
+    private void spendFoodForOption(String[] option) {
+        Map<String, Integer> requiredFoodCounts = new HashMap<>();
         int wildRequired = 0;
-        for (Food.FoodType food : option) {
-            if (food == Food.FoodType.SEED_INSECT) {
+        for (String food : option) {
+            if (food.equals("a")) {
                 wildRequired++;
             } else {
                 requiredFoodCounts.put(food, requiredFoodCounts.getOrDefault(food, 0) + 1);
             }
         }
 
-        for (Map.Entry<Food.FoodType, Integer> entry : requiredFoodCounts.entrySet()) {
-            food.removeFood(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Integer> entry : requiredFoodCounts.entrySet()) {
+            removeFood(entry.getKey(), entry.getValue());
         }
         for (int i = 0; i < wildRequired; i++) {
             spendAnyFood();
@@ -234,8 +254,8 @@ public class Player {
     }
 
     private void spendAnyFood() {
-        for (Food.FoodType t : Food.FoodType.values()) {
-            if (t != Food.FoodType.SEED_INSECT && hasFoodType(t)) {
+        for (String t : new String[]{"s", "f", "b", "i", "r"}) {
+            if (hasFoodType(t)) {
                 removeFood(t, 1);
                 break;
             }
@@ -367,21 +387,22 @@ public class Player {
         finalScore = s;
     }
     
-    public Food getFood(){
-        return food;
+    public ArrayList<Integer> getFood(){
+        return foods;
     }
     
     public ArrayList<Integer> getFoods() {
-        ArrayList<Integer> foodCounts = new ArrayList<>();
-        for (Food.FoodType type : Food.FoodType.values()) {
-            if(type != Food.FoodType.SEED_INSECT)
-                foodCounts.add(food.getFoodCount(type));
-        }
-        return foodCounts;
+        return new ArrayList<>(foods);
     }
     
-    public void addFood(Food.FoodType foodType, int amount) {
-        food.addFood(foodType, amount);
+    public void addFood(String foodType, int amount) {
+        switch (foodType) {
+            case "s" -> foods.set(0, foods.get(0) + amount);
+            case "f" -> foods.set(1, foods.get(1) + amount);
+            case "b" -> foods.set(2, foods.get(2) + amount);
+            case "i" -> foods.set(3, foods.get(3) + amount);
+            case "r" -> foods.set(4, foods.get(4) + amount);
+        }
     }
 
     public void tuckCard() {
@@ -421,11 +442,11 @@ public class Player {
         return needsToDiscard;
     }
     
-    public boolean canAffordFood(Food.FoodType f, int amount) {
-        return food.hasFood(f, amount);
+    public boolean canAffordFood(String f, int amount) {
+        return getFoodCount(f) >= amount;
     }
     
-    public void spendFood(Food.FoodType f, int amount) {
-        food.removeFood(f, amount);
+    public void spendFood(String f, int amount) {
+        removeFood(f, amount);
     }
 }

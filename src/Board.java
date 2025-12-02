@@ -9,10 +9,8 @@ public class Board {
     
     
     public Board() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = null;
-            }
+        for (Bird[] row : board) {
+            Arrays.fill(row, null);
         }
     }
     
@@ -57,6 +55,7 @@ public class Board {
 
         if (board[h][placementIndex] == null) {
             board[h][placementIndex] = bird;
+            bird.setHabitat(habitat);
             return true;
         }
 
@@ -85,8 +84,8 @@ public class Board {
         if (h == -1) return 0;
         
         int count = 0;
-        for (int i = 0; i < board[h].length; i++) {
-            if (board[h][i] != null) {
+        for (Bird bird : board[h]) {
+            if (bird != null) {
                 count++;
             }
         }
@@ -103,8 +102,8 @@ public class Board {
         int h = getHabitatIndex(habitat);
         if (h == -1) return true;
         
-        for (int i = 0; i < board[h].length; i++) {
-            if (board[h][i] == null) {
+        for (Bird bird : board[h]) {
+            if (bird == null) {
                 return false;
             }
         }
@@ -113,10 +112,10 @@ public class Board {
 
     public int getEggCount() {
         int totalEggs = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] != null) {
-                    totalEggs += board[i][j].getEggCount();
+        for (Bird[] row : board) {
+            for (Bird b : row) {
+                if (b != null) {
+                    totalEggs += b.getEggCount();
                 }
             }
         }
@@ -148,9 +147,9 @@ public class Board {
         if (h == -1) return new ArrayList<>();
         
         ArrayList<Bird> birds = new ArrayList<>();
-        for (int i = 0; i < board[h].length; i++) {
-            if (board[h][i] != null) {
-                birds.add(board[h][i]);
+        for (Bird bird : board[h]) {
+            if (bird != null) {
+                birds.add(bird);
             }
         }
         return birds;
@@ -177,8 +176,8 @@ public class Board {
         
         for (int h = 0; h < 3; h++) {
             int currentLength = 0;
-            for (int i = 0; i < board[h].length; i++) {
-                if (board[h][i] != null) {
+            for (Bird b : board[h]) {
+                if (b != null) {
                     currentLength++;
                 }
             }
@@ -190,10 +189,10 @@ public class Board {
     }
 
     private void forEachBird(java.util.function.Consumer<Bird> action) {
-        for (int h = 0; h < 3; h++) {
-            for (int i = 0; i < board[h].length; i++) {
-                if (board[h][i] != null) {
-                    action.accept(board[h][i]);
+        for (Bird[] row : board) {
+            for (Bird b : row) {
+                if (b != null) {
+                    action.accept(b);
                 }
             }
         }

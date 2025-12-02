@@ -7,7 +7,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import static java.lang.System.*;
 import java.util.*;
@@ -22,17 +21,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
-    private final ArrayList<Bird> birds = new ArrayList<Bird>();
+    private final ArrayList<Bird> birds = new ArrayList<>();
     private BufferedImage ingameBg;
     private Feeder feeder;
 
-    private ArrayList<Integer> roundGoals = new ArrayList<Integer>();
+    private ArrayList<Integer> roundGoals = new ArrayList<>();
     private BufferedImage[] roundPics = new BufferedImage[4];
     private boolean setUp = false;
 
-    private Map<String, ArrayList<String>> bonusMap = new HashMap<String, ArrayList<String>>();
+    private Map<String, ArrayList<String>> bonusMap = new HashMap<>();
     private String[] bonuses = {"Anatomist", "Cartographer", "Historian", "Photographer", "Backyard Birder", "Bird Bander", "Bird Counter", "Bird Feeder", "Diet Specialist", "Enclosure Builder", "Species Protector", "Falconer", "Fishery Manager", "Food Web Expert", "Forester", "Large Bird Specialist", "Nest Box Builder", "Omnivore Expert", "Passerine Specialist", "Platform Builder", "Prairie Manager", "Rodentologist", "Small Clutch Specialist", "Viticulturalist", "Wetland Scientist", "Wildlife Gardener"};
-    private ArrayList<Bonus> bonusArr = new ArrayList<Bonus>();
+    private ArrayList<Bonus> bonusArr = new ArrayList<>();
     private int[][] diceLocMap = new int[5][2];
     /*Gamestate variables */
 
@@ -94,6 +93,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
       
 
     }
+    @Override
     public void mousePressed(MouseEvent e) {
           int x = e.getX();
         int y = e.getY();
@@ -114,7 +114,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         this.repaint();
                         
                         state.lock.notifyAll();
-                        GameLogic gameLogic = new GameLogic(this, state);
+                        new GameLogic(this, state);
                         //  gameLogic.setUp(); //this has yet to be set up.
                     }
                 }
@@ -198,11 +198,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         for (int i=0;i<5;i++){
                             if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
                         }
-                        if (startSelections[5]) state.players[state.playing].addFood(Food.FoodType.FISH, 1);
-                        if (startSelections[6]) state.players[state.playing].addFood(Food.FoodType.SEED, 1); //why doubleadded?
-                        if (startSelections[7]) state.players[state.playing].addFood(Food.FoodType.INSECT, 1); //why double added?
-                        if (startSelections[8]) state.players[state.playing].addFood(Food.FoodType.BERRY, 1);
-                        if (startSelections[9]) state.players[state.playing].addFood(Food.FoodType.RAT, 1);
+                        if (startSelections[5]) state.players[state.playing].addFood("f", 1);
+                        if (startSelections[6]) state.players[state.playing].addFood("s", 1);
+                        if (startSelections[7]) state.players[state.playing].addFood("i", 1);
+                        if (startSelections[8]) state.players[state.playing].addFood("b", 1);
+                        if (startSelections[9]) state.players[state.playing].addFood("r", 1);
                         if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
                         else state.players[state.playing].addBonus(bonusOptions[1]);
                         if (state.playing == 3) {state.CURRENTEVENT.add("Game"); state.playing = 0;}
@@ -397,11 +397,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 repaint();
         }
     }
-}
+    }
+    @Override
     public void mouseReleased(MouseEvent e) {}
+    @Override
     public void mouseEntered(MouseEvent e) {}
+    @Override
     public void mouseExited(MouseEvent e) {}
+    @Override
     public void mouseDragged(MouseEvent e) {}
+    @Override
     public void mouseMoved(MouseEvent e) {
         // highlight the button when hovered
         updateStartButtonRect();
@@ -522,11 +527,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Play A Bird Card", 600, 458);
         g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
-        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<>();
         int counter = 0;
         for (Bird b: state.players[state.playing].getCardsInHand()){
             if (counter %showing == 0) 
-                birdArrSplit.add(new ArrayList<Bird>());
+                birdArrSplit.add(new ArrayList<>());
             counter ++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
@@ -818,7 +823,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawString("Bonus Cards", 600, 458);
         g.drawString(""+state.players[state.playing].getBonuses().size(), 1400, 460);
         
-        if (state.players[state.playing].getBonuses().size()==0) return;
+                if (state.players[state.playing].getBonuses().isEmpty()) return;
         Bonus b;
         for (int i=0;i<state.players[state.playing].getBonuses().size();i++){
             b = state.players[state.playing].getBonuses().get(i);
@@ -930,10 +935,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     //read in birdinfo
     public void readCSV(File f){
         for (String b: bonuses) bonusMap.put(b, new ArrayList<String>());
-        try {
-            //out.println("Will activate scanner");
-            Scanner scan = new Scanner(f);
-            //out.println("Read the scanner");
+        try (Scanner scan = new Scanner(f)) {
             Bird b;
             String[] items;
             int readAmt = 100;
@@ -944,7 +946,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     l = l.replace("\"\"", "");
                     String[] quoteSplit = l.split("\"");
                     //out.println("quotesplit: "+Arrays.toString(quoteSplit));
-                    ArrayList<String> supportSplit = new ArrayList<String>();
+                    ArrayList<String> supportSplit = new ArrayList<>();
                     supportSplit.addAll(Arrays.asList(quoteSplit[0].split(",")));
                     supportSplit.add(quoteSplit[1]);
                     supportSplit.addAll(Arrays.asList(quoteSplit[2].split(",")));
@@ -963,8 +965,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 Map<Integer, String> foodMap = new HashMap<Integer, String>();
                 String[] foodtypes = {"i", "s", "f", "b", "r", "","a"};
                 for (int i=13;i<20;i++) foodMap.put(i, foodtypes[i-13]);
-                ArrayList<Food.FoodType[]> foodArr = new ArrayList<Food.FoodType[]>();
-                ArrayList<String> foods = new ArrayList<String>();
+                ArrayList<String[]> foodArr = new ArrayList<>();
+                ArrayList<String> foods = new ArrayList<>();
                 //out.println("Food stuff instantiated");
                 if (items[20].equals("/")){
                     //out.println("Activated splitfoods");
@@ -973,23 +975,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                     for (String fo: foods){
                         String[] foo = {fo};
-                        //convert foo to Food.FoodType[] then add to foodArr
-                        Food.FoodType[] foodFoo = new Food.FoodType[foo.length];
-                        for (int i=0;i<foo.length;i++){
-                            switch (foo[i]){
-                                case "i" -> foodFoo[i] = Food.FoodType.INSECT;
-                                case "s" -> foodFoo[i] = Food.FoodType.SEED;
-                                case "f" -> foodFoo[i] = Food.FoodType.FISH;
-                                case "b" -> foodFoo[i] = Food.FoodType.BERRY;
-                                case "r" -> foodFoo[i] = Food.FoodType.RAT;
-                            }
-                        }
-                        foodArr.add(foodFoo);
+                        foodArr.add(foo);
                     }
                     
                 }else{
                     //out.println("Activated setfoods");
-                    ArrayList<String> foo = new ArrayList<String>();
+                    ArrayList<String> foo = new ArrayList<>();
                     for (int i=13;i<20;i++){
                         if (!items[i].equals("")){
                             //out.println("Adding");
@@ -1002,17 +993,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     String[] foox = new String[foo.size()];
                     for (int i=0;i<foo.size();i++) foox[i] = foo.get(i);
                     //out.println(Arrays.toString(foox));
-                    Food.FoodType[] foodFoods = new Food.FoodType[foox.length];
-                        for (int i=0;i<foox.length;i++){
-                            switch (foox[i]){
-                                case "i" -> foodFoods[i] = Food.FoodType.INSECT;
-                                case "s" -> foodFoods[i] = Food.FoodType.SEED;
-                                case "f" -> foodFoods[i] = Food.FoodType.FISH;
-                                case "b" -> foodFoods[i] = Food.FoodType.BERRY;
-                                case "r" -> foodFoods[i] = Food.FoodType.RAT;
-                            }
-                        }
-                    foodArr.add(foodFoods);
+                    foodArr.add(foox);
                 }
 
                 // Ability type stuff
@@ -1035,7 +1016,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                 //habitat stuff
                 //out.println("Got to Habitat stuff");
-                ArrayList<String> habitats = new ArrayList<String>();
+                ArrayList<String> habitats = new ArrayList<>();
                 if (items[10].equals("X")) habitats.add("f");
                 if (items[11].equals("X")) habitats.add("p");
                 if (items[12].equals("X")) habitats.add("w");
@@ -1157,6 +1138,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void endTurn(ProgramState.PlayerAction action) {
+        //Todo: state needs a game portion
         state.game.next(action);
     }
 
