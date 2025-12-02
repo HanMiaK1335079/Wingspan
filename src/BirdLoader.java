@@ -10,8 +10,7 @@ public class BirdLoader {
 
     public static ArrayList<Bird> loadBirds(File f, Map<String, ArrayList<String>> bonusMap) {
         ArrayList<Bird> birds = new ArrayList<>();
-        try {
-            Scanner scan = new Scanner(f);
+        try (Scanner scan = new Scanner(f)) {
             String[] items;
             while (scan.hasNextLine()) {
                 String l = scan.nextLine();
@@ -77,14 +76,10 @@ public class BirdLoader {
                 if (items[12].equals("X")) habitats.add("w");
 
                 String[] food = items[10].split("/");
-                ArrayList<Food.FoodType[]> foodList = new ArrayList<>();
+                ArrayList<String[]> foodList = new ArrayList<>();
                 for (String s : food) {
                     String[] foodTypes = s.split("\\+");
-                    Food.FoodType[] tempArr = new Food.FoodType[foodTypes.length];
-                    for (int i = 0; i < foodTypes.length; i++) {
-                        tempArr[i] = Food.FoodType.valueOf(foodTypes[i].toUpperCase());
-                    }
-                    foodList.add(tempArr);
+                    foodList.add(foodTypes);
                 }
 
                 Bird b = Bird.create(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]), items[7], Integer.parseInt(items[8]), Integer.parseInt(items[9]), habitats, foodList);

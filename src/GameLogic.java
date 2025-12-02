@@ -3,12 +3,10 @@ package src;
 import java.util.*;
 
 public class GameLogic implements Runnable {
-    private final FramePanel panel;
     private final ProgramState state;
-    private Game game;
+    private final Game game;
     
     public GameLogic(FramePanel panel, ProgramState state) {
-        this.panel = panel;
         this.state = state;
         this.game = new Game(state);
     }
@@ -65,7 +63,7 @@ public class GameLogic implements Runnable {
         return game.getPlayer(game.getCurrentPlayerIndex()).getBonuses();
     }
 
-    public int getFoodCount(Food.FoodType type) {
+    public int getFoodCount(String type) {
         return game.getPlayer(game.getCurrentPlayerIndex()).getFoodCount(type);
     }
 
