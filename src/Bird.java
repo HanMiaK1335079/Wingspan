@@ -23,6 +23,7 @@ public class Bird {
     private int cachedFood = 0;
     private int tuckedCards = 0;
     private boolean pinkPowerUsed = false;
+    private String habitat = "";
 
     Bird(String name, Ability ability, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<String[]> foods){
         this.name = name;
@@ -173,6 +174,18 @@ public class Bird {
 
     public int getCachedFood() {
         return cachedFood;
+    }
+
+    public boolean hasMaxEggs() {
+        return storedEggs >= maxEggs;
+    }
+
+    public String getHabitat() {
+        return habitat;
+    }
+
+    public void setHabitat(String habitat) {
+        this.habitat = habitat;
     }
 
     @Override

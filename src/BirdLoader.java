@@ -10,8 +10,7 @@ public class BirdLoader {
 
     public static ArrayList<Bird> loadBirds(File f, Map<String, ArrayList<String>> bonusMap) {
         ArrayList<Bird> birds = new ArrayList<>();
-        try {
-            Scanner scan = new Scanner(f);
+        try (Scanner scan = new Scanner(f)) {
             String[] items;
             while (scan.hasNextLine()) {
                 String l = scan.nextLine();

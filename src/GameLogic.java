@@ -3,12 +3,10 @@ package src;
 import java.util.*;
 
 public class GameLogic implements Runnable {
-    private final FramePanel panel;
     private final ProgramState state;
     private final Game game;
     
     public GameLogic(FramePanel panel, ProgramState state) {
-        this.panel = panel;
         this.state = state;
         this.game = new Game(state);
     }
