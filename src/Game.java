@@ -31,7 +31,6 @@ public class Game {
         state.makeDeckOfCards();
         dealInitialCards();
         dealInitialBonusCards();
-        setupInitialFood();
         setupRoundGoals();
         
         state.currentPhase = ProgramState.GamePhase.INITIAL_SELECTION;
@@ -74,15 +73,7 @@ public class Game {
         }
     }
 
-    private void setupInitialFood() {
-        for (Player p : state.players) {
-            p.addFood("s", 1);
-            p.addFood("i", 1);
-            p.addFood("f", 1);
-            p.addFood("b", 1);
-            p.addFood("r", 1);
-        }
-    }
+
     
     public void next(ProgramState.PlayerAction action) {
         currentPlayer = (currentPlayer + 1) % 4;

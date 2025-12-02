@@ -132,11 +132,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             
                 else if (x>=1200 && x<=1300 && y>=340 && y<=430){
-                    if(numberOfItemsSelected<5&&!startSelections[6]){
-                        startSelections[6] = !startSelections[6];
+                    if(numberOfItemsSelected<5&&!startSelections[8]){
+                        startSelections[8] = !startSelections[8];
                         numberOfItemsSelected++;
-                    }else if(startSelections[6]){
-                        startSelections[6] = !startSelections[6];
+                    }else if(startSelections[8]){
+                        startSelections[8] = !startSelections[8];
                         numberOfItemsSelected--;
                     }
                 }
@@ -150,11 +150,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
                 else if (x>=1440 && x<=1530 && y>=130 && y<=220){
-                    if(numberOfItemsSelected<5&&!startSelections[8]){
-                        startSelections[8] = !startSelections[8];
+                    if(numberOfItemsSelected<5&&!startSelections[6]){
+                        startSelections[6] = !startSelections[6];
                         numberOfItemsSelected++;
-                    }else if(startSelections[8]){
-                        startSelections[8] = !startSelections[8];
+                    }else if(startSelections[6]){
+                        startSelections[6] = !startSelections[6];
                         numberOfItemsSelected--;
                     }
                 }
@@ -197,11 +197,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         numberOfBonusesSelected = 0;
                         for (int i=0;i<5;i++){
                             if (startSelections[i]) state.players[state.playing].addCardToHand(startOptions[i]);
-                        }
-                        if (startSelections[5]) state.players[state.playing].addFood("f", 1);
-                        if (startSelections[6]) state.players[state.playing].addFood("s", 1);
-                        if (startSelections[7]) state.players[state.playing].addFood("i", 1);
-                        if (startSelections[8]) state.players[state.playing].addFood("b", 1);
+                        }//SFBIR  
+                        if (startSelections[5]) state.players[state.playing].addFood("s", 1);
+                        if (startSelections[6]) state.players[state.playing].addFood("f", 1);
+                        if (startSelections[7]) state.players[state.playing].addFood("b", 1);
+                        if (startSelections[8]) state.players[state.playing].addFood("i", 1);
                         if (startSelections[9]) state.players[state.playing].addFood("r", 1);
                         if (startSelections[10]) state.players[state.playing].addBonus(bonusOptions[0]);
                         else state.players[state.playing].addBonus(bonusOptions[1]);
@@ -355,8 +355,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 int position=0;
                 for(int i=0;i<3;i++){
                     for(int j=0;j<5;j++){
-                        if(!state.squaresClickedToPlayBird[i][j]){
+                        if(state.squaresClickedToPlayBird[i][j]){
                             position=j;
+                            
                         }
                     }
                 }
@@ -456,25 +457,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintPlaySpecificBird(Graphics g){
-        //     g2.drawRect(470, 155, 628-470, 392-155);
-        // g2.drawRect(469, 403, 627-469, 637-403);
-        // g2.drawRect(470,650,626-470,866-650);
-
-        // g2.drawRect(644, 155, 800-644, 392-155);
-        // g2.drawRect(644, 403, 800-644, 637-403);
-        // g2.drawRect(644,650,800-644,866-650);
        
-        // g2.drawRect(815, 155, 969-815, 392-155);
-        // g2.drawRect(815, 403, 969-815, 637-403);
-        // g2.drawRect(815,650,969-815,866-650);
-
-        // g2.drawRect(985, 155, 1138-985, 392-155);
-        // g2.drawRect(985, 403, 1138-985, 637-403);
-        // g2.drawRect(985,650,1138-985,866-650);
-
-        // g2.drawRect(1152, 155, 1302-1152, 392-155);
-        // g2.drawRect(1152, 403, 1302-1152, 637-403);
-        // g2.drawRect(1152,650,1302-1152,866-650);
         paintGame(g);
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(5.0f));
@@ -652,15 +635,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
        
         if (startSelections[5]) g.fillOval(1195, 115, 100, 100);
-        if (startSelections[6]) g.fillOval(1195, 325, 110, 110);
+        if (startSelections[8]) g.fillOval(1195, 325, 110, 110);
         if (startSelections[7]) g.fillOval(1310, 220, 110, 110);
-        if (startSelections[8]) g.fillOval(1425, 115, 110, 110);
+        if (startSelections[6]) g.fillOval(1425, 115, 110, 110);
         if (startSelections[9]) g.fillOval(1425, 325, 110, 110);
-        g.drawImage(fishToken, 1200, 120, 100, 100, null); //fish
-        g.drawImage(wheatToken, 1200, 330, 100, 100, null); //seed
-        g.drawImage(fruitToken, 1430, 120, 100, 100, null); //fruit
-        g.drawImage(rodentToken, 1430, 330, 100, 100, null); //rat
-        g.drawImage(invertebrateToken, 1315, 225, 100, 100, null); //insect
+        g.drawImage(wheatToken, 1200, 120, 100, 100, null);
+        g.drawImage(fishToken, 1430, 120, 100, 100, null);
+        g.drawImage(fruitToken, 1315, 225, 100, 100, null);  
+        g.drawImage(invertebrateToken, 1200, 330, 100, 100, null);
+        g.drawImage(rodentToken, 1430, 330, 100, 100, null); 
+     
+
 
         if (startSelections[10]) g.fillRect(545, 495, 210, 310);
         if (startSelections[11]) g.fillRect(795, 495, 210, 310);
@@ -695,11 +680,61 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString(state.playing+1+"", 238, 67);
+         //     g2.drawRect(470, 155, 628-470, 392-155);
+        // g2.drawRect(469, 403, 627-469, 637-403);
+        // g2.drawRect(470,650,626-470,866-650);
+
+        // g2.drawRect(644, 155, 800-644, 392-155);
+        // g2.drawRect(644, 403, 800-644, 637-403);
+        // g2.drawRect(644,650,800-644,866-650);
+       
+        // g2.drawRect(815, 155, 969-815, 392-155);
+        // g2.drawRect(815, 403, 969-815, 637-403);
+        // g2.drawRect(815,650,969-815,866-650);
+
+        // g2.drawRect(985, 155, 1138-985, 392-155);
+        // g2.drawRect(985, 403, 1138-985, 637-403);
+        // g2.drawRect(985,650,1138-985,866-650);
+
+        // g2.drawRect(1152, 155, 1302-1152, 392-155);
+        // g2.drawRect(1152, 403, 1302-1152, 637-403);
+        // g2.drawRect(1152,650,1302-1152,866-650);
         for (int i=0;i<3;i++){
            for(int j=0;j<5;j++){
-               if(state.players[state.playing].getBoard().getBoard()[i][j]!=null){
-                   g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 470+154*j, 155+248*i, 150, 240, null);
+            try{
+               switch(i){
+                   case 0 -> {
+                       //forest
+                       switch(j){
+                           case 0 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 470, 155, 158, 237, null);
+                           case 1 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 644, 155, 156, 237, null);
+                           case 2 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 815, 155, 154, 237, null);
+                           case 3 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 985, 155, 153, 237, null);
+                           case 4 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 1152, 155, 150, 237, null);
+                       }
+                   }
+                   case 1 -> {
+                       //plains
+                       switch(j){
+                           case 0 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 469, 403, 158, 234, null);
+                           case 1 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 644, 403, 156, 234, null);
+                           case 2 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 815, 403, 154, 234, null);
+                           case 3 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 985, 403, 153, 234, null);
+                           case 4 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 1152, 403, 150, 234, null);
+                       }
+                   }
+                   case 2 -> {
+                       //wetlands
+                       switch(j){
+                           case 0 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 470, 650, 156, 216, null);
+                           case 1 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 644, 650, 156, 216, null);
+                           case 2 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 815, 650, 154, 216, null);
+                           case 3 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 985, 650, 153, 216, null);
+                           case 4 -> g.drawImage(state.players[state.playing].getBoard().getBoard()[i][j].getImage(), 1152, 650, 150, 216, null);
+                       }
+                    }
                }
+            } catch (Exception NullPointerException){out.println(i+ " " +j); }
            }
         }
 
@@ -715,8 +750,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         //draw the food token nums
         g.setFont(new Font("Arial", Font.BOLD, 35));
         //out.println("Player foods: "+state.players[state.playing].getFoods());
-        for (int i=0;i<state.players[state.playing].getFoodTokens().size();i++)
-        g.drawString(""+state.players[state.playing].getFoodCount(state.players[state.playing].getFoodTokens().get(i)), 1416, 55+78*i);
+        for (int i=0;i<5;i++){
+            String foodTypeForToken="";
+            switch(i){
+                case 0 -> foodTypeForToken="s";
+                case 1 -> foodTypeForToken="f";
+                case 2 -> foodTypeForToken="b";
+                case 3 -> foodTypeForToken="i";
+                case 4 -> foodTypeForToken="r";
+            }
+        g.drawString(""+state.players[state.playing].getFoodCount(foodTypeForToken), 1416, 55+78*i);
+        }
         //g.drawString(state.players[state.playing].getFoods)
 
         //birdpics
