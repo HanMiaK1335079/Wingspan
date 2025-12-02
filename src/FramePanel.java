@@ -1135,9 +1135,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
 
-    public void endTurn(ProgramState.PlayerAction action) {
-        state.game.next(action);
-    }
+//   public void endTurn(ProgramState.PlayerAction action) {
+//      state.game.next(action);
+//  }
 
 }
      

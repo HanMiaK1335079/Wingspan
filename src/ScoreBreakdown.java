@@ -17,7 +17,7 @@ public class ScoreBreakdown {
 		this.bonus = bonus;
     }
 
-    public int total(){
+    public int totalScore(){
         return printedPoints + eggs + cachedFood + tuckedCards + flocked + bonus;
     }
 }
