@@ -290,6 +290,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 else if(x>=425 && x<=475 && y>=450 && y<=500) {
                     state.CURRENTEVENT.add("Lay Eggs");out.println("Lay Eggs");
+                    repaint();
                     
                 }
                 else if(x>=350 && x<=400 && y>=725 && y<=775) {
@@ -1441,6 +1442,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
       if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
       if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
 
+}
 }
      
    
