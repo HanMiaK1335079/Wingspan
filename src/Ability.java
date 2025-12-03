@@ -51,7 +51,15 @@ public class Ability {
                 lowerText.contains("[fruit]") ||
                 lowerText.contains("[wild]"));
     }
-
+    public String getTrigger(){
+        switch (trigger){
+            case (Trigger.BROWN) -> {return "OA";}
+            case (Trigger.WHITE) -> {return "WP";}
+            case (Trigger.PINK) -> {return "OBT";}
+            case (Trigger.NONE) -> {return "none";}
+        }
+        return null;
+    }
     
     public boolean mentionsPredator(){
         return rawText.toLowerCase(Locale.ROOT).contains("[predator]");
