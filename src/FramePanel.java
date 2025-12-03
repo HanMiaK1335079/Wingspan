@@ -13,7 +13,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, Reroll_Button;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -238,12 +238,27 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
             }case "Game" -> {
                 // g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+        //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+        // g.drawImage(Action_Button, 425, 200, 50,50,null);
+        // g.drawImage(Action_Button, 425, 450, 50,50,null);
+        // g.drawImage(Action_Button, 350, 725, 50,50,null);
                 if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
                 else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
                 else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
                 else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
                 else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
                 else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
+                else if(x>=425 && x<=475 && y>=200 && y<=250) {
+                    state.CURRENTEVENT.add("Gain Food"); out.println("Gain Food");
+                    
+                }
+                else if(x>=425 && x<=475 && y>=450 && y<=500) {
+                    state.CURRENTEVENT.add("Lay Eggs");out.println("Lay Eggs");
+                    
+                }
+                else if(x>=350 && x<=400 && y>=725 && y<=775) {
+                    state.CURRENTEVENT.add("Draw Birds");out.println("Draw Birds");
+                }
                 repaint();
             }case "View Birds" -> {
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -355,8 +370,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 int position=0;
                 for(int i=0;i<3;i++){
                     for(int j=0;j<5;j++){
-                        if(state.squaresClickedToPlayBird[i][j]){
-                            position=j;
+                        if(state.players[state.playing].getBoard().getBoard()[i][j]==null){
+                            for(int a=j;a>-1;a--){
+                            if(state.players[state.playing].getBoard().getBoard()[i][a]!=null){
+                                position=a;
+                                break;
+                                }
+                            }
+                            
                             
                         }
                     }
@@ -397,7 +418,33 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                 repaint();
         }
+        case("Gain Food") -> {
+        //     for (int i=0;i<feeder.getDice().size();i++){
+        //     g.drawImage(dicePics[feeder.getImageIndex(i)], diceLocMap[i][0], diceLocMap[i][1], 90, 90, null);
+        // }
+        if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
+        if(x>=diceLocMap[0][0] && x<=diceLocMap[0][0]+90 && y>=diceLocMap[0][1] && y<=diceLocMap[0][1]+90){
+           // feeder.takeFoodFromFeeder(0);
+            repaint();
+        }
+        else if(x>=diceLocMap[1][0] && x<=diceLocMap[1][0]+90 && y>=diceLocMap[1][1] && y<=diceLocMap[1][1]+90){
+           // feeder.takeFoodFromFeeder(1);
+            repaint();
+        }
+        else if(x>=diceLocMap[2][0] && x<=diceLocMap[2][0]+90 && y>=diceLocMap[2][1] && y<=diceLocMap[2][1]+90){
+            //feeder.takeFoodFromFeeder(2);
+            repaint();
+        }
+        else if(x>=diceLocMap[3][0] && x<=diceLocMap[3][0]+90 && y>=diceLocMap[3][1] && y<=diceLocMap[3][1]+90){
+           // feeder.takeFoodFromFeeder(3);
+            repaint();
+        }
+        else if(x>=diceLocMap[4][0] && x<=diceLocMap[4][0]+90 && y>=diceLocMap[4][1] && y<=diceLocMap[4][1]+90){
+           // feeder.takeFoodFromFeeder(4);
+        repaint();
+        }
     }
+}
     }
     @Override
     public void mouseReleased(MouseEvent e) {}
@@ -447,6 +494,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Play Specific Bird" -> paintPlaySpecificBird(g);
                 case "Rules" -> paintRules(g);
                 case "Choose Bird" -> paintPlaySpecificBirdSecondPart(g);
+                case "Gain Food" -> paintGetFoodFromFeeder(g);
             }
             state.lock.notifyAll();
         }
@@ -959,6 +1007,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
             Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
             Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
+            Reroll_Button = ImageIO.read(FramePanel.class.getResource("/assets/Reroll.png"));
         } catch (Exception e) {
             out.println("Exception: "+e);
             out.println("Oops pics dont load");
@@ -1184,6 +1233,28 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public void endTurn(ProgramState.PlayerAction action) {
         //Todo: state needs a game portion
         state.game.next(action);
+    }
+
+
+
+
+    public void paintGetFoodFromFeeder(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Get Food from Feeder", 600, 458);
+
+        g.drawImage(feederPic, 1150, 430, 350, 395, null);
+
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.drawRect(730, 494, 425, 298);
+
+        for (int i=0;i<feeder.getDice().size();i++){
+            g.drawImage(dicePics[feeder.getImageIndex(i)], diceLocMap[i][0], diceLocMap[i][1], 90, 90, null);
+        }
+        //state.CURRENTEVENT.add("Do Forest Abilities");
     }
 
 }
