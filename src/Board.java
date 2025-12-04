@@ -224,6 +224,7 @@ public class Board {
                 return 0;
             case "plains":
                 return 1;
+            case "grasslands": return 1;
             case "wetlands":
             case "wetland":
                 return 2;

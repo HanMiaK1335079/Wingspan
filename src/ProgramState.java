@@ -16,6 +16,10 @@ public class ProgramState {
     public volatile int playing = 0;
     public volatile int showing = 0;
 
+    public volatile boolean hasCheckedForNumberOfRemovableDice=false;
+    public volatile int numberOfRemovableDice=0;
+    public volatile boolean canTradeCardForMoreFood=false;
+
     public volatile int birdNumArrayForChoosingSpecificBird=0;
 
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
@@ -23,7 +27,7 @@ public class ProgramState {
 
         public ArrayList<String> CURRENTEVENT = new ArrayList<>();
 
-        public Game game;
+        
 
         
     
@@ -56,7 +60,7 @@ public class ProgramState {
     }
 
     public volatile boolean[][] squaresClickedToPlayBird = new boolean[3][5];
-    private int[] roundGoals = new int[4];
+    private final int[] roundGoals = new int[4];
     private int[] roundWinners = new int[4];
 
     public void resetSquaresClickedToPlayBird() {
@@ -188,4 +192,5 @@ public class ProgramState {
         }
         return 0;
     }
+    public Game game = new Game(this);
 }
