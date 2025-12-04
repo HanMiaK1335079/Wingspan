@@ -844,9 +844,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     else if (ability.contains("Trade 1 [wild] for any")){}
                     else if (ability.contains("Repeat 1 [predator] power")){}
-                    else if //ENDED ON LAZUI BUNTING
-                    
-                    /*FK u chihuahuan raven */
+                    else if (ability.contains("All players lay 1 [egg] on any 1")){
+                        out.println("I'm a bum!");
+                    }
+                    else if (currentBird.getName().equals("Mallard")){
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("Draw Birds");
+                    }
+                    else if (ability.contains("All players draw 1 [card]")){
+                        
+                    }
+                    // FK u chihuahuan raven 
                 }else {state.CURRENTEVENT.removeLast();}
                 
                 
