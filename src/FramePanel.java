@@ -107,7 +107,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
           int x = e.getX();
         int y = e.getY();
         out.println("("+x+","+y+")");
-        out.println(state.CURRENTEVENT);
+        //out.println(state.CURRENTEVENT);
         // Only respond to clicks when we are on the start screen
         switch(state.CURRENTEVENT.getLast()){
 
@@ -360,6 +360,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (!tradeStarted){
                     if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]){
                         tradeStarted = true;
+                        if (runningHabitat.equals("wetlands")){
+                            state.CURRENTEVENT.removeLast();
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Remove Egg");
+                        }
                     }else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]){
                         state.CURRENTEVENT.removeLast();
                     }
@@ -393,7 +398,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     repaint();
                 }
-                else if (runningHabitat.equals("wetlands")){}
                 repaint();
             }case "View Birds" -> {
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -445,10 +449,39 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 repaint();
             }case "Remove Egg" ->{
-                /*Nothing now :) */
-                out.println("Removing eggz");
-                state.CURRENTEVENT.removeLast();
-            }case "Draw Birds" -> {
+                Bird[][] birdBoard = state.players[state.playing].getPlayerBoard();
+                for (int i=0;i<3;i++){
+                    for (int j=0;j<5;j++){
+                        if (x>=470+170*j && x<=644+170*j && y>=155+247*i && y<= 375+247*i){
+                            if (birdBoard[i][j]!=null){
+                                if (birdBoard[i][j].getEggCount()>0){
+                                    birdBoard[i][j].removeEggs(1);
+                                    state.CURRENTEVENT.removeLast();
+                                }
+                            }
+                        }
+                    }
+                }
+                //out.println("Removing eggz");
+                repaint();
+            }case "Lay Eggs" ->{
+                Bird[][] birdBoard = state.players[state.playing].getPlayerBoard();
+                for (int i=0;i<3;i++){
+                    for (int j=0;j<5;j++){
+                        if (x>=470+170*j && x<=644+170*j && y>=155+247*i && y<= 375+247*i){
+                            if (birdBoard[i][j]!=null){
+                                if (birdBoard[i][j].getEggCount()<birdBoard[i][j].getMaxEggs()){
+                                    birdBoard[i][j].addEggs(1);
+                                    state.CURRENTEVENT.removeLast();
+                                }
+                            }
+                        }
+                    }
+                }
+                //out.println("Removing eggz");
+                repaint();
+            }
+            case "Draw Birds" -> {
                 if (x>=20 && x<=70 && y>=400 && y<=450){ 
                     state.CURRENTEVENT.removeLast();
                     repaint();
@@ -744,11 +777,23 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "When Played Ability" -> paintWPAbility(g);
                 case "Choose Bonus" -> paintBonusDraw(g);
                 case "Loop Draw" -> paintLoopDraw(g);
+                case "Lay Eggs" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.drawString("Click a bird to add an egg", 300, 100);
+                    int count = 0;
+                    for (String s: state.CURRENTEVENT) if (s.equals("Lay Eggs")) count ++;
+                    g.drawString("Add " + count + " more eggs", 300, 160);
+                }
+                case "Remove Egg" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.drawString("Click a bird to remove an egg", 300, 100);
+                }
                 case "Select Food" -> {
                     paintViewFeeder(g);
                     if (selectingBool) paintBoolean(g, "Select Food", "Seed","Insect");
                 }
-
             }
             state.lock.notifyAll();
         }
@@ -969,25 +1014,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString(state.playing+1+"", 238, 67);
-         //     g2.drawRect(470, 155, 628-470, 392-155);
-        // g2.drawRect(469, 403, 627-469, 637-403);
-        // g2.drawRect(470,650,626-470,866-650);
-
-        // g2.drawRect(644, 155, 800-644, 392-155);
-        // g2.drawRect(644, 403, 800-644, 637-403);
-        // g2.drawRect(644,650,800-644,866-650);
-       
-        // g2.drawRect(815, 155, 969-815, 392-155);
-        // g2.drawRect(815, 403, 969-815, 637-403);
-        // g2.drawRect(815,650,969-815,866-650);
-
-        // g2.drawRect(985, 155, 1138-985, 392-155);
-        // g2.drawRect(985, 403, 1138-985, 637-403);
-        // g2.drawRect(985,650,1138-985,866-650);
-
-        // g2.drawRect(1152, 155, 1302-1152, 392-155);
-        // g2.drawRect(1152, 403, 1302-1152, 637-403);
-        // g2.drawRect(1152,650,1302-1152,866-650);
         for (int i=0;i<3;i++){
            for(int j=0;j<5;j++){
             try{
@@ -1025,6 +1051,25 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                }
             } catch (Exception NullPointerException){/*out.println(i+ " " +j);*/ }
            }
+        }
+        int counterIndex = 0;
+        int counter = 0;
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setColor(new Color(70, 85, 207));
+        for (Bird[] birdArr: state.players[state.playing].getPlayerBoard()){
+            for (Bird b: birdArr){
+                //g.drawString()
+                if (b!=null){
+                    g.drawString("E: "+b.getEggCount(), 476, 330+230*counter);
+                    if (b.getTuckedCards()>0){
+                        g.drawString("T: "+b.getTuckedCards(), 594, 220 + 230*counter);
+                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594, 220 + 230*counter);
+                }
+                counterIndex++;
+                    //out.println("Birbing");
+            }
+            counter++;
+            counterIndex = 0;
         }
 
         //draw the goals
@@ -1112,7 +1157,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
                 g.drawString("Click to trade an egg", 400, 200);
             }
-            g.drawImage(skip, 1200, 350, 300, 80, null);
+            //g.drawImage(skip, 1200, 350, 300, 80, null);
         }
     }
 
