@@ -95,6 +95,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     Bird currentBird;
     boolean selectingBool;
+    boolean selectingFood;
     int[] yesCrds = {510, 790, 385, 515};
     int[] noCrds = {810, 1090, 385, 515};
     int currentBirdNum;
@@ -102,6 +103,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     String runningHabitat;
     boolean traded = false;
     boolean canTrade = false;
+    Bird highlighted;
     @Override
     public void mousePressed(MouseEvent e) {
           int x = e.getX();
@@ -719,6 +721,150 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                             selectingBool = true;
                         }
                     }
+                    else if (ability.contains("fewest birds in their")){
+                        out.println("I'm a bum and haven't implemented Bittern ability");
+                    }
+                    else if (ability.contains("Tuck 1 [card]")){
+                        if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
+                        currentShowing++;
+                        else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+
+                        for (int i=0;i<4;i++){
+                            if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
+                                if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
+                                    state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
+                                    currentBird.tuckCard();
+                                    state.CURRENTEVENT.removeLast();
+                                    if (ability.contains("If you do, draw 1 [card]"))
+                                        state.CURRENTEVENT.add("Draw Card");
+                                    else if (ability.contains("lay 1 [egg]"))
+                                        currentBird.addEggs(1);
+                                    else if (ability.contains("gain 1 [fruit]"))
+                                        state.players[state.playing].addFood("b", 1);
+                                    else if (ability.contains("gain 1 [seed]"))
+                                        state.players[state.playing].addFood("s",1);
+                                    else if (ability.contains("gain 1 [invertebrate] or [seed]"))
+                                        out.println("I'm a lazy bum: Nuthatch ability");
+                                }
+                            }
+                        }
+                    }
+                    else if (ability.contains("Discard 1 [egg] from any")){
+                        if (selectingFood){
+                            String[] fo = {"s", "f", "b", "i", "r"};
+                            for (int i=0;i<5;i++){
+                                if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650)
+                                    state.players[state.playing].addFood(fo[i], 1);
+                            }
+                            state.CURRENTEVENT.removeLast();
+                            selectingFood = false;
+                        }else{
+                            selectingFood = true;
+                            state.CURRENTEVENT.add("Remove Egg");
+                        }
+                    }
+                    else if (ability.contains("Gain 31 [invert")){
+                        state.players[state.playing].addFood("i", 3);
+                        state.CURRENTEVENT.removeLast();
+                    }
+                    else if (ability.contains("Roll all dice not in feeder")){
+                        feeder.rollOutDice();
+                        String check;
+                        if (ability.contains("[rodent]"))
+                            check = "r";
+                        else if (ability.contains("[fish]"))
+                            check = "f";
+                        if (feeder.getOutDice().contains("check")){
+                            currentBird.cacheFood();
+                        }
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("View Feeder");
+                    }
+                    else if (ability.contains("Each player gains 1 [die]")){
+                        out.println("I'm a lazy bum: Anna's Hummingbird");
+                    }
+                    else if (ability.contains("Lay 1 [egg] on any bird")){
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("Lay Eggs");
+                    }
+                    else if (ability.contains("All players gain 1")){
+                        String check = "";
+                        if (ability.contains("[fruit]")) check = "b";
+                        else if (ability.contains("[seed]")) check = "s";
+                        else if (ability.contains("[invertebrate]")) check = "i";
+                        else if (ability.contains("[fish]")) check = "f";
+
+                        state.CURRENTEVENT.removeLast();
+                        for (Player p: state.players) p.addFood(check, 1);
+                    }
+                    else if (ability.contains("Look at a [card] from the deck")){
+                        int span;
+                        if (ability.contains("50")) span = 50;
+                        else if (ability.contains("75")) span = 75;
+                        else if (ability.contains("100")) span = 100;
+
+                        highlighted = birds.remove(0);
+                        if (highlighted.getWingspan()<span) currentBird.tuckCard();
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("View Highlight Bird");
+                    }
+                    else if (ability.contains("If this bird is to the right")){
+                        out.println("Im a lazy bum: Kingfisher");
+                    }
+                    else if (ability.contains("If you do, discard")){
+                        state.CURRENTEVENT.add("Remove Card", state.CURRENTEVENT.get("Game")+1);
+                        state.CURRENTEVENT.removeLast();
+                        if (ability.contains("2")) state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Draw Birds");
+                    }
+                    else if (ability.contains("to tuck 2")){
+                        String check = ability.contains("fish")? "f":"s";
+                        if (state.players[state.playing].hasFoodType(check)){
+                            state.players[state.playing].removeFood(check, 1);
+                            out.println("I'm a bum and din't finish this: I haven't tucked 2 yet");
+                        }
+                        state.CURRENTEVENT.removeLast();
+                    }
+                    else if (ability.contains("Lay 1 [egg] on this bird")){
+                        currentBird.addEggs(1);
+                        state.CURRENTEVENT.removeLast();
+                    }
+                    else if (ability.contains("Cache 1 [seed]")){
+                        currentBird.cacheFood();
+                        state.CURRENTEVENT.removeLast();
+                    }
+                    else if (ability.contains("Discard 1 [egg] to draw 2 [card]")){
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Remove Egg");
+                    }
+                    else if (ability.contains("Repeat a brown power")){
+                        out.println("i am a lazy bum: catbird");
+                    }
+                    else if (ability.contains("Trade 1 [wild] for any")){}
+                    else if (ability.contains("Repeat 1 [predator] power")){}
+                    else if //ENDED ON LAZUI BUNTING
+                    
+                    /*FK u chihuahuan raven */
+                }else {state.CURRENTEVENT.removeLast();}
+                
+                
+                repaint();
+            }case "View Highlight Bird" -> {
+                state.CURRENTEVENT.removeLast();
+            }case "Remove Bird" -> {
+                if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
+                    currentShowing++;
+                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+
+                for (int i=0;i<4;i++){
+                    if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
+                        if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
+                            state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
+                            state.CURRENTEVENT.removeLast();
+                        }
+                    }
                 }
             }
         
@@ -777,6 +923,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "When Played Ability" -> paintWPAbility(g);
                 case "Choose Bonus" -> paintBonusDraw(g);
                 case "Loop Draw" -> paintLoopDraw(g);
+                case "On Activate Ability" -> paintOAAbility(g);
+                case "Remove Bird" -> paintViewBirds(g);
+                case "View Highlighted Bird" -> {
+                    paintGame(g);
+                    g.drawImage(highlighted.getImage(), 200, 200, 352, 600, null);
+                }
                 case "Lay Eggs" -> {
                     paintGame(g);
                     g.setFont(new Font("Arial", Font.BOLD, 55));
@@ -796,6 +948,27 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
             }
             state.lock.notifyAll();
+        }
+    }
+
+    public void paintOAAbility(Graphics g){
+        String ability = currentBird.getAbilityText();
+        if (ability.contains("Gain 1 [seed] from the birdfeeder")){
+            if (selectingBool) paintBoolean(g, "Cache seed?", "Yes", "No");
+        }
+        else if (ability.contains("Tuck 1 [card]")){
+            paintViewBirds(g);
+        }
+        else if (ability.contains("Discard 1 [egg] from any")){
+            if (selectingFood){
+                g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+                g.drawString("Click a food to take", 400, 200);
+                g.drawImage(wheatToken, 250, 550, 100, 100, null);
+                g.drawImage(fishToken, 350, 550, 100, 100, null);
+                g.drawImage(fruitToken, 450, 550, 100, 100, null);
+                g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+                g.drawImage(rodentToken, 650, 550, 100, 100, null);
+            }else paintGame(g);
         }
     }
 

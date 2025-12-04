@@ -144,4 +144,20 @@ public class Feeder {
         }
         return count;
     }
+    public void rollOutDice(){
+        int length = outDice.size();
+        outDice.clear();
+        for(int i=0;i<length;i++){
+            int roll=(int)(Math.random()*6);
+            switch(roll){
+                case 0 -> outDice.add("s");
+                case 1 -> outDice.add("f");
+                case 2 -> outDice.add("b");
+                case 3 -> outDice.add("i");
+                case 4 -> outDice.add("r");
+                case 5 -> outDice.add("a");
+            }
+        }
+    }
+
 }
