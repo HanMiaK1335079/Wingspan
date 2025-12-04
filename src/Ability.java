@@ -53,10 +53,10 @@ public class Ability {
     }
     public String getTrigger(){
         switch (trigger){
-            case (Trigger.BROWN) -> {return "OA";}
-            case (Trigger.WHITE) -> {return "WP";}
-            case (Trigger.PINK) -> {return "OBT";}
-            case (Trigger.NONE) -> {return "none";}
+            case Trigger.BROWN -> {return "OA";}
+            case Trigger.WHITE -> {return "WP";}
+            case Trigger.PINK -> {return "OBT";}
+            case Trigger.NONE -> {return "none";}
         }
         return null;
     }
