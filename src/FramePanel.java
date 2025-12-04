@@ -13,7 +13,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, skip;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, Reroll_Button;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -62,6 +62,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
+            Reroll_Button = ImageIO.read(FramePanel.class.getResource("/assets/Reroll.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -249,157 +250,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
             }case "Game" -> {
                 // g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+        //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+        // g.drawImage(Action_Button, 425, 200, 50,50,null);
+        // g.drawImage(Action_Button, 425, 450, 50,50,null);
+        // g.drawImage(Action_Button, 350, 725, 50,50,null);
                 if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
                 else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
                 else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
                 else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
                 else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
                 else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
-                else if (x>=440 && x<=463 && y>=214 && y<=238){
-                    if (state.players[state.playing].getBirdsInHabitat("forest").size()!=0)
-                        state.CURRENTEVENT.add("On Activate Ability");
-                    //state.CURRENTEVENT.add("Select Food");
-                    runningHabitat = "forest";
-                    currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("forest").size()-1;
-                    /*add counter for habitat action */
-                    switch (state.players[state.playing].getBoard().getBirdsInHabitat("forest").size()){
-                        case 5 -> {
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 4 -> {
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Select Food");
-                        }
-                        case 3 -> {
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 2 -> {
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Select Food");
-                        }
-                        case 1 -> {
-                            state.CURRENTEVENT.add("Select Food");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 0 -> {state.CURRENTEVENT.add("Select Food");}
-                    }
-                }else if (x>=439 && x<=463 && y>=462 && y<=488){
-                    if (state.players[state.playing].getBirdsInHabitat("grasslands").size()!=0)
-                        state.CURRENTEVENT.add("On Activate Ability");
-                    //state.CURRENTEVENT.add("Lay Eggs");
-                    runningHabitat = "grasslands";
-                    currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("grasslands").size()-1;
-                    switch (state.players[state.playing].getBoard().getBirdsInHabitat("grasslands").size()){
-                        case 5 -> {
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 4 -> {
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Lay Eggs");
-                        }
-                        case 3 -> {
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 2 -> {
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Lay Eggs");
-                        }
-                        case 1 -> {
-                            state.CURRENTEVENT.add("Lay Eggs");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 0 -> {state.CURRENTEVENT.add("Lay Eggs");}
-                    }
-                }else if (x>=366 && x<=387 && y>=736 && y<=759){
-                    if (state.players[state.playing].getBirdsInHabitat("wetlands").size()!=0)
-                        state.CURRENTEVENT.add("On Activate Ability");
-                    //state.CURRENTEVENT.add("Draw Birds");
-                    runningHabitat = "wetlands";
-                    currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("wetlands").size()-1;
-                    switch (state.players[state.playing].getBoard().getBirdsInHabitat("wetlands").size()){
-                        case 5 -> {
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 4 -> {
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Draw Birds");
-                        }
-                        case 3 -> {
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 2 -> {
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Draw Birds");
-                        }
-                        case 1 -> {
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Trade");
-                        }
-                        case 0 -> {state.CURRENTEVENT.add("Draw Birds");}
-                    }
-                }
-                tradeStarted = false;
-                repaint();
-            }case "Trade" -> {
-                if (!tradeStarted){
-                    if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]){
-                        tradeStarted = true;
-                        if (runningHabitat.equals("wetlands")){
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.add("Draw Birds");
-                            state.CURRENTEVENT.add("Remove Egg");
-                        }
-                    }else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]){
-                        state.CURRENTEVENT.removeLast();
-                    }
-                }
-                else if (runningHabitat.equals("forest")){
-                    if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
-                        currentShowing++;
-                    else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
-
-                    for (int i=0;i<4;i++){
-                        if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
-                            if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
-                                state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
-                                state.CURRENTEVENT.removeLast();
-                                state.CURRENTEVENT.add("Select Food");
-                            }
-                        }
-                    }
-
-                }
-                else if (runningHabitat.equals("grasslands")){
-                    String[] fo = {"s", "f", "b", "i", "r"};
-                    for (int i=0;i<5;i++){
-                        if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
-                            if (state.players[state.playing].hasFoodType(fo[i])){
-                                state.players[state.playing].removeFood(fo[i], 1);
-                                state.CURRENTEVENT.removeLast();
-                                state.CURRENTEVENT.add("Lay Eggs");
-                            }
-                        }
-                    }
-                    repaint();
-                }
                 repaint();
             }case "View Birds" -> {
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -544,332 +404,83 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             if(x>=644 && x<=800 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][1] = !state.squaresClickedToPlayBird[1][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
             if(x>=644 && x<=800 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][1] = !state.squaresClickedToPlayBird[2][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
 
-            if(x>=815 && x<=969 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][2] = !state.squaresClickedToPlayBird[0][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=815 && x<=969 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][2] = !state.squaresClickedToPlayBird[1][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-            if(x>=815 && x<=969 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][2] = !state.squaresClickedToPlayBird[2][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+        if(x>=815 && x<=969 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][2] = !state.squaresClickedToPlayBird[0][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+        if(x>=815 && x<=969 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][2] = !state.squaresClickedToPlayBird[1][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+        if(x>=815 && x<=969 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][2] = !state.squaresClickedToPlayBird[2][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+        
+        if(x>=985 && x<=1138 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][3] = !state.squaresClickedToPlayBird[0][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+        if(x>=985 && x<=1138 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][3] = !state.squaresClickedToPlayBird[1][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+        if(x>=985 && x<=1138 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][3] = !state.squaresClickedToPlayBird[2][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+        
+        if(x>=1152 && x<=1302 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][4] = !state.squaresClickedToPlayBird[0][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+        if(x>=1152 && x<=1302 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][4] = !state.squaresClickedToPlayBird[1][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+        if(x>=1152 && x<=1302 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][4] = !state.squaresClickedToPlayBird[2][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+        repaint();
             
-            if(x>=985 && x<=1138 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][3] = !state.squaresClickedToPlayBird[0][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=985 && x<=1138 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][3] = !state.squaresClickedToPlayBird[1][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-            if(x>=985 && x<=1138 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][3] = !state.squaresClickedToPlayBird[2][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-            
-            if(x>=1152 && x<=1302 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][4] = !state.squaresClickedToPlayBird[0][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=1152 && x<=1302 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][4] = !state.squaresClickedToPlayBird[1][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-            if(x>=1152 && x<=1302 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][4] = !state.squaresClickedToPlayBird[2][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-            state.players[state.playing].useAction(0); //what do u mean round?
-            
-            repaint();
-                
+        }
+        case "Wait For Second Part Play Specific Bird" -> {
+            state.CURRENTEVENT.removeLast();
+            paintPlaySpecificBirdSecondPart(this.getGraphics());
+        }
+        case "Choose Bird" -> {
+            if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();
+                for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
             }
-            case "Wait For Second Part Play Specific Bird" -> {
-                state.CURRENTEVENT.removeLast();
-                paintPlaySpecificBirdSecondPart(this.getGraphics());
-            }
-            case "Choose Bird" -> {
-                if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();
-                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
+                    currentShowing++;
+                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+                //(253,504)->(489,825)
+                //(504,504)->(740,825)
+                //(755,504)->(991,825)
+                //(100,504)->(1237,825)
+                int position=0;
+                for(int i=0;i<3;i++){
+                    for(int j=0;j<5;j++){
+                        if(state.squaresClickedToPlayBird[i][j]){
+                            position=j;
+                            
+                        }
+                    }
                 }
-                else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
-                    {currentShowing+=1;}
-                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) {currentShowing-=1;}
-                else{//(253,504)->(489,825)
-                    //(504,504)->(740,825)
-                    //(755,504)->(991,825)
-                    //(100,504)->(1237,825)
-                    int position=0;
-                    for(int i=0;i<3;i++){
-                        for(int j=0;j<5;j++){
-                            if(state.squaresClickedToPlayBird[i][j]){
-                                position=j;
-                                
-                            }
-                        }
-                    }
-                    if(x>=253 && x<=489 && y>=504 && y<=825){
-                        out.println("Clicked first card to play");
-                        if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position )){
-                            currentBird = state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
-                            
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.add("When Played Ability");
-                        }
-                        for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                        
-                        
-                    } else if ( x >= 504 && x <= 740 && y >= 504 && y <= 825 ) {
-                        out.println("Clicked Second card to play");
-                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+1),state.habitatToPlayBird, position)){
-                            currentBird = state.players[state.playing].getCardsInHand().remove(currentShowing*showing+1);
-                            
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.add("When Played Ability");
-                        }
-                        for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                        
-                    } else if ( x >= 755 && x <= 991 && y >= 504 && y <= 825 ) {
-                        out.println("Clicked Third card to play");
-                        if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+2),state.habitatToPlayBird, position)){
-                            currentBird = state.players[state.playing].getCardsInHand().remove(currentShowing*showing+2);
-                            
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.add("When Played Ability");
-                        }
-                        for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                    } else if ( x >= 1000 && x <= 1237 && y >= 504 && y <= 825 ) {
-                        out.println("Clicked Fourth card to play");
-                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird, position)){
-                            currentBird = state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
-                            
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.removeLast();
-                            state.CURRENTEVENT.add("When Played Ability");
-                        }
-                        for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                        
-                        
-                    }
-                        
+                if(x>=253 && x<=489 && y>=504 && y<=825){
+                    out.println("Clicked first card to play");
+                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.removeLast();
+                } else if ( x >= 504 && x <= 740 && y >= 504 && y <= 825 ) {
+                    out.println("Clicked Second card to play");
+                   if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+1),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+1);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.removeLast();
+                } else if ( x >= 755 && x <= 991 && y >= 504 && y <= 825 ) {
+                    out.println("Clicked Third card to play");
+                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+2),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+2);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.removeLast();
+                } else if ( x >= 1000 && x <= 1237 && y >= 504 && y <= 825 ) {
+                    out.println("Clicked Fourth card to play");
+                   if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                     state.CURRENTEVENT.removeLast();
+                     state.CURRENTEVENT.removeLast();
+                    endTurn(ProgramState.PlayerAction.PLAY_BIRD);
+                }
+                    
                     state.habitatToPlayBird = "";
                 
 
                     
-                }
-                repaint();
-            }case "When Played Ability" ->{
-                //out.println(state.CURRENTEVENT);
-                out.println("WHEN PLACED");
-                if (x>=1000 && y>=550 && x<=1300 && y<=630) {state.CURRENTEVENT.removeLast();repaint();return;}
-                out.println("Ability: "+currentBird.getAbility().getTrigger());
-                if (currentBird.getAbility().getTrigger().equals("WP")){
-                    out.println("activated when placed");
-                    String abilityText = currentBird.getAbilityText();
-                    Player p = state.players[state.playing];
-                    if (abilityText.contains("Play a second bird")) {
-                        /*OFFER A CHOICE */
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("Play Bird");
-                        state.CURRENTEVENT.add("Choose Bird");
-                    } else if (abilityText.contains("Gain 3 [seed] from the supply.")) {
-                        p.addFood("s", 3);
-                        state.CURRENTEVENT.removeLast();
-                    } else if (abilityText.contains("Gain 3 [fish] from the supply.")) {
-                        p.addFood("f", 3);
-                        state.CURRENTEVENT.removeLast();
-                    } else if (abilityText.contains("Gain all [fish] that are in the birdfeeder.")) {
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("View Feeder");
-                        int fishGained = feeder.takeAll("fish");
-                        p.addFood("f", fishGained);
-                    } else if (abilityText.contains("Gain all [invertebrate] that are in the birdfeeder.")) {
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("View Feeder");
-                        int invertebratesGained = feeder.takeAll("insect");
-                        p.addFood("i", invertebratesGained);
-                    } else if (abilityText.contains("Draw [card] equal to the number of players +1")) {
-                        int numToDraw = state.players.length + 1;
-                        loopDrawing = state.playing;
-                        for (int i=0;i<5;i++) loopOptions.add(birds.remove(0));
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("Loop Draw");
-                    } else if (abilityText.contains("Draw 2 [card] from the deck.")) {
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("Draw Birds");
-                        state.CURRENTEVENT.add("Draw Birds");
-                    } else if (abilityText.contains("Lay 1 [egg] on each of your birds with a [cavity] nest.")) {
-                        p.layEggsInNestType("cavity");
-                        state.CURRENTEVENT.removeLast();
-                    } else if (abilityText.contains("Lay 1 [egg] on this bird.")) {
-                        currentBird.addEggs(1); //IDK IF IT CHANGES THE BIRD THAT THE PLAYER HAS (IDK MUTATING RULS LOL)
-                        state.CURRENTEVENT.removeLast();
-                    } else if (abilityText.contains("Draw 2 new bonus cards and keep 1.")) {
-                        state.CURRENTEVENT.removeLast();
-                        bonusSelectOptions[0] = bonusArr.remove(0);
-                        bonusSelectOptions[1] = bonusArr.remove(1);
-                        state.CURRENTEVENT.add("Choose Bonus");
-                    }
-                }
-                out.println(state.CURRENTEVENT);
-                repaint();
-            }case "Choose Bonus" -> {
-                if (x>=400 && x<=645 && y>=470 && y<=825) {state.players[state.playing].addBonus(bonusSelectOptions[0]);state.CURRENTEVENT.removeLast();}
-                if (x>=800 && x<=1045 && y>=470 && y<=825) {state.players[state.playing].addBonus(bonusSelectOptions[1]);state.CURRENTEVENT.removeLast();}
-                repaint();
-            }case "Loop Draw" -> {
-                for (int i=0;i<loopOptions.size();i++){
-                    if (x>=120+230*i && x<=335+230*i && y>=515 && y<=775){
-                        state.players[loopDrawing].addCardToHand(loopOptions.remove(i));
-                        loopDrawing = (loopDrawing+1)%4;
-                    }
-                    //g.drawImage(loopOptions.get(i).getImage(), 120+230*i, 515, 215, 260, null);
-                }
-                
-                if (loopOptions.size()<1) state.CURRENTEVENT.removeLast();
-                repaint();
-            }case "On Activate Ability" -> {
-                String ability = currentBird.getAbilityText();
-                out.println("ON ACTIVATE");
-                out.println("Ability: "+ability);
-                if (currentBird.getAbility().getTrigger().equals("OA")){
-                    if (ability.contains("Gain 1 [seed] from the birdfeeder")){
-                        if (selectingBool){
-                            if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {currentBird.cacheFood();state.CURRENTEVENT.removeLast();}
-                            else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {state.players[state.playing].addFood("s",1);state.CURRENTEVENT.removeLast();}
-                            selectingBool = false;
-                        }else{
-                            selectingBool = true;
-                        }
-                    }
-                    else if (ability.contains("fewest birds in their")){
-                        out.println("I'm a bum and haven't implemented Bittern ability");
-                    }
-                    else if (ability.contains("Tuck 1 [card]")){
-                        if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
-                        currentShowing++;
-                        else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
-
-                        for (int i=0;i<4;i++){
-                            if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
-                                if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
-                                    state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
-                                    currentBird.tuckCard();
-                                    state.CURRENTEVENT.removeLast();
-                                    if (ability.contains("If you do, draw 1 [card]"))
-                                        state.CURRENTEVENT.add("Draw Card");
-                                    else if (ability.contains("lay 1 [egg]"))
-                                        currentBird.addEggs(1);
-                                    else if (ability.contains("gain 1 [fruit]"))
-                                        state.players[state.playing].addFood("b", 1);
-                                    else if (ability.contains("gain 1 [seed]"))
-                                        state.players[state.playing].addFood("s",1);
-                                    else if (ability.contains("gain 1 [invertebrate] or [seed]"))
-                                        out.println("I'm a lazy bum: Nuthatch ability");
-                                }
-                            }
-                        }
-                    }
-                    else if (ability.contains("Discard 1 [egg] from any")){
-                        if (selectingFood){
-                            String[] fo = {"s", "f", "b", "i", "r"};
-                            for (int i=0;i<5;i++){
-                                if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650)
-                                    state.players[state.playing].addFood(fo[i], 1);
-                            }
-                            state.CURRENTEVENT.removeLast();
-                            selectingFood = false;
-                        }else{
-                            selectingFood = true;
-                            state.CURRENTEVENT.add("Remove Egg");
-                        }
-                    }
-                    else if (ability.contains("Gain 31 [invert")){
-                        state.players[state.playing].addFood("i", 3);
-                        state.CURRENTEVENT.removeLast();
-                    }
-                    else if (ability.contains("Roll all dice not in feeder")){
-                        feeder.rollOutDice();
-                        String check;
-                        if (ability.contains("[rodent]"))
-                            check = "r";
-                        else if (ability.contains("[fish]"))
-                            check = "f";
-                        if (feeder.getOutDice().contains("check")){
-                            currentBird.cacheFood();
-                        }
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("View Feeder");
-                    }
-                    else if (ability.contains("Each player gains 1 [die]")){
-                        out.println("I'm a lazy bum: Anna's Hummingbird");
-                    }
-                    else if (ability.contains("Lay 1 [egg] on any bird")){
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("Lay Eggs");
-                    }
-                    else if (ability.contains("All players gain 1")){
-                        String check = "";
-                        if (ability.contains("[fruit]")) check = "b";
-                        else if (ability.contains("[seed]")) check = "s";
-                        else if (ability.contains("[invertebrate]")) check = "i";
-                        else if (ability.contains("[fish]")) check = "f";
-
-                        state.CURRENTEVENT.removeLast();
-                        for (Player p: state.players) p.addFood(check, 1);
-                    }
-                    else if (ability.contains("Look at a [card] from the deck")){
-                        int span;
-                        if (ability.contains("50")) span = 50;
-                        else if (ability.contains("75")) span = 75;
-                        else if (ability.contains("100")) span = 100;
-
-                        highlighted = birds.remove(0);
-                        if (highlighted.getWingspan()<span) currentBird.tuckCard();
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("View Highlight Bird");
-                    }
-                    else if (ability.contains("If this bird is to the right")){
-                        out.println("Im a lazy bum: Kingfisher");
-                    }
-                    else if (ability.contains("If you do, discard")){
-                        state.CURRENTEVENT.add("Remove Card", state.CURRENTEVENT.get("Game")+1);
-                        state.CURRENTEVENT.removeLast();
-                        if (ability.contains("2")) state.CURRENTEVENT.add("Draw Birds");
-                        state.CURRENTEVENT.add("Draw Birds");
-                    }
-                    else if (ability.contains("to tuck 2")){
-                        String check = ability.contains("fish")? "f":"s";
-                        if (state.players[state.playing].hasFoodType(check)){
-                            state.players[state.playing].removeFood(check, 1);
-                            out.println("I'm a bum and din't finish this: I haven't tucked 2 yet");
-                        }
-                        state.CURRENTEVENT.removeLast();
-                    }
-                    else if (ability.contains("Lay 1 [egg] on this bird")){
-                        currentBird.addEggs(1);
-                        state.CURRENTEVENT.removeLast();
-                    }
-                    else if (ability.contains("Cache 1 [seed]")){
-                        currentBird.cacheFood();
-                        state.CURRENTEVENT.removeLast();
-                    }
-                    else if (ability.contains("Discard 1 [egg] to draw 2 [card]")){
-                        state.CURRENTEVENT.removeLast();
-                        state.CURRENTEVENT.add("Draw Birds");
-                        state.CURRENTEVENT.add("Draw Birds");
-                        state.CURRENTEVENT.add("Remove Egg");
-                    }
-                    else if (ability.contains("Repeat a brown power")){
-                        out.println("i am a lazy bum: catbird");
-                    }
-                    else if (ability.contains("Trade 1 [wild] for any")){}
-                    else if (ability.contains("Repeat 1 [predator] power")){}
-                    else if //ENDED ON LAZUI BUNTING
-                    
-                    /*FK u chihuahuan raven */
-                }else {state.CURRENTEVENT.removeLast();}
-                
                 
                 repaint();
-            }case "View Highlight Bird" -> {
-                state.CURRENTEVENT.removeLast();
-            }case "Remove Bird" -> {
-                if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
-                    currentShowing++;
-                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
-
-                for (int i=0;i<4;i++){
-                    if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
-                        if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
-                            state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
-                            state.CURRENTEVENT.removeLast();
-                        }
-                    }
-                }
-            }
-        
-        
         }
+    }
     }
     @Override
     public void mouseReleased(MouseEvent e) {}
@@ -920,32 +531,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Play Specific Bird" -> paintPlaySpecificBird(g);
                 case "Rules" -> paintRules(g);
                 case "Choose Bird" -> paintPlaySpecificBirdSecondPart(g);
-                case "When Played Ability" -> paintWPAbility(g);
-                case "Choose Bonus" -> paintBonusDraw(g);
-                case "Loop Draw" -> paintLoopDraw(g);
-                case "On Activate Ability" -> paintOAAbility(g);
-                case "Remove Bird" -> paintViewBirds(g);
-                case "View Highlighted Bird" -> {
-                    paintGame(g);
-                    g.drawImage(highlighted.getImage(), 200, 200, 352, 600, null);
-                }
-                case "Lay Eggs" -> {
-                    paintGame(g);
-                    g.setFont(new Font("Arial", Font.BOLD, 55));
-                    g.drawString("Click a bird to add an egg", 300, 100);
-                    int count = 0;
-                    for (String s: state.CURRENTEVENT) if (s.equals("Lay Eggs")) count ++;
-                    g.drawString("Add " + count + " more eggs", 300, 160);
-                }
-                case "Remove Egg" -> {
-                    paintGame(g);
-                    g.setFont(new Font("Arial", Font.BOLD, 55));
-                    g.drawString("Click a bird to remove an egg", 300, 100);
-                }
-                case "Select Food" -> {
-                    paintViewFeeder(g);
-                    if (selectingBool) paintBoolean(g, "Select Food", "Seed","Insect");
-                }
             }
             state.lock.notifyAll();
         }
@@ -1402,7 +987,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawString("Click anywhere to continue (that isn't skip)", 400, 200);
         g.drawString("Any When Placed abilities will be auto-activated", 300, 300);
         g.drawImage(currentBird.getImage(), 500, 400, 340, 470, null);
-        g.drawImage(skip, 1000, 550, 300, 80, null);
+        //g.drawImage(skip, 1000, 550, 300, 80, null);
         
     }
     
@@ -1551,7 +1136,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             Continue_Button = ImageIO.read(FramePanel.class.getResource("/assets/Continue_Button.png"));
             Action_Button = ImageIO.read(FramePanel.class.getResource("/assets/Action_Button.png"));
             Score_By_Round = ImageIO.read(FramePanel.class.getResource("/assets/score_by_round.png"));
-            skip = ImageIO.read(FramePanel.class.getResource("/assets/skip.png"));
         } catch (Exception e) {
             out.println("Exception: "+e);
             out.println("Oops pics dont load");
@@ -1781,6 +1365,91 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         state.game.next(action);
     }
 
+
+
+
+    public void paintGetFoodFromFeeder(Graphics g){
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Get Food from Feeder", 600, 458);
+
+        g.drawImage(feederPic, 1150, 430, 350, 395, null);
+        if(feeder.canReroll()){
+            g.drawImage(Reroll_Button, 50, 700, 100, 100, null);
+            
+        }
+
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.drawRect(730, 494, 425, 298);
+        g.drawString(""+state.numberOfRemovableDice, 1400, 460);
+        for (int i=0;i<feeder.getDice().size();i++){
+            g.drawImage(dicePics[feeder.getImageIndex(i)], diceLocMap[i][0], diceLocMap[i][1], 90, 90, null);
+        }
+       
+    }
+    
+    public void paintTradeCardForFood(Graphics g){
+        if (state.players[state.playing].getCardsInHand().size()==0){ state.CURRENTEVENT.removeLast();repaint();return;}
+        paintGetFoodFromFeeder(g);
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        g.drawString("Select a bird card to trade for food, or press the x to decline", 300, 150);
+        
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(exitPic, 20, 400, 50, 50, null);
+        
+        
+        g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
+      
+
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        int counter = 0;
+        for (Bird b: state.players[state.playing].getCardsInHand()){
+            if (counter %showing == 0) 
+                birdArrSplit.add(new ArrayList<Bird>());
+            counter ++;
+            birdArrSplit.get(birdArrSplit.size()-1).add(b);
+        }
+
+        for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+        }
+     
+
+        if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
+        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
+    }
+    public void paintLayEggs(Graphics g){
+      paintGame(g);
+      Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.setColor(Color.BLUE);
+
+        if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
+        if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
+        if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
+
+       if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
+       
+       if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
+
+       if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
+
+      if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
+      if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
+      if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
+
 }
+}
+
+
      
    

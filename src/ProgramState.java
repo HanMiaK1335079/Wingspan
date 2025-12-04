@@ -16,6 +16,10 @@ public class ProgramState {
     public volatile int playing = 0;
     public volatile int showing = 0;
 
+    public volatile boolean hasCheckedForNumberOfRemovableDice=false;
+    public volatile int numberOfRemovableDice=0;
+    public volatile boolean canTradeCardForMoreFood=false;
+
     public volatile int birdNumArrayForChoosingSpecificBird=0;
 
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
