@@ -6,4 +6,5 @@
  - skip ability
  - highlight activation bird
  - should I remove onActivation or leave it and use a counter?
- - FK u chihuahuan raven why must u get 2 foods
+ - remove a seed from feeder for woodpecker ability
+ - painting for skipped abilities borken yey
