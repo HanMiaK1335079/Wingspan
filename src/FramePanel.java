@@ -798,7 +798,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         for (Player p: state.players) p.addFood(check, 1);
                     }
                     else if (ability.contains("Look at a [card] from the deck")){
-                        int span;
+                        int span = 0;
                         if (ability.contains("50")) span = 50;
                         else if (ability.contains("75")) span = 75;
                         else if (ability.contains("100")) span = 100;
