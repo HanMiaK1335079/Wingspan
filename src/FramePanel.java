@@ -13,7 +13,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, Reroll_Button;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -62,6 +62,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
+            Reroll_Button = ImageIO.read(FramePanel.class.getResource("/assets/Reroll.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -476,7 +477,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 
 
                     
-                }
+                
                 repaint();
         }
     }
@@ -986,7 +987,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawString("Click anywhere to continue (that isn't skip)", 400, 200);
         g.drawString("Any When Placed abilities will be auto-activated", 300, 300);
         g.drawImage(currentBird.getImage(), 500, 400, 340, 470, null);
-        g.drawImage(skip, 1000, 550, 300, 80, null);
+        //g.drawImage(skip, 1000, 550, 300, 80, null);
         
     }
     
@@ -1448,5 +1449,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
 }
 }
+
+
      
    
