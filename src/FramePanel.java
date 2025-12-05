@@ -13,7 +13,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, Reroll_Button;
+    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, Reroll_Button, skip;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -63,6 +63,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
             bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
             Reroll_Button = ImageIO.read(FramePanel.class.getResource("/assets/Reroll.png"));
+            skip = ImageIO.read(FramePanel.class.getResource("/assets/skip.png"));
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -83,6 +84,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         startButtonRect.setBounds(x, y, btnW, btnH);
     }
 
+    @Override
     public void addNotify() {
         super.addNotify();
         requestFocus();
@@ -260,6 +262,163 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
                 else if (x>=1375 && x<=1425 && y>=615 && y<=665) state.CURRENTEVENT.add("View Draw Birds");
                 else if (x>=480 && x<=530 && y>=120 && y<=170) state.CURRENTEVENT.add("Play Bird");
+                else if (x>=440 && x<=463 && y>=214 && y<=238){
+                    if (state.players[state.playing].getBirdsInHabitat("forest").size()!=0)
+                        state.CURRENTEVENT.add("On Activate Ability");
+                    //state.CURRENTEVENT.add("Select Food");
+                    runningHabitat = "forest";
+                    currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("forest").size()-1;
+                    /*add counter for habitat action */
+                    switch (state.players[state.playing].getBoard().getBirdsInHabitat("forest").size()){
+                        case 5 -> {
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 4 -> {
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Select Food");
+                        }
+                        case 3 -> {
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 2 -> {
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Select Food");
+                        }
+                        case 1 -> {
+                            state.CURRENTEVENT.add("Select Food");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 0 -> {state.CURRENTEVENT.add("Select Food");}
+                    }
+                }else if (x>=439 && x<=463 && y>=462 && y<=488){
+                    if (state.players[state.playing].getBirdsInHabitat("grasslands").size()!=0)
+                        state.CURRENTEVENT.add("On Activate Ability");
+                    //state.CURRENTEVENT.add("Lay Eggs");
+                    runningHabitat = "grasslands";
+                    currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("grasslands").size()-1;
+                    switch (state.players[state.playing].getBoard().getBirdsInHabitat("grasslands").size()){
+                        case 5 -> {
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 4 -> {
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                        }
+                        case 3 -> {
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 2 -> {
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                        }
+                        case 1 -> {
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Lay Eggs");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 0 -> {state.CURRENTEVENT.add("Lay Eggs");state.CURRENTEVENT.add("Lay Eggs");}
+                        
+                    }
+                }else if (x>=366 && x<=387 && y>=736 && y<=759){
+                    if (state.players[state.playing].getBirdsInHabitat("wetlands").size()!=0)
+                        state.CURRENTEVENT.add("On Activate Ability");
+                    //state.CURRENTEVENT.add("Draw Birds");
+                    runningHabitat = "wetlands";
+                    currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("wetlands").size()-1;
+                    switch (state.players[state.playing].getBoard().getBirdsInHabitat("wetlands").size()){
+                        case 5 -> {
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 4 -> {
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Draw Birds");
+                        }
+                        case 3 -> {
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 2 -> {
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Draw Birds");
+                        }
+                        case 1 -> {
+                            state.CURRENTEVENT.add("Draw Birds");
+                            state.CURRENTEVENT.add("Trade");
+                        }
+                        case 0 -> {state.CURRENTEVENT.add("Draw Birds");}
+                    }
+                }
+                tradeStarted = false;
+                repaint();
+            }case "Trade" -> {
+                if (!tradeStarted){
+                    if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]){
+                        if (runningHabitat.equals("grasslands") && !state.players[state.playing].hasFood()){
+                            state.CURRENTEVENT.removeLast();
+                            state.CURRENTEVENT.add("No Food");
+                        }
+                        else{
+                            tradeStarted = true;
+                            if (runningHabitat.equals("wetlands")){
+                                state.CURRENTEVENT.removeLast();
+                                state.CURRENTEVENT.add("Draw Birds");
+                                state.CURRENTEVENT.add("Remove Egg");
+                            }
+                        }
+                    }else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]){
+                        state.CURRENTEVENT.removeLast();
+                    }
+                }
+                else if (runningHabitat.equals("forest")){
+                    if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
+                        currentShowing++;
+                    else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+
+                    for (int i=0;i<4;i++){
+                        if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
+                            if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
+                                state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
+                                state.CURRENTEVENT.removeLast();
+                                state.CURRENTEVENT.add("Select Food");
+                            }
+                        }
+                    }
+
+                }
+                else if (runningHabitat.equals("grasslands")){
+                    String[] fo = {"s", "f", "b", "i", "r"};
+                    for (int i=0;i<5;i++){
+                        if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
+                            if (state.players[state.playing].hasFoodType(fo[i])){
+                                state.players[state.playing].removeFood(fo[i], 1);
+                                state.CURRENTEVENT.removeLast();
+                                state.CURRENTEVENT.add("Lay Eggs");
+                            }
+                        }
+                    }
+                    
+                }
                 repaint();
             }case "View Birds" -> {
                 if (x>=20 && x<=70 && y>=400 && y<=450) state.CURRENTEVENT.removeLast();
@@ -438,7 +597,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     for(int j=0;j<5;j++){
                         if(state.squaresClickedToPlayBird[i][j]){
                             position=j;
-                            
+                            for(int a=j;a>-1;a--){
+                                if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
+                                    position=a;
+                            }
+                        }
                         }
                     }
                 }
@@ -479,9 +642,295 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     
                 
                 repaint();
+            }case "When Played Ability" ->{
+                //out.println(state.CURRENTEVENT);
+                out.println("WHEN PLACED");
+                if (x>=1000 && y>=550 && x<=1300 && y<=630) {state.CURRENTEVENT.removeLast();repaint();return;}
+                out.println("Ability: "+currentBird.getAbility().getTrigger());
+                if (currentBird.getAbility().getTrigger().equals("WP")){
+                    out.println("activated when placed");
+                    String abilityText = currentBird.getAbilityText();
+                    Player p = state.players[state.playing];
+                    if (abilityText.contains("Play a second bird")) {
+                        /*OFFER A CHOICE */
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("Play Bird");
+                        state.CURRENTEVENT.add("Choose Bird");
+                    } else if (abilityText.contains("Gain 3 [seed] from the supply.")) {
+                        p.addFood("s", 3);
+                        state.CURRENTEVENT.removeLast();
+                    } else if (abilityText.contains("Gain 3 [fish] from the supply.")) {
+                        p.addFood("f", 3);
+                        state.CURRENTEVENT.removeLast();
+                    } else if (abilityText.contains("Gain all [fish] that are in the birdfeeder.")) {
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("View Feeder");
+                        int fishGained = feeder.takeAll("fish");
+                        p.addFood("f", fishGained);
+                    } else if (abilityText.contains("Gain all [invertebrate] that are in the birdfeeder.")) {
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("View Feeder");
+                        int invertebratesGained = feeder.takeAll("insect");
+                        p.addFood("i", invertebratesGained);
+                    } else if (abilityText.contains("Draw [card] equal to the number of players +1")) {
+                        int numToDraw = state.players.length + 1;
+                        loopDrawing = state.playing;
+                        for (int i=0;i<5;i++) loopOptions.add(birds.remove(0));
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("Loop Draw");
+                    } else if (abilityText.contains("Draw 2 [card]")) {
+                        state.CURRENTEVENT.removeLast();
+                        state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Draw Birds");
+                    } else if (abilityText.contains("Lay 1 [egg] on each of your birds with a [cavity] nest.")) {
+                        p.layEggsInNestType("cavity");
+                        state.CURRENTEVENT.removeLast();
+                    } else if (abilityText.contains("Lay 1 [egg] on this bird.")) {
+                        currentBird.addEggs(1); //IDK IF IT CHANGES THE BIRD THAT THE PLAYER HAS (IDK MUTATING RULS LOL)
+                        state.CURRENTEVENT.removeLast();
+                    } else if (abilityText.contains("Draw 2 new bonus cards and keep 1.")) {
+                        state.CURRENTEVENT.removeLast();
+                        bonusSelectOptions[0] = bonusArr.remove(0);
+                        bonusSelectOptions[1] = bonusArr.remove(1);
+                        state.CURRENTEVENT.add("Choose Bonus");
+                    }
+                }
+                out.println(state.CURRENTEVENT);
+                repaint();
+            }case "Choose Bonus" -> {
+                if (x>=400 && x<=645 && y>=470 && y<=825) {state.players[state.playing].addBonus(bonusSelectOptions[0]);state.CURRENTEVENT.removeLast();}
+                if (x>=800 && x<=1045 && y>=470 && y<=825) {state.players[state.playing].addBonus(bonusSelectOptions[1]);state.CURRENTEVENT.removeLast();}
+                repaint();
+            }case "Loop Draw" -> {
+                for (int i=0;i<loopOptions.size();i++){
+                    if (x>=120+230*i && x<=335+230*i && y>=515 && y<=775){
+                        state.players[loopDrawing].addCardToHand(loopOptions.remove(i));
+                        loopDrawing = (loopDrawing+1)%4;
+                    }
+                    //g.drawImage(loopOptions.get(i).getImage(), 120+230*i, 515, 215, 260, null);
+                }
+                
+                if (loopOptions.size()<1) state.CURRENTEVENT.removeLast();
+                repaint();
+            }case "On Activate Ability" -> {
+                String ability = currentBird.getAbilityText();
+                out.println("Current Bird NUm: " + currentBirdNum);
+                if (currentBirdNum>-1){
+                    currentBird = state.players[state.playing].getBirdsInHabitat(runningHabitat).get(currentBirdNum);
+                }else {currentBird = null;state.CURRENTEVENT.removeLast();}
+                out.println("ON ACTIVATE");
+                out.println("Ability: "+ability);
+                if (currentBird!=null && currentBird.getAbility().getTrigger().equals("OA")){
+                    if (ability.contains("Gain 1 [seed] from the birdfeeder")){
+                        if (selectingBool){
+                            if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {currentBird.cacheFood();currentBirdNum--;}
+                            else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {state.players[state.playing].addFood("s",1);currentBirdNum--;}
+                            selectingBool = false;
+                        }else{
+                            selectingBool = true;
+                        }
+                    }
+                    else if (ability.contains("fewest birds in their")){
+                        out.println("I'm a bum and haven't implemented Bittern ability");
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Tuck 1 [card]")){
+                        if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
+                        currentShowing++;
+                        else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+
+                        for (int i=0;i<4;i++){
+                            if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
+                                if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
+                                    state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
+                                    currentBird.tuckCard();
+                                    currentBirdNum--;
+                                    if (ability.contains("draw 1 [card]"))
+                                        state.CURRENTEVENT.add("Draw Card");
+                                    else if (ability.contains("lay 1 [egg]"))
+                                        currentBird.addEggs(1);
+                                    else if (ability.contains("gain 1 [fruit]"))
+                                        state.players[state.playing].addFood("b", 1);
+                                    else if (ability.contains("gain 1 [seed]"))
+                                        state.players[state.playing].addFood("s",1);
+                                    else if (ability.contains("gain 1 [invertebrate] or [seed]"))
+                                        out.println("I'm a lazy bum: Nuthatch ability");
+                                }
+                            }
+                        }
+                    }
+                    else if (ability.contains("Discard 1 [egg] from any")){
+                        if (selectingFood){
+                            String[] fo = {"s", "f", "b", "i", "r"};
+                            for (int i=0;i<5;i++){
+                                if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650)
+                                    state.players[state.playing].addFood(fo[i], 1);
+                            }
+                            currentBirdNum--;
+                            selectingFood = false;
+                        }else{
+                            selectingFood = true;
+                            state.CURRENTEVENT.add("Remove Egg");
+                        }
+                    }
+                    else if (ability.contains("Gain 31 [invert")){
+                        state.players[state.playing].addFood("i", 3);
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Roll all dice not in birdfeeder")){
+                        feeder.rollOutDice();
+                        String check;
+                        if (ability.contains("[rodent]"))
+                            check = "r";
+                        else if (ability.contains("[fish]"))
+                            check = "f";
+                        if (feeder.getOutDice().contains("check")){
+                            currentBird.cacheFood();
+                        }
+                        currentBirdNum--;
+                        state.CURRENTEVENT.add("View Feeder");
+                    }
+                    else if (ability.contains("Each player gains 1 [die]")){
+                        out.println("I'm a lazy bum: Anna's Hummingbird");
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Lay 1 [egg] on any bird")){
+                        currentBirdNum--;
+                        state.CURRENTEVENT.add("Lay Eggs");
+                    }
+                    else if (ability.contains("All players gain 1")){
+                        String check = "";
+                        if (ability.contains("[fruit]")) check = "b";
+                        else if (ability.contains("[seed]")) check = "s";
+                        else if (ability.contains("[invertebrate]")) check = "i";
+                        else if (ability.contains("[fish]")) check = "f";
+
+                        currentBirdNum--;
+                        for (Player p: state.players) p.addFood(check, 1);
+                    }
+                    else if (ability.contains("Look at a [card] from the deck")){
+                        int span = 0;
+                        if (ability.contains("50")) span = 50;
+                        else if (ability.contains("75")) span = 75;
+                        else span = 100;
+
+                        highlighted = birds.remove(0);
+                        if (highlighted.getWingspan()<span) currentBird.tuckCard();
+                        currentBirdNum--;
+                        state.CURRENTEVENT.add("View Highlight Bird");
+                    }
+                    else if (ability.contains("If this bird is to the right")){
+                        out.println("Im a lazy bum: Kingfisher");
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("If you do, discard")){
+                        state.CURRENTEVENT.add(state.CURRENTEVENT.indexOf("Game")+1, "Remove Bird");
+                        currentBirdNum--;
+                        if (ability.contains("2")) state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Draw Birds");
+                    }
+                    else if (ability.contains("to tuck 2")){
+                        String check = ability.contains("fish")? "f":"s";
+                        if (state.players[state.playing].hasFoodType(check)){
+                            state.players[state.playing].removeFood(check, 1);
+                            out.println("I'm a bum and din't finish this: I haven't tucked 2 yet");
+                        }
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Lay 1 [egg] on this bird")){
+                        currentBird.addEggs(1);
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Cache 1 [seed]")){
+                        currentBird.cacheFood();
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Discard 1 [egg] to draw 2 [card]")){
+                        currentBirdNum--;
+                        state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Draw Birds");
+                        state.CURRENTEVENT.add("Remove Egg");
+                    }
+                    else if (ability.contains("Repeat a brown power")){
+                        out.println("i am a lazy bum: catbird");
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("Trade 1 [wild] for any")){
+                        if (state.players[state.playing].hasFood()){
+                            state.CURRENTEVENT.add("Remove Food");
+                            state.CURRENTEVENT.add("Add Food");
+                            state.CURRENTEVENT.add("Add Food");
+                        }else{
+                            state.CURRENTEVENT.add("No Food");
+                            currentBirdNum--;
+                        }
+                    }
+                    else if (ability.contains("Repeat 1 [predator] power")){currentBirdNum--;}
+                    else if (ability.contains("All players lay 1 [egg] on any 1")){
+                        out.println("I'm a bum!");
+                        currentBirdNum--;
+                    }
+                    else if (currentBird.getName().equals("Mallard")){
+                        state.CURRENTEVENT.removeLast();currentBirdNum--;state.CURRENTEVENT.add("Draw Birds");
+                    }
+                    else if (ability.contains("All players draw 1 [card]")){
+                        currentBirdNum--;
+                    }
+                    else if (ability.contains("or [fruit] from the birdfeeder, if available")){
+                        // paint viewfeeder for this
+                        
+                    }
+                    
+                }else {currentBirdNum--;}
+                
+                
+                repaint();
+            }case "Remove Bird" -> {
+                if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
+                    currentShowing++;
+                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+
+                for (int i=0;i<4;i++){
+                    if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
+                        if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
+                            state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
+                            state.CURRENTEVENT.removeLast();
+                        }
+                    }
+                }
+                repaint();
+            }case "Remove Food" -> {
+                String[] fo = {"s", "f", "b", "i", "r"};
+                for (int i=0;i<5;i++){
+                    if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
+                        if (state.players[state.playing].hasFoodType(fo[i])){
+                            state.players[state.playing].removeFood(fo[i], 1);
+                            state.CURRENTEVENT.removeLast();
+                        }
+                    }
+                }
+                repaint();
+                }case "Add Food" -> {
+                    String[] fo = {"s", "f", "b", "i", "r"};
+                    for (int i=0;i<5;i++){
+                        if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
+                            state.players[state.playing].addFood(fo[i], 1);
+                            state.CURRENTEVENT.removeLast();
+                        }
+                    }
+                    repaint();
+                }
+                default ->{
+                    state.CURRENTEVENT.removeLast();
+                    repaint();
+                }
+            }
+            repaint();
+            
         }
-    }
-    }
+    
+       
+    
     @Override
     public void mouseReleased(MouseEvent e) {}
     @Override
@@ -500,7 +949,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             repaint();
         }
     }
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+        if (e.getKeyChar() == 'e') {
+           out.println(state.CURRENTEVENT);
+        }
+    }
     public void keyPressed(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
 
@@ -531,6 +984,42 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Play Specific Bird" -> paintPlaySpecificBird(g);
                 case "Rules" -> paintRules(g);
                 case "Choose Bird" -> paintPlaySpecificBirdSecondPart(g);
+                case "When Played Ability" -> paintWPAbility(g);
+                case "Choose Bonus" -> paintBonusDraw(g);
+                case "Loop Draw" -> paintLoopDraw(g);
+                case "On Activate Ability" -> paintOAAbility(g);
+                case "Remove Bird" -> paintViewBirds(g);
+                case "Remove Food" -> paintViewFoods(g);
+                case "Add Food" -> paintViewFoods(g);
+                case "No Food" -> {
+                    paintGame(g);
+                    g.setColor(Color.CYAN);
+                    g.fillRect(600, 400, 300, 100);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.setColor(Color.BLACK);
+                    g.drawString("Oops you have no food :(", 650, 420);
+                }
+                case "View Highlight Bird" -> {
+                    paintGame(g);
+                    g.drawImage(highlighted.getImage(), 200, 200, 352, 600, null);
+                }
+                case "Lay Eggs" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.drawString("Click a bird to add an egg", 300, 100);
+                    int count = 0;
+                    for (String s: state.CURRENTEVENT) if (s.equals("Lay Eggs")) count ++;
+                    g.drawString("Add " + count + " more eggs", 300, 160);
+                }
+                case "Remove Egg" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.drawString("Click a bird to remove an egg", 300, 100);
+                }
+                case "Select Food" -> {
+                    paintViewFeeder(g);
+                    if (selectingBool) paintBoolean(g, "Select Food", "Seed","Insect");
+                }
             }
             state.lock.notifyAll();
         }
@@ -538,7 +1027,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void paintOAAbility(Graphics g){
         String ability = currentBird.getAbilityText();
-        if (ability.contains("Gain 1 [seed] from the birdfeeder")){
+        if (currentBirdNum<0){
+            paintGame(g);
+            g.setFont(new Font("Arial", Font.BOLD, 55));
+            g.drawString("clic to continue", 200, 200);
+            return;
+        }
+        else if (ability.contains("Gain 1 [seed] from the birdfeeder")){
             if (selectingBool) paintBoolean(g, "Cache seed?", "Yes", "No");
         }
         else if (ability.contains("Tuck 1 [card]")){
@@ -555,6 +1050,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 g.drawImage(rodentToken, 650, 550, 100, 100, null);
             }else paintGame(g);
         }
+        else paintGame(g);
+        g.setColor(Color.CYAN);
+        g.fillRect(630, 10, 300, (int)(200*1.4)+40);
+        g.drawImage(currentBird.getImage(), 650, 30, 260, (int)(200*1.4), null);
+        g.drawImage(skip, 1100, 300, 300, 100, null);
     }
 
     public void paintScoreRound(Graphics g){
@@ -818,10 +1318,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             for (Bird b: birdArr){
                 //g.drawString()
                 if (b!=null){
-                    g.drawString("E: "+b.getEggCount(), 476, 330+230*counter);
+                    g.drawString("E: "+b.getEggCount(), 476+173*counterIndex, 330+230*counter);
                     if (b.getTuckedCards()>0){
-                        g.drawString("T: "+b.getTuckedCards(), 594, 220 + 230*counter);
-                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594, 220 + 230*counter);
+                        g.drawString("T: "+b.getTuckedCards(), 594+173*counterIndex, 220 + 230*counter);
+                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+173*counterIndex, 220 + 230*counter);
                 }
                 counterIndex++;
                     //out.println("Birbing");
@@ -893,24 +1393,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 paintViewBirds(g);
                 g.drawString("Click a card to trade", 400, 200);
             }else if (runningHabitat.equals("grasslands")){
-                g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
-                g.drawString("Click a food to trade", 400, 200);
-                for (int i=0;i<5;i++){
-                    String foodTypeForToken="";
-                    switch(i){
-                        case 0 -> foodTypeForToken="s";
-                        case 1 -> foodTypeForToken="f";
-                        case 2 -> foodTypeForToken="b";
-                        case 3 -> foodTypeForToken="i";
-                        case 4 -> foodTypeForToken="r";
-                    }
-                    g.drawString(""+state.players[state.playing].getFoodCount(foodTypeForToken), 285+100*i, 700);
-                }
-                g.drawImage(wheatToken, 250, 550, 100, 100, null);
-                g.drawImage(fishToken, 350, 550, 100, 100, null);
-                g.drawImage(fruitToken, 450, 550, 100, 100, null);
-                g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
-                g.drawImage(rodentToken, 650, 550, 100, 100, null);
+                paintGame(g);
+                //g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+                paintViewFoods(g);
             }else if (runningHabitat.equals("wetlands")){
                 g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
                 g.drawString("Click to trade an egg", 400, 200);
@@ -980,6 +1465,37 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
     }
 
+    public void paintViewFoods(Graphics g){
+        out.println("Painting view foods");
+        paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        //g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        String s = "";
+        switch (state.CURRENTEVENT.getLast()){
+            case "Trade" -> s = "trade";
+            case "Remove Food" -> s = "trade";
+            case "Add Food" -> s = "gain";
+        }
+        g.drawString("Click a food to " + s, 600, 458);
+
+        for (int i=0;i<5;i++){
+            String foodTypeForToken="";
+            switch(i){
+                case 0 -> foodTypeForToken="s";
+                case 1 -> foodTypeForToken="f";
+                case 2 -> foodTypeForToken="b";
+                case 3 -> foodTypeForToken="i";
+                case 4 -> foodTypeForToken="r";
+            }
+            g.drawString(""+state.players[state.playing].getFoodCount(foodTypeForToken), 285+100*i, 700);
+        }
+        g.drawImage(wheatToken, 250, 550, 100, 100, null);
+        g.drawImage(fishToken, 350, 550, 100, 100, null);
+        g.drawImage(fruitToken, 450, 550, 100, 100, null);
+        g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+        g.drawImage(rodentToken, 650, 550, 100, 100, null);
+    }
     //Ability stuffs
     public void paintWPAbility(Graphics g){
         g.drawImage(bg, 0,0, getWidth(), getHeight(), null);

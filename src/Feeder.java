@@ -138,7 +138,7 @@ public class Feeder {
         
         for (int i = foodDice.size() - 1; i >= 0; i--) {
             if (foodDice.get(i).equals(foodType)) {
-                foodDice.remove(i);
+                outDice.add(foodDice.remove(i));
                 count++;
             }
         }

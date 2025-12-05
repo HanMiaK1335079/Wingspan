@@ -97,6 +97,13 @@ public class Player {
             bird.setPinkPowerUsed(false);
         }
     }
+
+    public boolean hasFood(){
+        for (int x: foods){
+            if (x>0) return true;
+        }
+        return false;
+    }
     
     public void removeFood(String foodType, int amount) {
         switch (foodType) {
