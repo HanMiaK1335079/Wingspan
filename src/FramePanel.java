@@ -12,8 +12,14 @@ import static java.lang.System.*;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import src.Bird;
+import src.Bonus;
+import src.Feeder;
+import src.GameLogic;
+import src.Player;
+import src.ProgramState;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener {
-    private BufferedImage cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round;
+    private BufferedImage Reroll_Button,cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, skip;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -633,7 +639,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 
 
                     
-                }
+                
                 repaint();
             }case "When Played Ability" ->{
                 //out.println(state.CURRENTEVENT);
@@ -1099,7 +1105,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if(state.squaresClickedToPlayBird[2][4]) g2.drawRect(1152,650,1302-1152,866-650);
         if (state.CURRENTEVENT.indexOf("Choose Bird")<0)state.CURRENTEVENT.add("Choose Bird");
         g.setColor(new Color(0, 0, 0));
-        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 380, this.getWidth(), this.getHeight(), null);
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("Bird Card", 600, 458);
