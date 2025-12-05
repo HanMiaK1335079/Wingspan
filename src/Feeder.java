@@ -105,6 +105,10 @@ public class Feeder {
     public void removeDie(int i){
         foodDice.remove(i);
     }
+    public void removeDie(String food){
+        foodDice.remove(food);
+        outDice.add(food);
+    }
     public boolean isEmpty() {
         return foodDice.isEmpty();
     }
