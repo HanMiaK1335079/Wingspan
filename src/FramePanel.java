@@ -297,7 +297,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         }
                         case 0 -> {state.CURRENTEVENT.add("Select Food");}
                     }
-                }else if (x>=439 && x<=463 && y>=462 && y<=488){
+                }else if (x>=439 && x<=463 && y>=462 && y<=488 && state.players[state.playing].canLayEggs()){
                     if (state.players[state.playing].getBirdsInHabitat("grasslands").size()!=0)
                         state.CURRENTEVENT.add("On Activate Ability");
                     //state.CURRENTEVENT.add("Lay Eggs");
@@ -376,6 +376,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 repaint();
             }case "Trade" -> {
                 if (!tradeStarted){
+                    if(state.players[state.playing].getCardsInHand().isEmpty()){state.CURRENTEVENT.removeLast(); repaint(); return;}
+
+                        canTrade = true;
                     if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]){
                         if (runningHabitat.equals("grasslands") && !state.players[state.playing].hasFood()){
                             state.CURRENTEVENT.removeLast();
@@ -455,13 +458,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 else if (x>=100 && x<=170 && y>=450 && y<=520 && rulePage>0) rulePage --;
                 repaint();
             }case "Select Food" -> {
-                if (selectingBool){
+               
+                if (selectingBool&&x>=500 && x<=1100 && y>=250 && y<=525){
                     if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {state.players[state.playing].addFood("s", 1);state.CURRENTEVENT.removeLast();}
                     else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {state.players[state.playing].addFood("i", 1);state.CURRENTEVENT.removeLast();}
                     selectingBool = false;
                 }
+            
                 else{
-                    if (feeder.canReroll() && x>=1185 && x<=1300 && y>=480 && y<=605) feeder.reRoll();
+                    if (feeder.canReroll() && x>=1185 && x<=1300 && y>=480 && y<=605&&!selectingBool) feeder.reRoll();
                     for (int i=0;i<5;i++){
                         if (x>=diceLocMap[i][0] && x<=diceLocMap[i][0]+90 && y>=diceLocMap[i][1] && y<=diceLocMap[i][1]+90){
                             if (feeder.getDice().get(i).equals("a")) selectingBool = true;
@@ -471,6 +476,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     
                 }
+            
                 repaint();
             }case "Remove Egg" ->{
                 Bird[][] birdBoard = state.players[state.playing].getPlayerBoard();
@@ -730,15 +736,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     if (ability.contains("Gain 1 [seed] from the birdfeeder")){
                         if (feeder.getDice().contains("s")){
                             if (selectingBool){
-                                feeder.removeDie("s");
                                 if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {
                                     currentBird.cacheFood();
                                     currentBirdNum--;
+                                    feeder.removeDie("s");
                                     selectingBool = false;
                                 }
                                 else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {
                                     state.players[state.playing].addFood("s",1);
                                     currentBirdNum--;
+                                    feeder.removeDie("s");
                                     selectingBool = false;
                                 }
                             }else{
@@ -1059,7 +1066,30 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     g.drawImage(highlighted.getImage(), 200, 200, 352, 600, null);
                 }
                 case "Lay Eggs" -> {
-                    paintGame(g);
+                    paintGame(g);Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.setColor(Color.BLUE);
+
+        if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
+        if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
+        if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
+
+       if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
+       
+       if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
+
+       if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
+
+      if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
+      if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
+      if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
+      g2.setColor(Color.BLACK);
                     g.setFont(new Font("Arial", Font.BOLD, 55));
                     g.drawString("Click a bird to add an egg", 300, 100);
                     int count = 0;
@@ -1483,10 +1513,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             counter ++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
-
+        try{
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
+    } catch (IndexOutOfBoundsException e){for (int i=0;i<birdArrSplit.get(currentShowing--).size();i++){
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+        }
+    }
         //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
@@ -1655,7 +1689,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         for (int i=0;i<feeder.getOutDice().size();i++){
             g.drawImage(dicePics[feeder.getOutImageIndex(i)], diceLocMap[i][0]-520, diceLocMap[i][1], 90, 90, null);
         }
-        if (feeder.canReroll()) g.drawImage(cover, 1185, 480, 115, 115, null);
+        if (feeder.canReroll()) g.drawImage(Reroll_Button, 1185, 480, 115, 115, null);
         
     }
 
@@ -1997,29 +2031,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     public void paintLayEggs(Graphics g){
       paintGame(g);
-      Graphics2D g2 = (Graphics2D)g;
-        g2.setStroke(new BasicStroke(5.0f));
-        g2.setColor(Color.BLUE);
-
-        if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
-        if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
-        if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
-
-       if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
-       if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
-       if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
-       
-       if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
-       if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
-       if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
-
-       if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
-       if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
-       if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
-
-      if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
-      if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
-      if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
+      
 
 }
 }
