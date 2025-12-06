@@ -4,4 +4,4 @@
  - bird counts are wrong
  - theres a bird with no pic
  - skip ability
- - painting for skipped abilities borken yey
+ - move to another habitat borken for when theres a bird behind it
