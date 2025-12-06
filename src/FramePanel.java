@@ -1085,9 +1085,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     repaint();
                 }
             }
-<<<<<<< HEAD
-            repaint();
-=======
             case "Loop Lay Eggs" -> {
                 Bird[][] birdBoard = state.players[state.playing].getPlayerBoard();
                 for (int i=0;i<3;i++){
@@ -1164,7 +1161,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 repaint();
             }
->>>>>>> 8a24055e2392c762c5015758e0669fbf74947b1a
             
         }
     
