@@ -199,11 +199,17 @@ public class Board {
     }
 
     public void layEggsInNestType(String nestType) {
-        forEachBird(bird -> {
-            if (bird.getNest().equalsIgnoreCase(nestType) && bird.getStoredEggs() < bird.getMaxEggs()) {
-                bird.addEggs(1);
+        System.out.println("Laying eggs on : " + nestType);
+        for (Bird[] row: board){
+            for (Bird b: row){
+                if (!(b==null)){
+                    if (b.getNest().equals(nestType)){
+                        b.addEggs(1);
+                        System.out.println("Added Eggz");
+                    }
+                }
             }
-        });
+        }
     }
 
     public boolean layEggsOnAnyBird() {
