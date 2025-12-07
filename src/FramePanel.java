@@ -1264,30 +1264,31 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     g.drawImage(highlighted.getImage(), 200, 200, 352, 600, null);
                 }
                 case "Lay Eggs" -> {
-                    paintGame(g);Graphics2D g2 = (Graphics2D)g;
-        g2.setStroke(new BasicStroke(5.0f));
-        g2.setColor(Color.BLUE);
+                    paintGame(g);
+                    Graphics2D g2 = (Graphics2D)g;
+                    g2.setStroke(new BasicStroke(5.0f));
+                    g2.setColor(Color.BLUE);
 
-        if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
-        if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
-        if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
+                    if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
+                    if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
+                    if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
 
-       if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
-       if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
-       if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
-       
-       if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
-       if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
-       if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
+                    if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
+                    if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
+                    if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
+                    
+                    if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
+                    if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
+                    if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
 
-       if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
-       if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
-       if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
+                    if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
+                    if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
+                    if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
 
-      if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
-      if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
-      if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
-      g2.setColor(Color.BLACK);
+                    if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
+                    if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
+                    if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
+                    g2.setColor(Color.BLACK);
                     g.setFont(new Font("Arial", Font.BOLD, 55));
                     g.drawString("Click a bird to add an egg", 300, 100);
                     int count = 0;
@@ -1308,23 +1309,26 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     g.setFont(new Font("Arial", Font.BOLD, 55));
                     
                       paintGame(g);
-        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
-        //g.drawImage(exitPic, 20, 400, 50, 50, null);
-        g.setFont(new Font("Arial", Font.BOLD, 50));
-        g.drawString("Click a food to play bird with", 600, 458);
+                    g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+                    //g.drawImage(exitPic, 20, 400, 50, 50, null);
+                    g.setFont(new Font("Arial", Font.BOLD, 50));
+                    g.drawString("Click a food to play bird with", 600, 458);
 
-        for (int i=0;i<5;i++){  
-            g.drawString(""+state.birdFoodsForPlayingBird[i], 285+100*i, 700);
-        }
-        g.drawImage(wheatToken, 250, 550, 100, 100, null);
-        g.drawImage(fishToken, 350, 550, 100, 100, null);
-        g.drawImage(fruitToken, 450, 550, 100, 100, null);
-        g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
-        g.drawImage(rodentToken, 650, 550, 100, 100, null);
-                
-            state.lock.notifyAll();
+                    for (int i=0;i<5;i++){  
+                        g.drawString(""+state.birdFoodsForPlayingBird[i], 285+100*i, 700);
+                    }
+                    g.drawImage(wheatToken, 250, 550, 100, 100, null);
+                    g.drawImage(fishToken, 350, 550, 100, 100, null);
+                    g.drawImage(fruitToken, 450, 550, 100, 100, null);
+                    g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+                    g.drawImage(rodentToken, 650, 550, 100, 100, null);
+                            
+                    state.lock.notifyAll();
+                }
+            }
         }
     }
+
 
     public void paintOAAbility(Graphics g){
         String ability = currentBird.getAbilityText();
