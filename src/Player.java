@@ -270,7 +270,15 @@ public class Player {
     }
 
     private int getEggCostForPlacement(String habitat) {
-        return board.getBirdsInHabitat(habitat).size();
+        switch(board.getBirdsInHabitat(habitat).size()) {
+            case 0 -> { return 0; }
+            case 1 -> { return 1; }
+            case 2 -> { return 1; }
+            case 3 -> { return 2; }
+            case 4 -> { return 2;}
+            
+        }
+        return 0;
     }
 
     public boolean spendEggs(int eggs) {
@@ -455,5 +463,8 @@ public class Player {
     
     public void spendFood(String f, int amount) {
         removeFood(f, amount);
+    }
+    public boolean canLayEggs() {
+        return canLayEggsOnAnyBird();
     }
 }
