@@ -1170,9 +1170,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 
             }
             
-        }
-        repaint();
-            
+        
+            repaint();
+            }
         }
     }
             
