@@ -176,7 +176,7 @@ public class Player {
     }
 
     @SuppressWarnings("unchecked")
-    private void spendFoodForBird(Bird bird, Object... params) {
+    private void spendFoodForBird(Bird bird, String[] chosen, Object... params) {
         if (bird.getFoods() == null || bird.getFoods().size() == 0) {
             return;
         }
@@ -184,7 +184,7 @@ public class Player {
         if (params != null && params.length > 0 && params[0] instanceof Map) {
             spendFoodFromMap((Map<String, Integer>) params[0]);
         } else {
-            spendFirstAffordableOption(bird);
+            spendTHECHOSENOPTION(bird,chosen);
         }
     }
 
@@ -194,14 +194,16 @@ public class Player {
         }
     }
 
-    private void spendFirstAffordableOption(Bird bird) {
+    private void spendTHECHOSENOPTION(Bird bird, String[] chosen) {
         for (String[] option : bird.getFoods()) {
-            if (canAffordOption(option)) {
+            if (canAffordOption(option)&&Arrays.equals(option, chosen)) {
                 spendFoodForOption(option);
                 return;
             }
         }
     }
+
+    
 
     public boolean canAffordBird(Bird bird) {
         if (bird.getFoods() == null || bird.getFoods().size() == 0) {
@@ -213,6 +215,17 @@ public class Player {
             }
         }
         return false;
+    }
+    public boolean canAffordBirdWithChosenFoods(Bird bird, int[] chosen) {
+        for(int i=0;i<chosen.length;i++){
+            if(chosen[i]-bird.foodsToIntArray()[i]<0) return false;
+            chosen[i]-=bird.foodsToIntArray()[i];
+        }
+        int evilGuyThatWEyesWENeedToGetRidOf=bird.foodsToIntArray()[5];
+        for(int i=0;i<chosen.length;i++){
+        evilGuyThatWEyesWENeedToGetRidOf-=chosen[i];
+        }
+        return(evilGuyThatWEyesWENeedToGetRidOf==0);
     }
 
     private boolean canAffordOption(String[] option) {
@@ -241,7 +254,7 @@ public class Player {
         return leftovers >= wildRequired;
     }
 
-    private void spendFoodForOption(String[] option) {
+    private void spendFoodForOption(String[] option, Object... params) {
         Map<String, Integer> requiredFoodCounts = new HashMap<>();
         int wildRequired = 0;
         for (String food : option) {
