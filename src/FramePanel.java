@@ -55,7 +55,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
         for (int i=0;i<4;i++){
             state.players[i] = new Player();
-        }
+            }
+         
+        
 
         //Add all buffered images here 
         try{
@@ -461,26 +463,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 else if (x>=100 && x<=170 && y>=450 && y<=520 && rulePage>0) rulePage --;
                 repaint();
             }case "Select Food" -> {
-<<<<<<< HEAD
                
                 if (selectingBool&&x>=500 && x<=1100 && y>=250 && y<=525){
                     if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {state.players[state.playing].addFood("s", 1);state.CURRENTEVENT.removeLast();}
                     else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {state.players[state.playing].addFood("i", 1);state.CURRENTEVENT.removeLast();}
                     selectingBool = false;
-=======
-                if (selectingBool){
-                    if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {
-                        state.players[state.playing].addFood("s", 1);
-                        state.CURRENTEVENT.removeLast();
-                        selectingBool = false;
-                    }
-                    else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {
-                        state.players[state.playing].addFood("i", 1);
-                        state.CURRENTEVENT.removeLast();
-                        selectingBool = false;
-                    }
-                    
->>>>>>> 8a24055e2392c762c5015758e0669fbf74947b1a
                 }
             
                 else{
@@ -606,7 +593,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
         case "Wait For Second Part Play Specific Bird" -> {
             state.CURRENTEVENT.removeLast();
-            paintPlaySpecificBirdSecondPart(this.getGraphics());
+            state.CURRENTEVENT.add("Pick Food For Specific Bird");
+            repaint();
         }
         case "Choose Bird" -> {
             if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();
@@ -1080,10 +1068,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     repaint();
                 }
-                default ->{
-                    state.CURRENTEVENT.removeLast();
-                    repaint();
-                }
+            default ->{
+                state.CURRENTEVENT.removeLast();
+                repaint();
             }
             case "Loop Lay Eggs" -> {
                 Bird[][] birdBoard = state.players[state.playing].getPlayerBoard();
@@ -1160,9 +1147,36 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     
                 }
                 repaint();
+            }case "Pick Food For Bird" -> {
+        //         g.drawImage(wheatToken, 250, 550, 100, 100, null);
+        // g.drawImage(fishToken, 350, 550, 100, 100, null);
+        // g.drawImage(fruitToken, 450, 550, 100, 100, null);
+        // g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+        // g.drawImage(rodentToken, 650, 550, 100, 100, null);
+            if(x>=250 && x<=350 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[0]++;
+            }
+            else if (x>=350 && x<=450 && y>=550 && y<=650){
+               state.birdFoodsForPlayingBird[0]++;
+            }
+            else if (x>=450 && x<=550 && y>=550 && y<=650){
+               state.birdFoodsForPlayingBird[0]++;
+            }
+            else if (x>=550 && x<=650 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[0]++;
+            }
+            else if (x>=650 && x<=750 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[0]++;
+                
             }
             
         }
+        repaint();
+            
+        }
+    }
+            
+        
     
        
     
@@ -1289,7 +1303,25 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     paintViewFeeder(g);
                     if (selectingBool) paintBoolean(g, "Select Food", "Seed","Insect");
                 }
-            }
+                case "Pick Food For Bird" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    
+                      paintGame(g);
+        g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+        //g.drawImage(exitPic, 20, 400, 50, 50, null);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Click a food to play bird with", 600, 458);
+
+        for (int i=0;i<5;i++){  
+            g.drawString(""+state.birdFoodsForPlayingBird[i], 285+100*i, 700);
+        }
+        g.drawImage(wheatToken, 250, 550, 100, 100, null);
+        g.drawImage(fishToken, 350, 550, 100, 100, null);
+        g.drawImage(fruitToken, 450, 550, 100, 100, null);
+        g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+        g.drawImage(rodentToken, 650, 550, 100, 100, null);
+                
             state.lock.notifyAll();
         }
     }
@@ -1299,7 +1331,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if (currentBirdNum<0){
             paintGame(g);
             g.setFont(new Font("Arial", Font.BOLD, 55));
-            g.drawString("clic to continue", 200, 200);
+            g.drawString("CLICK to continue", 200, 200);
             return;
         }
         else if (ability.contains("Gain 1 [seed] from the birdfeeder")){
@@ -1331,11 +1363,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         else if (ability.contains("If this bird is to the right")){
             paintGame(g);
             Graphics2D g2 = (Graphics2D) g;
-            g.setStroke(new BasicStroke(5.5f));
-            g.setColor(color.CYAN);
-            g.drawRect(247, 154, 466-247, 394-154);
-            g.drawRect(246, 398, 467-246, 646-398);
-            g.drawRect(245, 649, 463-245, 860-649);
+            g2.setStroke(new BasicStroke(5.5f));
+            g2.setColor(Color.CYAN);
+            g2.drawRect(247, 154, 466-247, 394-154);
+            g2.drawRect(246, 398, 467-246, 646-398);
+            g2.drawRect(245, 649, 463-245, 860-649);
         }
         else if (ability.contains("Discard 1 [egg] from any")){
             if (selectingFood){
