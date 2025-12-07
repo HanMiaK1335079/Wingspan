@@ -151,16 +151,16 @@ public class Player {
         }
     }
     
-    public boolean playBird(Bird bird, String habitat, int position, Object... params) {
+    public boolean playBird(Bird bird, String habitat, int position, int[] thing ,Object... params) {
         if (!canPlayBird(bird, habitat, position)) {
             return false;
         }
         
-        spendFoodForBird(bird, params);
-        int eggCost = getEggCostForPlacement(habitat);
-        if (!spendEggs(eggCost)) {
-            return false;
-        }
+        spendFoodForBird(bird, thing);
+       // int eggCost = getEggCostForPlacement(habitat);
+        // if (!spendEggs(eggCost)) {
+        //     return false;
+        // }
         return board.playBird(bird, habitat, position);
     }
     
@@ -176,16 +176,10 @@ public class Player {
     }
 
     @SuppressWarnings("unchecked")
-    private void spendFoodForBird(Bird bird, String[] chosen, Object... params) {
-        if (bird.getFoods() == null || bird.getFoods().size() == 0) {
-            return;
-        }
-
-        if (params != null && params.length > 0 && params[0] instanceof Map) {
-            spendFoodFromMap((Map<String, Integer>) params[0]);
-        } else {
-            spendTHECHOSENOPTION(bird,chosen);
-        }
+    private void spendFoodForBird(Bird bird, int[] thing ,Object... params) {
+       for(int i=0;i<thing.length;i++){
+          foods.set(i, foods.get(i) - thing[i]);  
+       }
     }
 
     private void spendFoodFromMap(Map<String, Integer> chosenFoods) {
@@ -217,15 +211,64 @@ public class Player {
         return false;
     }
     public boolean canAffordBirdWithChosenFoods(Bird bird, int[] chosen) {
+        for(String[] option: bird.getFoods()){
+            System.out.print(Arrays.toString(option)+"/");
+        }   
+        ArrayList<String> CHOSEN = new ArrayList<>();
         for(int i=0;i<chosen.length;i++){
-            if(chosen[i]-bird.foodsToIntArray()[i]<0) return false;
-            chosen[i]-=bird.foodsToIntArray()[i];
+            switch(i){
+                case 0 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("s");}
+                case 1 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("f");}
+                case 2 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("b");}
+                case 3 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("i");}
+                case 4 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("r");}
+            }
+            
         }
-        int evilGuyThatWEyesWENeedToGetRidOf=bird.foodsToIntArray()[5];
-        for(int i=0;i<chosen.length;i++){
-        evilGuyThatWEyesWENeedToGetRidOf-=chosen[i];
+        
+            System.out.print("the chosen one"+CHOSEN);
+        
+        ArrayList<ArrayList<String>> options = new ArrayList<>();
+        for(String[] option: bird.getFoods()){
+            ArrayList<String> x = new ArrayList<>();
+            for(String op: option){
+                x.add(op);
+            }
+            options.add(x);
         }
-        return(evilGuyThatWEyesWENeedToGetRidOf==0);
+        if(options.size()==1){
+        for(int i=0;i<CHOSEN.size();i++){
+            if(options.get(0).contains(CHOSEN.get(i))){ 
+           options.get(0).remove(options.get(0).indexOf(CHOSEN.get(i)));
+           CHOSEN.remove(i);
+           i--;
+            }
+        }
+        for(int i=0;i<CHOSEN.size()&&i<options.get(0).size();i++){
+            if(options.get(0).get(i).equals("a")){ 
+           options.get(0).remove(i);
+           CHOSEN.remove(i);
+           i--;
+            }
+        }
+    }else{
+         if(options.contains(CHOSEN))
+            return true;
+    }
+        
+        System.out.println("the options left after removing the chosen ones");
+        for(ArrayList<String> option: options){
+            System.out.print((option)+"/");
+        }
+        System.out.println("The chosen ones left after removing from options");
+        for(String c: CHOSEN){
+            System.out.print(c+"/");
+        }
+        for(int i=0;i<options.size();i++){
+            
+            if(options.get(i).size()==0) options.remove(i);
+        }
+        return options.size()==0&&CHOSEN.size()==0;
     }
 
     private boolean canAffordOption(String[] option) {

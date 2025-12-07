@@ -97,6 +97,7 @@ public class Bird {
     public void setImage(BufferedImage i) { image = i; }
 
     public boolean canLiveInHabitat(String habitat) {
+        System.out.println("Checking if "+name+" can live in habitat: "+habitat);
         if (habitat == null) return false;
         String habitatNormalized = getHabitatNorm(habitat);
         return habitats != null && habitats.contains(habitatNormalized);
