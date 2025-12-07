@@ -1297,11 +1297,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         else if (ability.contains("If this bird is to the right")){
             paintGame(g);
             Graphics2D g2 = (Graphics2D) g;
-            g.setStroke(new BasicStroke(5.5f));
-            g.setColor(color.CYAN);
-            g.drawRect(247, 154, 466-247, 394-154);
-            g.drawRect(246, 398, 467-246, 646-398);
-            g.drawRect(245, 649, 463-245, 860-649);
+            g2.setStroke(new BasicStroke(5.5f));
+            g2.setColor(Color.CYAN);
+            g2.drawRect(247, 154, 466-247, 394-154);
+            g2.drawRect(246, 398, 467-246, 646-398);
+            g2.drawRect(245, 649, 463-245, 860-649);
         }
         else if (ability.contains("Discard 1 [egg] from any")){
             if (selectingFood){
@@ -1585,8 +1585,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (b!=null){
                     g.drawString("E: "+b.getEggCount(), 476+173*counterIndex, 330+230*counter);
                     if (b.getTuckedCards()>0){
-                        g.drawString("T: "+b.getTuckedCards(), 594+173*counterIndex, 220 + 230*counter);
-                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+173*counterIndex, 220 + 230*counter);
+                        g.drawString("T: "+b.getTuckedCards(), 594+177*counterIndex, 220 + 230*counter);
+                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+177*counterIndex, 220 + 230*counter);
                 }
                 counterIndex++;
                     //out.println("Birbing");
