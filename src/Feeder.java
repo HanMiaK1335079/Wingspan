@@ -2,8 +2,8 @@ package src;
 import java.util.*;
 public class Feeder {
      private final ProgramState state;
-     private ArrayList<Food.FoodType> foodDice=new ArrayList<>();
-     private ArrayList<Food.FoodType> outDice=new ArrayList<>();
+     private ArrayList<String> foodDice=new ArrayList<>();
+     private ArrayList<String> outDice=new ArrayList<>();
      public Feeder(ProgramState state){
         this.state = state;
         reRoll();
@@ -11,7 +11,7 @@ public class Feeder {
 
     public boolean canReroll(){
         if(foodDice.size()>1){
-            Food.FoodType one=foodDice.get(0);
+            String one=foodDice.get(0);
             for(int i=0;i<foodDice.size();i++){
                 if(!foodDice.get(i).equals(one)){
                     return false;
@@ -27,37 +27,37 @@ public class Feeder {
         for(int i=0;i<5;i++){
             int roll=(int)(Math.random()*6);
             switch(roll){
-                case 0 -> foodDice.add(Food.FoodType.SEED);
-                case 1 -> foodDice.add(Food.FoodType.FISH);
-                case 2 -> foodDice.add(Food.FoodType.BERRY);
-                case 3 -> foodDice.add(Food.FoodType.INSECT);
-                case 4 -> foodDice.add(Food.FoodType.RAT);
-                case 5 -> foodDice.add(Food.FoodType.SEED_INSECT);
+                case 0 -> foodDice.add("s");
+                case 1 -> foodDice.add("f");
+                case 2 -> foodDice.add("b");
+                case 3 -> foodDice.add("i");
+                case 4 -> foodDice.add("r");
+                case 5 -> foodDice.add("a");
             }
         }
     }
 
     public int getImageIndex(int i){
-        Food.FoodType k = getDice().get(i);
+        String k = getDice().get(i);
         switch(k){
-            case SEED: return 0;
-            case FISH: return 1;
-            case BERRY: return 2;
-            case INSECT: return 3;
-            case RAT: return 4;
-            case SEED_INSECT: return 5;
+            case "s": return 0;
+            case "f": return 1;
+            case "b": return 2;
+            case "i": return 3;
+            case "r": return 4;
+            case "a": return 5;
         }
         return -1;
     }
     public int getOutImageIndex(int i){
-        Food.FoodType k = getOutDice().get(i);
+        String k = getOutDice().get(i);
         switch(k){
-            case SEED: return 0;
-            case FISH: return 1;
-            case BERRY: return 2;
-            case INSECT: return 3;
-            case RAT: return 4;
-            case SEED_INSECT: return 5;
+            case "s": return 0;
+            case "f": return 1;
+            case "b": return 2;
+            case "i": return 3;
+            case "r": return 4;
+            case "a": return 5;
         }
         return -1;
     }
@@ -72,14 +72,14 @@ public class Feeder {
     
     public void takeDice(int f, int subIndex, int player) {
         if (f >= 0 && f < foodDice.size()) {
-            Food.FoodType diceValue = foodDice.get(f);
-            if (diceValue.equals(Food.FoodType.SEED_INSECT)) {
+            String diceValue = foodDice.get(f);
+            if (diceValue.equals("a")) {
                 if (subIndex == 0) {
-                    state.players[player].addFood(Food.FoodType.SEED, 1);
-                    outDice.add(Food.FoodType.SEED);
+                    state.players[player].addFood("s", 1);
+                    outDice.add("s");
                 } else if (subIndex == 1) {
-                    state.players[player].addFood(Food.FoodType.INSECT, 1);
-                    outDice.add(Food.FoodType.INSECT);
+                    state.players[player].addFood("i", 1);
+                    outDice.add("i");
                 }
                 foodDice.remove(f);
             } else {
@@ -90,33 +90,37 @@ public class Feeder {
     
     public boolean isDualDie(int index) {
         if (index >= 0 && index < foodDice.size()) {
-            return foodDice.get(index).equals(Food.FoodType.SEED_INSECT);
+            return foodDice.get(index).equals("a");
         }
         return false;
     }
     
-    public Food.FoodType[] getDualDieOptions(int index) {
+    public String[] getDualDieOptions(int index) {
         if (isDualDie(index)) {
-            return new Food.FoodType[]{Food.FoodType.SEED, Food.FoodType.INSECT};
+            return new String[]{"s", "i"};
         }
-        return new Food.FoodType[]{};
+        return new String[]{};
     }
 
-    public void removeDie(int i){
-        foodDice.remove(i);
+    public String removeDie(int i){
+        return foodDice.remove(i);
+    }
+    public void removeDie(String food){
+        foodDice.remove(food);
+        outDice.add(food);
     }
     public boolean isEmpty() {
         return foodDice.isEmpty();
     }
-    public ArrayList<Food.FoodType> getDice(){
+    public ArrayList<String> getDice(){
         return foodDice;
     }
-    public ArrayList<Food.FoodType> getOutDice() {return outDice;}
-    public void removeFood(Food.FoodType food) {
+    public ArrayList<String> getOutDice() {return outDice;}
+    public void removeFood(String food) {
         foodDice.remove(food);
     }
 
-    public Food.FoodType takeRandomFood() {
+    public String takeRandomFood() {
         if (foodDice.isEmpty()) {
             return null;
         }
@@ -125,20 +129,39 @@ public class Feeder {
 
     public int takeAll(String food) {
         int count = 0;
-        Food.FoodType foodType = Food.FoodType.fromString(food);
-        if (foodType != null) {
-            for (int i = foodDice.size() - 1; i >= 0; i--) {
-                if (foodDice.get(i) == foodType) {
-                    foodDice.remove(i);
-                    count++;
-                }
+        String foodType = switch(food.toLowerCase()) {
+            case "seed" -> "s";
+            case "fish" -> "f";
+            case "berry" -> "b";
+            case "insect" -> "i";
+            case "invertebrate" -> "i";
+            case "rat" -> "r";
+            case "wild" -> "a";
+            default -> food;
+        };
+        
+        for (int i = foodDice.size() - 1; i >= 0; i--) {
+            if (foodDice.get(i).equals(foodType)) {
+                outDice.add(foodDice.remove(i));
+                count++;
             }
         }
         return count;
     }
+    public void rollOutDice(){
+        int length = outDice.size();
+        outDice.clear();
+        for(int i=0;i<length;i++){
+            int roll=(int)(Math.random()*6);
+            switch(roll){
+                case 0 -> outDice.add("s");
+                case 1 -> outDice.add("f");
+                case 2 -> outDice.add("b");
+                case 3 -> outDice.add("i");
+                case 4 -> outDice.add("r");
+                case 5 -> outDice.add("a");
+            }
+        }
+    }
+
 }
-    
-
-
-
-

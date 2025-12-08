@@ -2,12 +2,13 @@ package src;
 import java.util.*;
 
 public class Game {
-    private ProgramState state;
-    private Feeder feeder;
+    private final ProgramState state;
+    private final Feeder feeder;
     private int round = 1;
-    private int player = 0;
+    private int currentPlayer = 0;
     private boolean over = false;
     private ArrayList<Bird> birds;
+    
     public enum GamePhase {
         SETUP,
         INITIAL_SELECTION,
@@ -22,26 +23,20 @@ public class Game {
         init();
     }
     
-    public void init() {
+    private void init() {
         for (int i = 0; i < state.players.length; i++) {
-            state.players[i] = new Player("Player " + (i + 1), 0, new ArrayList<>(), new ArrayList<>(), i);
+            state.players[i] = new Player("Player " + (i + 1), new ArrayList<>(), new ArrayList<>(), i);
         }
         
         state.makeDeckOfCards();
-        
         dealInitialCards();
-
         dealInitialBonusCards();
-        
-        setupInitialFood();
-        
         setupRoundGoals();
         
         state.currentPhase = ProgramState.GamePhase.INITIAL_SELECTION;
     }
     
     private void setupRoundGoals() {
-        
         int[] goalIds = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         
         for (int i = 0; i < goalIds.length; i++) {
@@ -58,10 +53,10 @@ public class Game {
     
     private void dealInitialCards() {
         for (int i = 0; i < 5; i++) {
-            for (int p = 0; p < state.players.length; p++) {
+            for (Player p : state.players) {
                 if (!state.deckOfCards.isEmpty()) {
                     Bird card = state.deckOfCards.remove(state.deckOfCards.size() - 1);
-                    state.players[p].addCardToHand(card);
+                    p.addCardToHand(card);
                 }
             }
         }
@@ -69,44 +64,33 @@ public class Game {
     
     private void dealInitialBonusCards() {
         for (int i = 0; i < 2; i++) {
-            for (int p = 0; p < state.players.length; p++) {
+            for (Player p : state.players) {
                 if (!state.bonusDeck.isEmpty()) {
                     Bonus card = state.bonusDeck.remove(state.bonusDeck.size() - 1);
-                    state.players[p].addBonusCard(card);
+                    p.addBonusCard(card);
                 }
             }
         }
     }
 
-    private void setupInitialFood() {
-        for (int p = 0; p < state.players.length; p++) {
-            state.players[p].addFood(Food.FoodType.SEED, 1);
-            state.players[p].addFood(Food.FoodType.INSECT, 1);
-            state.players[p].addFood(Food.FoodType.FISH, 1);
-            state.players[p].addFood(Food.FoodType.BERRY, 1);
-            state.players[p].addFood(Food.FoodType.RAT, 1);
-        }
-    }
+
     
     public void next(ProgramState.PlayerAction action) {
-        player = (player + 1) % 4;
+        currentPlayer = (currentPlayer + 1) % 4;
+        activatePinkPowers(state.players[currentPlayer], action);
         
-        activatePinkPowers(state.players[player], action);
-        
-        if (player == (state.firstPlayerToken - 1)) {
+        if (currentPlayer == (state.firstPlayerToken - 1)) {
             nextRound();
         }
         
-        state.players[player].setPlayerScore(state.players[player].calculateScore().total());
+        state.players[currentPlayer].setPlayerScore(state.players[currentPlayer].calculateScore().total());
     }
     
-    //TODO: check, ai gen placeholder
     public void activatePinkPowers(Player p, ProgramState.PlayerAction action) {
-        for (int i = 0; i < state.players.length; i++) {
-            if (i == player) continue;
-            Player other = state.players[i];
-            ArrayList<Bird> birds = other.getAllBirdsOnBoard();
-            for (Bird b : birds) {
+        for (Player other : state.players) {
+            if (other == p) continue;
+            ArrayList<Bird> birdsList = other.getAllBirdsOnBoard();
+            for (Bird b : birdsList) {
                 if (!b.isPinkPowerUsed() && b.triggersOnAction(action)) {
                     handlePinkPower(other, b, action);
                     b.setPinkPowerUsed(true);
@@ -114,9 +98,9 @@ public class Game {
             }
         }
     }
+    
     public void nextRound() {
         determineRoundWinner(round);
-        
         round++;
         
         if (round > 4) {
@@ -126,8 +110,7 @@ public class Game {
             return;
         }
         
-        for (int i = 0; i < state.players.length; i++) {
-            Player p = state.players[i];
+        for (Player p : state.players) {
             p.nextRound();
             p.resetPinkPowers();
         }
@@ -142,8 +125,8 @@ public class Game {
         List<Integer> winners = new ArrayList<>();
         int maxCount = -1;
         
-        for (int i = 0; i < state.players.length; i++) {
-            int count = getRoundGoalCount(goalId, state.players[i]);
+        for (Player p : state.players) {
+            int count = getRoundGoalCount(goalId, p);
             if (count > maxCount) {
                 maxCount = count;
             }
@@ -156,24 +139,13 @@ public class Game {
             }
         }
 
-        int[] points;
-        switch (roundNumber) {
-            case 1:
-                points = new int[]{4, 1, 0};
-                break;
-            case 2:
-                points = new int[]{5, 2, 0};
-                break;
-            case 3:
-                points = new int[]{6, 3, 1};
-                break;
-            case 4:
-                points = new int[]{7, 4, 2};
-                break;
-            default:
-                points = new int[]{0, 0, 0};
-                break;
-        }
+        int[] points = switch (roundNumber) {
+            case 1 -> new int[]{4, 1, 0};
+            case 2 -> new int[]{5, 2, 0};
+            case 3 -> new int[]{6, 3, 1};
+            case 4 -> new int[]{7, 4, 2};
+            default -> new int[]{0, 0, 0};
+        };
 
         if (winners.size() == 1) {
             state.players[winners.get(0)].addPoints(points[0]);
@@ -185,25 +157,25 @@ public class Game {
     }
 
     private int getRoundGoalCount(int goalId, Player p) {
-        switch (goalId) {
-            case 0: return p.getBirdsInHabitat("forest").size();
-            case 1: return p.getBirdsInHabitat("plains").size();
-            case 2: return p.getBirdsInHabitat("wetlands").size();
-            case 3: return p.getEggCount();
-            case 4: return getCachedFoodCount(p);
-            case 5: return getBirdsWithEggsCount(p);
-            case 6: return p.getFoodTokens().size();
-            case 7: return p.getBoard().getLongestRow();
-            case 8: return getMaxBirdsInSingleHabitat(p);
-            case 9: return getTuckedCardCount(p);
-            case 10: return getDietTypes(p);
-            case 11: return p.getBirdsInHabitat("forest").size() + p.getBirdsInHabitat("plains").size();
-            case 12: return p.getBirdsInHabitat("forest").size() + p.getBirdsInHabitat("wetlands").size();
-            case 13: return p.getBirdsInHabitat("plains").size() + p.getBirdsInHabitat("wetlands").size();
-            case 14: return getBirdsWithNoEggsCount(p);
-            case 15: return p.getBirdCount();
-            default: return 0;
-        }
+        return switch (goalId) {
+            case 0 -> p.getBirdsInHabitat("forest").size();
+            case 1 -> p.getBirdsInHabitat("plains").size();
+            case 2 -> p.getBirdsInHabitat("wetlands").size();
+            case 3 -> p.getEggCount();
+            case 4 -> getCachedFoodCount(p);
+            case 5 -> getBirdsWithEggsCount(p);
+            case 6 -> p.getFoodTokens().size();
+            case 7 -> p.getBoard().getLongestRow();
+            case 8 -> getMaxBirdsInSingleHabitat(p);
+            case 9 -> getTuckedCardCount(p);
+            case 10 -> getDietTypes(p);
+            case 11 -> p.getBirdsInHabitat("forest").size() + p.getBirdsInHabitat("plains").size();
+            case 12 -> p.getBirdsInHabitat("forest").size() + p.getBirdsInHabitat("wetlands").size();
+            case 13 -> p.getBirdsInHabitat("plains").size() + p.getBirdsInHabitat("wetlands").size();
+            case 14 -> getBirdsWithNoEggsCount(p);
+            case 15 -> p.getBirdCount();
+            default -> 0;
+        };
     }
 
     private int getCachedFoodCount(Player p) {
@@ -225,7 +197,8 @@ public class Game {
     }
 
     private int getMaxBirdsInSingleHabitat(Player p) {
-        return Math.max(p.getBirdsInHabitat("forest").size(), Math.max(p.getBirdsInHabitat("plains").size(), p.getBirdsInHabitat("wetlands").size()));
+        return Math.max(p.getBirdsInHabitat("forest").size(), 
+            Math.max(p.getBirdsInHabitat("plains").size(), p.getBirdsInHabitat("wetlands").size()));
     }
 
     private int getTuckedCardCount(Player p) {
@@ -237,10 +210,10 @@ public class Game {
     }
 
     private int getDietTypes(Player p) {
-        Set<Food.FoodType> dietTypes = new HashSet<>();
+        Set<String> dietTypes = new HashSet<>();
         for (Bird b : p.getAllBirdsOnBoard()) {
-            for (Food.FoodType[] foodOptions : b.getFoods()) {
-                for (Food.FoodType food : foodOptions) {
+            for (String[] foodOptions : b.getFoods()) {
+                for (String food : foodOptions) {
                     dietTypes.add(food);
                 }
             }
@@ -259,8 +232,7 @@ public class Game {
     }
     
     private void calculateFinalScores() {
-        for (int i = 0; i < state.players.length; i++) {
-            Player p = state.players[i];
+        for (Player p : state.players) {
             ScoreBreakdown baseScore = p.calculateScore();
             
             ArrayList<Bonus> bonuses = p.getBonuses();
@@ -296,11 +268,11 @@ public class Game {
     }
     
     public int getPlayer() {
-        return player;
+        return currentPlayer;
     }
 
     public int getCurrentPlayerIndex() {
-        return player;
+        return currentPlayer;
     }
     
     public int getRound() {
@@ -315,28 +287,22 @@ public class Game {
     }
     
     public boolean doAction(ProgramState.PlayerAction action, Object... params) {
-        Player p = state.players[player];
+        Player p = state.players[currentPlayer];
         if (p.getActionsRemaining(round) <= 0) return false;
 
-        boolean success = false;
-        switch (action) {
-            case PLAY_BIRD:
-                success = play(p, params);
-                break;
-            case GAIN_FOOD:
-                success = food(p, params);
-                break;
-            case LAY_EGGS:
-                success = eggs(p, params);
-                break;
-            case DRAW_CARDS:
+        boolean success = switch (action) {
+            case PLAY_BIRD -> play(p, params);
+            case GAIN_FOOD -> food(p, params);
+            case LAY_EGGS -> eggs(p, params);
+            case DRAW_CARDS -> {
                 String[] drawParams = new String[params.length];
                 for (int i = 0; i < params.length; i++) {
                     drawParams[i] = (String) params[i];
                 }
-                success = draw(p, drawParams);
-                break;
-        }
+                yield draw(p, drawParams);
+            }
+            default -> false;
+        };
 
         if (success) {
             p.useAction(round);
@@ -348,10 +314,10 @@ public class Game {
 
     private void triggerPinkPowers(ProgramState.PlayerAction action, Object... params) {
         for (int i = 0; i < state.players.length; i++) {
-            if (i == player) continue;
+            if (i == currentPlayer) continue;
             Player other = state.players[i];
-            ArrayList<Bird> birds = other.getAllBirdsOnBoard();
-            for (Bird b : birds) {
+            ArrayList<Bird> birdsList = other.getAllBirdsOnBoard();
+            for (Bird b : birdsList) {
                 if (!b.isPinkPowerUsed() && b.triggersOnAction(action)) {
                     handlePinkPower(other, b, action, params);
                     b.setPinkPowerUsed(true);
@@ -409,12 +375,13 @@ public class Game {
 
         int numToGain = 1 + (p.getBirdsInHabitat("forest") != null ? p.getBirdsInHabitat("forest").size() : 0);
         if (params[0] instanceof ArrayList) {
-            ArrayList<Food.FoodType> foodChoices = (ArrayList<Food.FoodType>) params[0];
+            @SuppressWarnings("unchecked")
+            ArrayList<String> foodChoices = (ArrayList<String>) params[0];
             if (foodChoices.size() > numToGain) {
                 return false;
             }
 
-            for (Food.FoodType food : foodChoices) {
+            for (String food : foodChoices) {
                 if (feeder.getDice().contains(food)) {
                     p.addFood(food, 1);
                     feeder.removeDie(feeder.getDice().indexOf(food));
@@ -440,10 +407,11 @@ public class Game {
 
         int numToLay = 2 + (p.getBirdsInHabitat("plains") != null ? p.getBirdsInHabitat("plains").size() : 0);
         if (params[0] instanceof Map) {
+            @SuppressWarnings("unchecked")
             Map<Bird, Integer> eggsToLay = (Map<Bird, Integer>) params[0];
             int totalEggs = 0;
-            for (int eggs : eggsToLay.values()) {
-                totalEggs += eggs;
+            for (int eggsCount : eggsToLay.values()) {
+                totalEggs += eggsCount;
             }
 
             if (totalEggs > numToLay) {
@@ -452,8 +420,8 @@ public class Game {
 
             for (Map.Entry<Bird, Integer> entry : eggsToLay.entrySet()) {
                 Bird b = entry.getKey();
-                int eggs = entry.getValue();
-                if (!p.layEggsOnBird(b, eggs)) {
+                int eggCount = entry.getValue();
+                if (!p.layEggsOnBird(b, eggCount)) {
                     return false;
                 }
             }
@@ -468,30 +436,16 @@ public class Game {
         String abilityText = b.getAbilityText();
 
         if (abilityText.contains("Play a second bird")) {
-            String habitat = "";
-            if (params.length > 0 && params[0] instanceof String) {
-                habitat = (String) params[0];
-            } else {
-                if (abilityText.contains("[forest]")) {
-                    habitat = "forest";
-                } else if (abilityText.contains("[grassland]")) {
-                    habitat = "plains";
-                } else if (abilityText.contains("[wetland]")) {
-                    habitat = "wetlands";
-                } else if (abilityText.contains("this bird's habitat")) {
-                    habitat = p.getHabitatOfBird(b);
-                }
-            }
         } else if (abilityText.contains("Gain 3 [seed] from the supply.")) {
-            p.addFood(Food.FoodType.SEED, 3);
+            p.addFood("s", 3);
         } else if (abilityText.contains("Gain 3 [fish] from the supply.")) {
-            p.addFood(Food.FoodType.FISH, 3);
+            p.addFood("f", 3);
         } else if (abilityText.contains("Gain all [fish] that are in the birdfeeder.")) {
             int fishGained = feeder.takeAll("fish");
-            p.addFood(Food.FoodType.FISH, fishGained);
+            p.addFood("f", fishGained);
         } else if (abilityText.contains("Gain all [invertebrate] that are in the birdfeeder.")) {
             int invertebratesGained = feeder.takeAll("insect");
-            p.addFood(Food.FoodType.INSECT, invertebratesGained);
+            p.addFood("i", invertebratesGained);
         } else if (abilityText.contains("Draw [card] equal to the number of players +1")) {
             int numToDraw = state.players.length + 1;
             ArrayList<Bird> drawnCards = new ArrayList<>();
@@ -503,7 +457,7 @@ public class Game {
             }
             for (int i = 0; i < state.players.length - 1; i++) {
                 if (!drawnCards.isEmpty()) {
-                    state.players[(player + 1 + i) % state.players.length].addCardToHand(drawnCards.remove(0));
+                    state.players[(currentPlayer + 1 + i) % state.players.length].addCardToHand(drawnCards.remove(0));
                 }
             }
         } else if (abilityText.contains("Draw 3 [card] from the deck.")) {
@@ -535,76 +489,46 @@ public class Game {
         }
     }
 
-    private void activateBrownAbility(Bird b, Player p) {
-        String abilityText = b.getAbilityText();
-        if (b.isPredatorAbility()) {
-            if (b.isRollDieAbility()) {
-                // Roll die for each player and check for success
-                boolean success = false;
-                for (int i = 0; i < state.players.length; i++) {
-                    if (feeder.takeRandomFood() != null) {
-                        success = true;
-                        break;
-                    }
-                }
-                if (success) {
-                    p.addFood(Food.FoodType.INSECT, 1);
-                }
-            }
-        }
-    }
-
     private void handlePinkPower(Player p, Bird b, ProgramState.PlayerAction action, Object... params) {
         String abilityText = b.getAbilityText();
-        if (action == ProgramState.PlayerAction.LAY_EGGS) {
-            if (abilityText.contains("When another player takes the \"lay eggs\" action")) {
-                if (abilityText.contains("[ground] nest")) {
-                    p.layEggsInNestType("ground");
-                } else if (abilityText.contains("[cavity] nest")) {
-                    p.layEggsInNestType("cavity");
-                } else if (abilityText.contains("[bowl] nest")) {
-                    p.layEggsInNestType("bowl");
-                }
-            }
-        } else if (action == ProgramState.PlayerAction.PLAY_BIRD) {
-            if (abilityText.contains("When another player plays a bird in their [wetland]")) {
-                p.addFood(Food.FoodType.FISH, 1);
-            } else if (abilityText.contains("When another player plays a bird in their [forest]")) {
-                p.addFood(Food.FoodType.INSECT, 1);
-            } else if (abilityText.contains("When another player plays a bird in their [grassland]")) {
-                if (p.getCardsInHand().size() > 0) {
-                    Bird cardToTuck = p.getCardsInHand().get(0);
-                    p.removeCardFromHand(cardToTuck);
-                    b.tuckCard();
-                }
-            }
-        } else if (action == ProgramState.PlayerAction.PREDATOR_SUCCESS) {
-            if (abilityText.contains("When another player's [predator] succeeds")) {
-                p.addFood(feeder.takeRandomFood(), 1);
-            }
-        } else if (action == ProgramState.PlayerAction.GAIN_FOOD) {
-            if (abilityText.contains("if they gain any number of [rodent]")) {
-                if (params.length > 0 && params[0] instanceof ArrayList) {
-                    ArrayList<String> foodGained = (ArrayList<String>) params[0];
-                    if (foodGained.contains("rodent")) {
-                        b.cacheFood();
+        switch (action) {
+            case LAY_EGGS:
+                if (abilityText.contains("When another player takes the \"lay eggs\" action")) {
+                    if (abilityText.contains("[ground] nest")) {
+                        p.layEggsInNestType("ground");
+                    } else if (abilityText.contains("[cavity] nest")) {
+                        p.layEggsInNestType("cavity");
+                    } else if (abilityText.contains("[bowl] nest")) {
+                        p.layEggsInNestType("bowl");
                     }
                 }
-            }
-        }
-    }
-
-    private void giveAllPlayersFood(Food.FoodType foodType, int amount) {
-        for (Player player : state.players) {
-            player.addFood(foodType, amount);
-        }
-    }
-
-    private void giveAllPlayersCard() {
-        for (Player player : state.players) {
-            if (!state.deckOfCards.isEmpty()) {
-                player.addCardToHand(state.deckOfCards.remove(state.deckOfCards.size() - 1));
-            }
+                break;
+            case PLAY_BIRD:
+                if (abilityText.contains("When another player plays a bird in their [wetland]")) {
+                    p.addFood("f", 1);
+                } else if (abilityText.contains("When another player plays a bird in their [forest]")) {
+                    p.addFood("i", 1);
+                } else if (abilityText.contains("When another player plays a bird in their [grassland]")) {
+                    if (!p.getCardsInHand().isEmpty()) {
+                        Bird cardToTuck = p.getCardsInHand().get(0);
+                        p.removeCardFromHand(cardToTuck);
+                        b.tuckCard();
+                    }
+                }
+                break;
+            case GAIN_FOOD:
+                if (abilityText.contains("if they gain any number of [rodent]")) {
+                    if (params.length > 0 && params[0] instanceof ArrayList) {
+                        @SuppressWarnings("unchecked")
+                        ArrayList<String> foodGained = (ArrayList<String>) params[0];
+                        if (foodGained.contains("rodent")) {
+                            b.cacheFood();
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -645,7 +569,7 @@ public class Game {
     }
 
     public int getActionsRemaining() {
-        return state.players[player].getActionsRemaining(round);
+        return state.players[currentPlayer].getActionsRemaining(round);
     }
 
     public ProgramState.GamePhase getCurrentPhase() {

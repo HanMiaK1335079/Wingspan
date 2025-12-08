@@ -1,16 +1,7 @@
 package src;
 
 import java.awt.image.BufferedImage;
-<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.*;
-import java.util.Map;
-=======
-import java.util.*;
->>>>>>> e5181e672eeeb8ccc794e20a81b70e3b166675f8
-
 
 public class Bird {
 
@@ -25,16 +16,16 @@ public class Bird {
     private final int maxEggs;
     private final int wingspan;
     private final List<String> habitats;
-    private final List<Food.FoodType[]> foods;
+    private final List<String[]> foods;
 
     private BufferedImage image;
     private int storedEggs = 0;
     private int cachedFood = 0;
-    private int flocked = 0;
     private int tuckedCards = 0;
     private boolean pinkPowerUsed = false;
+    private String habitat = "";
 
-    Bird(String name, Ability ability, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<Food.FoodType[]> foods){
+    Bird(String name, Ability ability, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<String[]> foods){
         this.name = name;
         this.ability = ability == null ? new Ability(Ability.Trigger.NONE, "") : ability;
         this.abilityType = abilityType == null ? "" : abilityType;
@@ -54,7 +45,7 @@ public class Bird {
         triggerMap.put("OBT", Ability.Trigger.PINK);
     }
 
-    public static Bird create(String name, String abilityActivate, String abilityText, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<Food.FoodType[]> foods){
+    public static Bird create(String name, String abilityActivate, String abilityText, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, ArrayList<String[]> foods){
         Ability.Trigger trig = triggerMap.getOrDefault(abilityActivate, Ability.Trigger.NONE);
         Ability ability = new Ability(trig, abilityText == null ? "" : abilityText);
         return new Bird(name, ability, abilityType, points, nest, maxEggs, wingspan, habitats, foods);
@@ -68,7 +59,7 @@ public class Bird {
     public int getMaxEggs() { return maxEggs; }
     public int getWingspan() { return wingspan; }
     public List<String> getHabitats() { return habitats; }
-    public List<Food.FoodType[]> getFoods() { return foods; }
+    public List<String[]> getFoods() { return foods; }
     public BufferedImage getImage() { return image; }
     public int getStoredEggs() { return storedEggs; }
 
@@ -83,10 +74,10 @@ public class Bird {
         return storedEggs;
     }
 
-    public List<Food.FoodType> getDiet() {
-        List<Food.FoodType> diet = new ArrayList<>();
-        for (Food.FoodType[] foodArray : foods) {
-            for (Food.FoodType food : foodArray) {
+    public List<String> getDiet() {
+        List<String> diet = new ArrayList<>();
+        for (String[] foodArray : foods) {
+            for (String food : foodArray) {
                 if (!diet.contains(food)) {
                     diet.add(food);
                 }
@@ -106,23 +97,21 @@ public class Bird {
     public void setImage(BufferedImage i) { image = i; }
 
     public boolean canLiveInHabitat(String habitat) {
+        System.out.println("Checking if "+name+" can live in habitat: "+habitat);
         if (habitat == null) return false;
-        String habitatsn = getHabitatNorm(habitat);
-        return habitats != null && habitats.contains(habitatsn);
+        String habitatNormalized = getHabitatNorm(habitat);
+        return habitats != null && habitats.contains(habitatNormalized);
     }
 
     private String getHabitatNorm(String habitat) {
-        switch (habitat.toLowerCase(Locale.ROOT)) {
-            case "forest": return "f";
-            case "plains":
-            case "grassland": return "p";
-            case "wetlands":
-            case "wetland": return "w";
-            default: return "";
-        }
+        return switch (habitat.toLowerCase(Locale.ROOT)) {
+            case "forest" -> "f";
+            case "plains", "grassland" -> "p";
+            case "wetlands", "wetland" -> "w";
+            default -> "";
+        };
     }
 
-    //some like memory leak format preference for vscode idk
     private static final Map<String, String> foodNameMap = Map.ofEntries(
         Map.entry("i", "insect"),
         Map.entry("s", "seed"),
@@ -138,52 +127,6 @@ public class Bird {
         Map.entry("rat", "rat")
     );
 
-    private String convertFoodNames(String food) {
-        if (food == null) return null;
-        return foodNameMap.get(food.toLowerCase(Locale.ROOT));
-    }
-
-    public boolean canAfford(Food playerFood) {
-        if (foods == null || foods.isEmpty()) {
-            return true;
-        }
-
-        for (Food.FoodType[] option : foods) {
-            if (isOptionAffordable(playerFood, option)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isOptionAffordable(Food playerFood, Food.FoodType[] costOption) {
-        Map<Food.FoodType, Integer> requiredCounts = new HashMap<>();
-        int wildcardsRequired = 0;
-
-        for (Food.FoodType foodCost : costOption) {
-            if (foodCost == null) continue;
-
-            requiredCounts.put(foodCost, requiredCounts.getOrDefault(foodCost, 0) + 1);
-        }
-
-        for (Map.Entry<Food.FoodType, Integer> requirement : requiredCounts.entrySet()) {
-            Food.FoodType foodType = requirement.getKey();
-            int requiredAmount = requirement.getValue();
-            int availableAmount = playerFood.getFoodCount(foodType);
-
-            if (availableAmount < requiredAmount) {
-                return false; 
-            }
-            playerFood.removeFood(foodType, requiredAmount);
-        }
-
-        int remainingFood = playerFood.getFoodTokens().size();
-        
-        return remainingFood >= wildcardsRequired;
-    }
-
-    
     public int addEggs(int eggs){
         if (eggs <= 0) return 0;
         int space = maxEggs - storedEggs;
@@ -200,20 +143,14 @@ public class Bird {
     }
 
     public void cacheFood(){ this.cachedFood++; }
-    public void flock(){ this.flocked++; }
     public void tuckCard(){ this.tuckedCards++; }
 
     public boolean triggersOnAction(ProgramState.PlayerAction action) {
-        switch (action) {
-            case PLAY_BIRD:
-                return ability.trigger == Ability.Trigger.WHITE;
-            case GAIN_FOOD:
-            case LAY_EGGS:
-            case DRAW_CARDS:
-                return ability.trigger == Ability.Trigger.BROWN;
-            default:
-                return false;
-        }
+        return switch (action) {
+            case PLAY_BIRD -> ability.trigger == Ability.Trigger.WHITE;
+            case GAIN_FOOD, LAY_EGGS, DRAW_CARDS -> ability.trigger == Ability.Trigger.BROWN;
+            default -> false;
+        };
     }
 
     public boolean isWhenPlayedAbility() {
@@ -225,111 +162,73 @@ public class Bird {
     }
 
     public void setPinkPowerUsed(boolean used) {
-        this.pinkPowerUsed = used;
+        pinkPowerUsed = used;
+    }
+
+    public boolean isPredatorAbility() {
+        return ability.rawText.contains("[predator]");
     }
 
     public int getTuckedCards() {
         return tuckedCards;
     }
 
-    public void resetPinkPower() {
-        this.pinkPowerUsed = false;
-    }
-
-    public int getCachedFood() { 
-        return cachedFood; 
-    }
-
-    public void untuckCard(){ 
-        if (this.tuckedCards > 0) {
-            this.tuckedCards--; 
-        }
-    }
-
-    public String getHabitat() {
-        if (habitats.isEmpty()) {
-            return "";
-        }
-        return habitats.get(0);
-    }
-
-    public void setHabitat(String habitat) {
-        if (!habitats.contains(habitat)) {
-            habitats.add(habitat);
-        }
-    }
-
-    @Override
-    public String toString(){
-        StringBuilder s = new StringBuilder();
-        s.append("*****").append(name).append("*****\n");
-        s.append(ability).append("\n");
-        s.append("Nest: ").append(nest).append('\n');
-        s.append("Habitats: ").append(habitats).append('\n');
-        s.append("Points: ").append(points).append('\n');
-        s.append("Eggs: ").append(storedEggs).append(" / ").append(maxEggs).append('\n');
-        s.append("Wingspan: ").append(wingspan).append('\n');
-        s.append("Foods: ");
-        if (foods != null) {
-            for (Food.FoodType[] arr: foods){
-                s.append(java.util.Arrays.toString(arr)).append(", ");
-            }
-        }
-        return s.toString();
-    }
-
-    public boolean isCachedFoodAbility() {
-        return ability.mentionsCache();
-    }
-    
-    public boolean isTuckAbility() {
-        return ability.mentionsTuck();
-    }
-    
-    public boolean isDrawAbility() {
-        return ability.mentionsDraw();
-    }
-    
-    public boolean isLayEggsAbility() {
-        return ability.mentionsLayEgg();
-    }
-    
-    public boolean isGainFoodAbility() {
-        return ability.isGainFoodAbility();
-    }
-    
-    public boolean isPredatorAbility() {
-        return abilityType != null && abilityType.equals("predator");
-    }
-    
-    public int getPredatorWingspan() {
-        //place holder .Actual implementation relies on birdInfo.csv
-        return 100;
-    }
-    
-    public boolean isWhenActivatedAbility() {
-        return ability.trigger == Ability.Trigger.BROWN;
-    }
-    
-    public boolean isWhenOtherPlayerAbility() {
-        return ability.trigger == Ability.Trigger.PINK;
-    }
-    
-    public boolean isAllPlayersAbility() {
-        return ability.isAllPlayersAbility();
-    }
-    
-    public boolean isPlayerWithFewestAbility() {
-        return ability.isPlayerWithFewestAbility();
-    }
-    
-    public void layEgg() {
-        if (storedEggs < maxEggs) {
-            storedEggs++;
-        }
+    public int getCachedFood() {
+        return cachedFood;
     }
 
     public boolean hasMaxEggs() {
         return storedEggs >= maxEggs;
+    }
+
+    public String getHabitat() {
+        return habitat;
+    }
+
+    public void setHabitat(String habitat) {
+        this.habitat = habitat;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("Name: ").append(name).append("\n");
+        s.append("Ability: ").append(ability.rawText).append("\n");
+        s.append("Points: ").append(points).append("\n");
+        s.append("Nest: ").append(nest).append("\n");
+        s.append("Max Eggs: ").append(maxEggs).append("\n");
+        s.append("Wingspan: ").append(wingspan).append("\n");
+        s.append("Habitats: ").append(habitats).append("\n");
+        s.append("Foods: ");
+        for (String[] foodOption : foods) {
+            s.append("[").append(String.join(" OR ", foodOption)).append("] ");
+        }
+        s.append("\n");
+        s.append("Stored Eggs: ").append(storedEggs).append("\n");
+        s.append("Cached Food: ").append(cachedFood).append("\n");
+        s.append("Tucked Cards: ").append(tuckedCards).append("\n");
+        return s.toString();
+    }
+
+    public void resetAbility() {
+        cachedFood = 0;
+        tuckedCards = 0;
+        pinkPowerUsed = false;
+    }
+    public int[] foodsToIntArray(){
+        int[] foodCounts = new int[6]; // s, f, b, i, r, a
+        for (String[] option : foods) {
+            for (String food : option) {
+                switch (food) {
+                    case "s", "seed" -> foodCounts[0]++;
+                    case "f", "fish" -> foodCounts[1]++;
+                    case "b", "berry" -> foodCounts[2]++;
+                    case "i", "insect" -> foodCounts[3]++;
+                    case "r", "rat" -> foodCounts[4]++;
+                    case "a", "wild" -> foodCounts[5]++;
+                }
+            }
+        }
+        return foodCounts;
     }
 }
