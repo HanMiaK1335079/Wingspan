@@ -278,7 +278,18 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 // g.drawImage(Action_Button, 425, 200, 50,50,null);
                 // g.drawImage(Action_Button, 425, 450, 50,50,null);
                 // g.drawImage(Action_Button, 350, 725, 50,50,null);
+                // Score button clickable area (visible)
+                Graphics g = this.getGraphics();
+                if (Score_By_Round != null) g.drawImage(Score_By_Round, 815, 54, 51, 50, null);
+                 //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+                 // g.drawImage(Action_Button, 425, 200, 50,50,null);
+                 // g.drawImage(Action_Button, 425, 450, 50,50,null);
+                 // g.drawImage(Action_Button, 350, 725, 50,50,null);
                 if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
+                // Score area click (user coordinates)
+                else if (x >= 815 && x <= 866 && y >= 54 && y <= 104) {
+                    state.CURRENTEVENT.add("Score Round");
+                }
                 else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
                 else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
                 else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
@@ -1000,7 +1011,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                                     currentBirdNum--;
                                     selectingBool = false;
                                 }
-                                else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {
+                                else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=yesCrds[3]) {
                                     if (feeder.getDice().contains("i")){
                                         feeder.removeDie("i");
                                     }else{
@@ -1060,8 +1071,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
                 repaint();
-            }
-            case "Remove Bird" -> {
+            }case "Remove Bird" -> {
                 if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
                     currentShowing++;
                 else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
@@ -1098,6 +1108,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
             default ->{
                 state.CURRENTEVENT.removeLast();
+                repaint();
+            }
+            case "Score Round" -> {
+                // Exit button click: x between 815-866, y between 54-104
+                if (x >= 815 && x <= 866 && y >= 54 && y <= 104) {
+                    // remove the Score Round view and ensure we return to the Game view
+                    if (!state.CURRENTEVENT.isEmpty()) state.CURRENTEVENT.removeLast();
+                    if (state.CURRENTEVENT.isEmpty() || !state.CURRENTEVENT.getLast().equals("Game")) {
+                        state.CURRENTEVENT.add("Game");
+                    }
+                }
                 repaint();
             }
             case "Loop Lay Eggs" -> {
@@ -1598,11 +1619,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     g.drawString("Click eggs to spend. Eggs needed: "+state.eggsNeededToSpendForPlayingBird, 300, 100);
                    
                     
-            }
-        }
-    }
-
-
+                }
+             }
+        }     
+    }    
     public void paintOAAbility(Graphics g){
         String ability = currentBird.getAbilityText();
         if (currentBirdNum<0){
@@ -1666,7 +1686,146 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintScoreRound(Graphics g){
-        g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
+        // improved, grid-based score sheet
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Layout params
+        int cols = state.players.length;
+        int leftPad = 40;
+        int topPad = 110;
+        int labelColWidth = 220;                 // left column for category labels
+        int availableW = Math.max(600, getWidth() - leftPad - labelColWidth - 80);
+        int colWidth = Math.max(160, availableW / Math.max(1, cols));
+        int tableWidth = labelColWidth + colWidth * cols;
+        int startX = (getWidth() - tableWidth) / 2;
+
+        // Title
+        g2.setFont(new Font("SansSerif", Font.BOLD, 36));
+        g2.setColor(new Color(30, 30, 30));
+        g2.drawString("FINAL SCORES", startX, 60);
+
+        // Player color chips (simple palette), header boxes
+        Color[] chip = { new Color(0, 120, 215), new Color(230, 180, 20), new Color(34, 139, 34), new Color(200, 30, 60) };
+        g2.setFont(new Font("SansSerif", Font.BOLD, 16));
+        for (int p = 0; p < cols; p++) {
+            int x = startX + labelColWidth + p * colWidth;
+            int y = topPad - 70;
+            // header box
+            g2.setColor(new Color(245, 245, 250));
+            g2.fillRoundRect(x + 6, y - 18, colWidth - 12, 56, 10, 10);
+            g2.setColor(Color.DARK_GRAY);
+            String title = "Player " + (p + 1);
+            // center title
+            FontMetrics fm = g2.getFontMetrics();
+            int tx = x + (colWidth - fm.stringWidth(title)) / 2;
+            int ty = y + fm.getAscent();
+            // color chip
+            g2.setColor(chip[p % chip.length]);
+            g2.fillRect(x + 8, y - 6, 22, 22);
+            g2.setColor(Color.BLACK);
+            g2.drawString(title, tx, ty);
+        }
+
+        // Categories (rows). Use same logical categories as official sheet.
+        String[] categories = {"Birds (printed)", "Bonus Cards", "End-of-Round Goals (total)", "Eggs", "Cached Food", "Tucked Cards"};
+        int rows = categories.length + 1; // +1 for TOTAL
+        int rowH = 48;
+
+        // Draw table background and grid lines
+        int tableX = startX;
+        int tableY = topPad;
+        int tableH = rows * rowH + 18;
+        // left labels column background
+        g2.setColor(new Color(250, 250, 255));
+        g2.fillRect(tableX, tableY, labelColWidth, tableH);
+        // overall table border
+        g2.setColor(Color.GRAY);
+        g2.setStroke(new BasicStroke(1.5f));
+        g2.drawRect(tableX, tableY, tableWidth, tableH);
+
+        // horizontal lines and labels
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        for (int r = 0; r < rows; r++) {
+            int y = tableY + r * rowH;
+            // row separator
+            g2.setColor(new Color(200, 200, 210));
+            g2.drawLine(tableX, y, tableX + tableWidth, y);
+            // label column text (for category rows)
+            String label;
+            if (r < categories.length) label = categories[r];
+            else label = "TOTAL";
+            // bold TOTAL label
+            if (r == rows - 1) g2.setFont(new Font("SansSerif", Font.BOLD, 18));
+            else g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            g2.setColor(Color.DARK_GRAY);
+            int labelX = tableX + 12;
+            int labelY = y + rowH / 2 + g2.getFontMetrics().getAscent() / 2 - 4;
+            g2.drawString(label, labelX, labelY);
+        }
+        // last horizontal bottom line
+        g2.drawLine(tableX, tableY + rows * rowH, tableX + tableWidth, tableY + rows * rowH);
+
+        // vertical separators and player cell backgrounds / values
+        for (int p = 0; p < cols; p++) {
+            int colXPos = tableX + labelColWidth + p * colWidth;
+            // vertical line
+            g2.setColor(new Color(200, 200, 210));
+            g2.drawLine(colXPos, tableY, colXPos, tableY + tableH);
+            // draw values per row
+            Player player = state.players[p];
+            ScoreBreakdown breakdown = player.getFinalScoreBreakdown();
+            // compute values array: Birds, Bonus, Goals, Eggs, Cached, Tucked, Total
+            String[] vals = new String[rows];
+            if (breakdown != null) {
+                vals[0] = String.valueOf(breakdown.printedPoints);
+                vals[1] = String.valueOf(breakdown.bonus);
+                vals[2] = String.valueOf(breakdown.flocked);
+                vals[3] = String.valueOf(breakdown.eggs);
+                vals[4] = String.valueOf(breakdown.cachedFood);
+                vals[5] = String.valueOf(breakdown.tuckedCards);
+                vals[6] = String.valueOf(breakdown.total());
+            } else {
+                for (int i = 0; i < vals.length; i++) vals[i] = "—";
+            }
+            for (int r = 0; r < rows; r++) {
+                int cellX = colXPos;
+                int cellY = tableY + r * rowH;
+                // highlight total row
+                if (r == rows - 1) {
+                    g2.setColor(new Color(210, 235, 255));
+                    g2.fillRect(cellX + 1, cellY + 1, colWidth - 2, rowH - 1);
+                }
+                // draw value centered
+                g2.setFont(r == rows - 1 ? new Font("SansSerif", Font.BOLD, 18) : new Font("SansSerif", Font.PLAIN, 16));
+                FontMetrics fmV = g2.getFontMetrics();
+                String text = vals[r];
+                int textW = fmV.stringWidth(text);
+                int textX = cellX + (colWidth - textW) / 2;
+                int textY = cellY + rowH / 2 + fmV.getAscent() / 2 - 4;
+                g2.setColor(Color.BLACK);
+                g2.drawString(text, textX, textY);
+            }
+        }
+
+        // final vertical right border
+        g2.setColor(new Color(200, 200, 210));
+        g2.drawLine(tableX + tableWidth, tableY, tableX + tableWidth, tableY + tableH);
+
+        // Exit button (styled)
+        int bx = startX + tableWidth - 60;
+        int by = tableY - 70;
+        g2.setColor(new Color(200, 80, 80));
+        g2.fillRoundRect(bx, by, 48, 36, 8, 8);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 20));
+        g2.drawString("X", bx + 16, by + 25);
+
+        // small footer note
+        g2.setFont(new Font("SansSerif", Font.ITALIC, 12));
+        g2.setColor(new Color(80, 80, 80));
+        g2.drawString("Fill each player column and add vertically for TOTAL.", startX, tableY + tableH + 30);
     }
 
     public void paintPlaySpecificBird(Graphics g){
@@ -1728,7 +1887,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int counter = 0;
         for (Bird b: state.players[state.playing].getCardsInHand()){
             if (counter %showing == 0) 
-                birdArrSplit.add(new ArrayList<>());
+                birdArrSplit.add(new ArrayList<Bird>());
             counter ++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
@@ -2030,7 +2189,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         for (Bird b: state.players[state.playing].getCardsInHand()){
             if (counter %showing == 0) 
                 birdArrSplit.add(new ArrayList<Bird>());
-            counter ++;
+            counter++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
         try{
@@ -2110,7 +2269,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     //Ability stuffs
     public void paintWPAbility(Graphics g){
-        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString("Click anywhere to continue (that isn't skip)", 400, 200);
         g.drawString("Any When Placed abilities will be auto-activated", 300, 300);
@@ -2131,7 +2290,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     int loopDrawing = 0;
     ArrayList<Bird> loopOptions = new ArrayList<Bird>();
     public void paintLoopDraw(Graphics g){
-        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.setColor(Color.BLACK);
         g.drawString("Player " + (loopDrawing+1) + " can select a card", 400, 200);
@@ -2214,7 +2373,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintInfo(Graphics g){
-        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 30, 30, 90, 90, null);
         g.setFont(new Font("Arial", Font.BOLD, 40));
         //g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
@@ -2401,6 +2560,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 readAmt -= 1;
             }
             //for (Bird birbo: birds) out.println(birbo.toString());
+
+            // For debugging: print out the bonus map
+            for (String bonus : bonuses) {
+                ArrayList<String> birdsWithBonus = bonusMap.get(bonus);
+                if (birdsWithBonus != null) {
+                    out.println(bonus + ": " + birdsWithBonus);
+                }
+            }
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
         }
@@ -2498,6 +2665,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
         startOptions = new Bird[5];
         for (int i=0;i<5;i++){
+
+
+
+
+
+
             startOptions[i] = birds.remove(0);
         }
         bonusOptions = new Bonus[2];
@@ -2535,7 +2708,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintTradeCardForFood(Graphics g){
-        if (state.players[state.playing].getCardsInHand().size()==0){ state.CURRENTEVENT.removeLast();repaint();return;}
+        if (state.players[state.playing].getCardsInHand().size()==0){ 
+            state.CURRENTEVENT.removeLast();
+            repaint();
+            return;
+        }
         paintGetFoodFromFeeder(g);
         g.setFont(new Font("Arial", Font.BOLD, 40));
         g.drawString("Select a bird card to trade for food, or press the x to decline", 300, 150);
@@ -2543,34 +2720,25 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         
-        
         g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
-      
-
-        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<>();
         int counter = 0;
         for (Bird b: state.players[state.playing].getCardsInHand()){
-            if (counter %showing == 0) 
+            if (counter % showing == 0) 
                 birdArrSplit.add(new ArrayList<Bird>());
-            counter ++;
+            counter++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
 
-        for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
-            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+        for (int i=0; i<birdArrSplit.get(currentShowing).size(); i++){
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325, null);
         }
-     
-
-
-        //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
-
-        if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
-        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
-    }
-    public void paintLayEggs(Graphics g){
-        paintGame(g);
     }
 }
+
+
+
 
 
 

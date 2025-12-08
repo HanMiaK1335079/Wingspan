@@ -12,6 +12,8 @@ public class Game {
     // Round goal points storage - new structure to persist awarded points
     private int[][] roundGoalPoints;
 
+    private RoundGoal[] roundGoals;
+
     public enum GamePhase {
         SETUP,
         INITIAL_SELECTION,
@@ -287,15 +289,17 @@ public class Game {
                 roundPointsTotal += roundGoalPoints[playerIndex][r];
             }
 
-            // Create final breakdown: keep bonus and round goals separate
+            // Combine bonusPoints and roundPointsTotal into the single 'bonus' parameter
+            int combinedBonus = bonusPoints + roundPointsTotal;
+
+            // Create final breakdown using the 6-arg constructor:
             ScoreBreakdown finalScore = new ScoreBreakdown(
                 baseScore.printedPoints,
                 baseScore.eggs,
                 baseScore.cachedFood,
                 baseScore.tuckedCards,
-                bonusPoints,
-                baseScore.flocked,
-                roundPointsTotal
+                combinedBonus,
+                baseScore.flocked
             );
 
             p.setFinalScore(finalScore);
@@ -642,5 +646,46 @@ public class Game {
         if (playerIndex < 0 || playerIndex >= roundGoalPoints.length) return 0;
         if (roundIndex < 0 || roundIndex >= roundGoalPoints[playerIndex].length) return 0;
         return roundGoalPoints[playerIndex][roundIndex];
+    }
+
+    /**
+     * Initialize 4 round goals for the game.
+     * These are randomly selected or pre-defined based on game setup.
+     */
+    private void initializeRoundGoals() {
+        roundGoals = new RoundGoal[4];
+        // Example round goals (can be randomized from a pool)
+        roundGoals[0] = new RoundGoal("Most birds in forest", RoundGoal.GoalType.BIRDS_IN_HABITAT, "forest");
+        roundGoals[1] = new RoundGoal("Most eggs in grasslands", RoundGoal.GoalType.EGGS_IN_HABITAT, "grasslands");
+        roundGoals[2] = new RoundGoal("Most small birds (wingspan <= 30)", RoundGoal.GoalType.BIRDS_WITH_WINGSPAN_RANGE, "<=,30");
+        roundGoals[3] = new RoundGoal("Most cavity nesters with eggs", RoundGoal.GoalType.NEST_TYPE_WITH_EGGS, "cavity");
+    }
+
+    /**
+     * Called at the end of each round.
+     * Evaluates the round goal and awards placement points to each player.
+     */
+    public void scoreRoundGoal(int roundIndex) {
+        if (roundIndex < 0 || roundIndex >= 4 || roundGoals[roundIndex] == null) return;
+
+        RoundGoal goal = roundGoals[roundIndex];
+        Map<Integer, Integer> pointsAwarded = goal.awardPoints(state.players);
+        
+        for (int playerIndex = 0; playerIndex < state.players.length; playerIndex++) {
+            int points = pointsAwarded.getOrDefault(playerIndex, 0);
+            state.players[playerIndex].setRoundGoalPoints(roundIndex, points);
+        }
+
+        for (Player player : state.players) {
+            player.calculateFinalScore();
+        }
+        // TODO: Call UI to display final score sheet (will be implemented in FramePanel)
+    }
+
+    public RoundGoal getRoundGoal(int roundIndex) {
+        if (roundIndex >= 0 && roundIndex < 4) {
+            return roundGoals[roundIndex];
+        }
+        return null;
     }
 }
