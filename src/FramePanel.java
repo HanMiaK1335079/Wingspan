@@ -591,61 +591,61 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             paintPlaySpecificBirdSecondPart(this.getGraphics());
         }
         case "Choose Bird" -> {
-            // if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();
-            //     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-            // }
-            //     else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
-            //         currentShowing++;
-            //     else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
-            //     //(253,504)->(489,825)
-            //     //(504,504)->(740,825)
-            //     //(755,504)->(991,825)
-            //     //(100,504)->(1237,825)
-            //     int position=0;
-            //     for(int i=0;i<3;i++){
-            //         for(int j=0;j<5;j++){
-            //             if(state.squaresClickedToPlayBird[i][j]){
-            //                 position=j;
-            //                 for(int a=j;a>-1;a--){
-            //                     if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
-            //                         position=a;
-            //                 }
-            //             }
-            //             }
-            //         }
-            //     }
-                // if(x>=253 && x<=489 && y>=504 && y<=825){
-                //     out.println("Clicked first card to play");
-                //     if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
-                //         state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
-                //     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                //     state.CURRENTEVENT.removeLast();
-                //     state.CURRENTEVENT.removeLast();
-                // } else if ( x >= 504 && x <= 740 && y >= 504 && y <= 825 ) {
-                //     out.println("Clicked Second card to play");
-                //    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+1),state.habitatToPlayBird, position))
-                //         state.players[state.playing].getCardsInHand().remove(currentShowing*showing+1);
-                //     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                //     state.CURRENTEVENT.removeLast();
-                //     state.CURRENTEVENT.removeLast();
-                // } else if ( x >= 755 && x <= 991 && y >= 504 && y <= 825 ) {
-                //     out.println("Clicked Third card to play");
-                //     if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+2),state.habitatToPlayBird, position))
-                //         state.players[state.playing].getCardsInHand().remove(currentShowing*showing+2);
-                //     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                //     state.CURRENTEVENT.removeLast();
-                //     state.CURRENTEVENT.removeLast();
-                // } else if ( x >= 1000 && x <= 1237 && y >= 504 && y <= 825 ) {
-                //     out.println("Clicked Fourth card to play");
-                //    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird, position))
-                //         state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
-                //     for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-                //      state.CURRENTEVENT.removeLast();
-                //      state.CURRENTEVENT.removeLast();
-                //     endTurn(ProgramState.PlayerAction.PLAY_BIRD);
-                // }
+            if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();
+                for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+            }
+                else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()%showing)
+                    currentShowing++;
+                else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
+                //(253,504)->(489,825)
+                //(504,504)->(740,825)
+                //(755,504)->(991,825)
+                //(100,504)->(1237,825)
+                int position=0;
+                for(int i=0;i<3;i++){
+                    for(int j=0;j<5;j++){
+                        if(state.squaresClickedToPlayBird[i][j]){
+                            position=j;
+                            for(int a=j;a>-1;a--){
+                                if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
+                                    position=a;
+                            }
+                        }
+                        }
+                    }
+                }
+                if(x>=253 && x<=489 && y>=504 && y<=825){
+                    out.println("Clicked first card to play");
+                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.removeLast();
+                } else if ( x >= 504 && x <= 740 && y >= 504 && y <= 825 ) {
+                    out.println("Clicked Second card to play");
+                   if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+1),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+1);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.removeLast();
+                } else if ( x >= 755 && x <= 991 && y >= 504 && y <= 825 ) {
+                    out.println("Clicked Third card to play");
+                    if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+2),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+2);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.removeLast();
+                } else if ( x >= 1000 && x <= 1237 && y >= 504 && y <= 825 ) {
+                    out.println("Clicked Fourth card to play");
+                   if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+3),state.habitatToPlayBird, position))
+                        state.players[state.playing].getCardsInHand().remove(currentShowing*showing+3);
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                     state.CURRENTEVENT.removeLast();
+                     state.CURRENTEVENT.removeLast();
+                    endTurn(ProgramState.PlayerAction.PLAY_BIRD);
+                }
                     
-                //     state.habitatToPlayBird = "";
+                    state.habitatToPlayBird = "";
                 
 
                     
