@@ -201,7 +201,7 @@ public class Bird {
         s.append("Habitats: ").append(habitats).append("\n");
         s.append("Foods: ");
         for (String[] foodOption : foods) {
-            s.append("[").append(String.join(" OR ", foodOption)).append("] ");
+            s.append(Arrays.toString(foodOption));
         }
         s.append("\n");
         s.append("Stored Eggs: ").append(storedEggs).append("\n");
@@ -230,5 +230,21 @@ public class Bird {
             }
         }
         return foodCounts;
+    }
+
+    /**
+     * Check if this bird can be paid for with a specific food type.
+     * A bird matches if ANY of its food cost options include the given food type.
+     */
+    public boolean canBePaidWith(String foodType) {
+        if (foods == null || foods.isEmpty()) return false;
+        for (String[] option : foods) {
+            for (String food : option) {
+                if (food.equals(foodType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

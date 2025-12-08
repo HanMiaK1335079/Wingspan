@@ -2,12 +2,15 @@ package src;
 
 import java.util.Locale;
 
-/**
- * Lightweight, extensible Ability representation parsed from CSV ability text.
- * This class intentionally keeps logic simple and delegates game-specific effects
- * to callers via the perform(...) method which has access to `ProgramState` and `Player`.
- */
+
+
 public class Ability {
+
+    
+    public void printstatement() {
+        System.out.println("testing");
+    }
+
     public enum Trigger { BROWN, WHITE, PINK, NONE }
 
     public final Trigger trigger;
@@ -18,12 +21,9 @@ public class Ability {
         this.rawText = rawText == null ? "" : rawText;
     }
 
-    /**
-     * Very small set of heuristic helpers for executing common ability patterns.
-     * Game-specific effects should be wired in GameLogic; this provides helpers
-     * that callers can use (e.g., detect if ability tucks a card, draws a card, etc.).
-     */
+ 
     public boolean mentionsTuck(){
+        printstatement();
         return rawText.toLowerCase(Locale.ROOT).contains("tuck");
     }
 
@@ -38,6 +38,8 @@ public class Ability {
     public boolean mentionsCache(){
         return rawText.toLowerCase(Locale.ROOT).contains("cache");
     }
+
+ 
 
     public boolean isGainFoodAbility() {
         String lowerText = rawText.toLowerCase(Locale.ROOT);

@@ -20,7 +20,13 @@ public class Player {
     private int rodentNum=0;
     
     private int score = 0;
-    private ScoreBreakdown finalScore;
+    
+    // Round-by-round goal scoring (4 rounds)
+    private int[] roundGoalPoints = new int[4];
+    private ScoreBreakdown finalScoreBreakdown;
+
+    // final score breakdown (populated at game end)
+    private ScoreBreakdown finalScore = null;
     
     public Player(String name, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
         this.name = name;
@@ -447,7 +453,29 @@ public class Player {
     }
     
     public ScoreBreakdown calculateScore() {
-        return board.calculateScore();
+        int printed = 0;
+        int eggs = 0;
+        int cached = 0;
+        int tucked = 0;
+
+        // sum up contributions from all birds on board
+        ArrayList<Bird> all = getAllBirdsOnBoard();
+        if (all != null) {
+            for (Bird b : all) {
+                try {
+                    // fallback to reading basic properties (Bird doesn't provide per-bird ScoreBreakdown)
+                    printed += b.getPoints();
+                    eggs += b.getEggCount();
+                    cached += b.getCachedFood();
+                    tucked += b.getTuckedCards();
+                } catch (Throwable ignored) {}
+            }
+        }
+
+        // Use the 6-argument ScoreBreakdown constructor:
+        // (printedPoints, eggs, cachedFood, tuckedCards, bonusPoints, flocked)
+        // bonus & flocked are handled at final scoring stage; set them to 0 here.
+        return new ScoreBreakdown(printed, eggs, cached, tucked, 0 /*bonus*/, 0 /*flocked*/);
     }
     
     public void setPlayerScore(int s) {
@@ -456,6 +484,10 @@ public class Player {
 
     public void setFinalScore(ScoreBreakdown s) {
         finalScore = s;
+    }
+    
+    public ScoreBreakdown getFinalScore() {
+        return finalScore;
     }
     
     public ArrayList<Integer> getFood(){
@@ -522,5 +554,87 @@ public class Player {
     }
     public boolean canLayEggs() {
         return canLayEggsOnAnyBird();
+    }
+
+    /**
+     * Record points earned in a specific round's goal evaluation.
+     */
+    public void setRoundGoalPoints(int roundIndex, int points) {
+        if (roundIndex >= 0 && roundIndex < 4) {
+            roundGoalPoints[roundIndex] = points;
+        }
+    }
+
+    public int getRoundGoalPoints(int roundIndex) {
+        if (roundIndex >= 0 && roundIndex < 4) {
+            return roundGoalPoints[roundIndex];
+        }
+        return 0;
+    }
+
+    /**
+     * Calculate final score following official Wingspan rules (in order):
+     * 1. Bird card points (printed + variable)
+     * 2. Bonus cards
+     * 3. End-of-round goals (sum of all 4 rounds)
+     * 4. Eggs on birds
+     * 5. Cached food on birds
+     * 6. Tucked cards
+     */
+    public ScoreBreakdown calculateFinalScore() {
+        // 1. Bird points: sum all printed bird values
+        int birdPoints = 0;
+        for (Bird b : getAllBirdsOnBoard()) {
+            if (b != null) {
+                birdPoints += b.getPoints();
+            }
+        }
+
+        // 2. Bonus card points: evaluate each bonus card owned
+        int bonusPoints = 0;
+        for (Bonus bonus : bonus) {
+            if (bonus != null) {
+                bonusPoints += bonus.evaluateBonus(this);
+            }
+        }
+
+        // 3. End-of-round goal points: sum all 4 rounds
+        int goalPoints = 0;
+        for (int points : roundGoalPoints) {
+            goalPoints += points;
+        }
+
+        // 4. Egg points: count all eggs on all birds
+        int eggPoints = 0;
+        for (Bird b : getAllBirdsOnBoard()) {
+            if (b != null) {
+                eggPoints += b.getEggCount();
+            }
+        }
+
+        // 5. Cached food points: count all cached food tokens
+        int cachedFoodPoints = 0;
+        for (Bird b : getAllBirdsOnBoard()) {
+            if (b != null) {
+                cachedFoodPoints += b.getCachedFood();
+            }
+        }
+
+        // 6. Tucked card points: count all tucked cards
+        int tuckedCardPoints = 0;
+        for (Bird b : getAllBirdsOnBoard()) {
+            if (b != null) {
+                tuckedCardPoints += b.getTuckedCards();
+            }
+        }
+
+        finalScoreBreakdown = new ScoreBreakdown(birdPoints, bonusPoints, goalPoints,
+                                                  eggPoints, cachedFoodPoints, tuckedCardPoints);
+        setPlayerScore(finalScoreBreakdown.total());
+        return finalScoreBreakdown;
+    }
+
+    public ScoreBreakdown getFinalScoreBreakdown() {
+        return finalScoreBreakdown;
     }
 }

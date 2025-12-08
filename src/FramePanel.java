@@ -8,6 +8,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URL;
 
 import static java.lang.System.*;
 import java.util.*;
@@ -73,15 +74,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             }
          
         
-
         //Add all buffered images here 
         try{
-            cover = ImageIO.read(FramePanel.class.getResource("/assets/cover_image.png"));
-            infoButton = ImageIO.read(FramePanel.class.getResource("/assets/info picture.png"));
-            bg = ImageIO.read(FramePanel.class.getResource("/assets/table_bg.png"));
-            Reroll_Button = ImageIO.read(FramePanel.class.getResource("/assets/Reroll.png"));
-            skip = ImageIO.read(FramePanel.class.getResource("/assets/skip.png"));
-            Clear_Button = ImageIO.read(FramePanel.class.getResource("/assets/fghjk-Picsart-BackgroundRemover.jpeg"));
+            cover = loadImage("/assets/cover_image.png", "assets/cover_image.png");
+            infoButton = loadImage("/assets/info picture.png", "assets/info picture.png");
+            bg = loadImage("/assets/table_bg.png", "assets/table_bg.png");
+            Reroll_Button = loadImage("/assets/Reroll.png", "assets/Reroll.png");
+            skip = loadImage("/assets/skip.png", "assets/skip.png");
+            Clear_Button = loadImage("/assets/fghjk-Picsart-BackgroundRemover.jpeg", "assets/fghjk-Picsart-BackgroundRemover.jpeg");
 
         } catch (Exception e){
             System.out.println("No workie because idk 🤷‍♂️");
@@ -89,6 +89,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
         //readCSV(new File("src/birdInfo.csv"));
         this.repaint();
+    }
+    
+    // Helper method to load images with fallback to file system
+    private BufferedImage loadImage(String resourcePath, String filePath) throws Exception {
+        try {
+            URL resource = FramePanel.class.getResource(resourcePath);
+            if (resource != null) {
+                return ImageIO.read(resource);
+            }
+        } catch (Exception e1) {
+            System.err.println("Failed to load from classpath: " + resourcePath);
+        }
+        // Try file system fallback
+        return ImageIO.read(new File(filePath));
     }
     
     // update button geometry based on current panel size
@@ -273,11 +287,22 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
             }case "Game" -> {
                 // g.drawImage(Action_Button, 480, 120, 50 ,50, null);
-        //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
-        // g.drawImage(Action_Button, 425, 200, 50,50,null);
-        // g.drawImage(Action_Button, 425, 450, 50,50,null);
-        // g.drawImage(Action_Button, 350, 725, 50,50,null);
+                //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+                // g.drawImage(Action_Button, 425, 200, 50,50,null);
+                // g.drawImage(Action_Button, 425, 450, 50,50,null);
+                // g.drawImage(Action_Button, 350, 725, 50,50,null);
+                // Score button clickable area (visible)
+                Graphics g = this.getGraphics();
+                if (Score_By_Round != null) g.drawImage(Score_By_Round, 815, 54, 51, 50, null);
+                 //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+                 // g.drawImage(Action_Button, 425, 200, 50,50,null);
+                 // g.drawImage(Action_Button, 425, 450, 50,50,null);
+                 // g.drawImage(Action_Button, 350, 725, 50,50,null);
                 if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
+                // Score area click (user coordinates)
+                else if (x >= 815 && x <= 866 && y >= 54 && y <= 104) {
+                    state.CURRENTEVENT.add("Score Round");
+                }
                 else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
                 else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
                 else if (x>=508 && x<=589 && y>=22 && y<=86) state.CURRENTEVENT.add("Info");
@@ -570,56 +595,58 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 if(x>=120&&x<=335&&y>=515&&y<=775){//120, 515, 215, 2 60,
                     out.println("Clicked the bird deck");
-                    state.players[state.playing].addCardToHand(birds.removeFirst());
+                    if (!birds.isEmpty()) {
+                        state.players[state.playing].addCardToHand(birds.remove(0)); // replaced removeFirst() -> remove(0)
+                    }
                     state.CURRENTEVENT.removeLast(); 
                 }
                 repaint();
             }case "Play Bird" -> {
-                   //     g2.drawRect(470, 155, 628-470, 392-155);
-            // g2.drawRect(469, 403, 627-469, 637-403);
-            // g2.drawRect(470,650,626-470,866-650);
+                //     g2.drawRect(470, 155, 628-470, 392-155);
+                // g2.drawRect(469, 403, 627-469, 637-403);
+                // g2.drawRect(470,650,626-470,866-650);
 
-            // g2.drawRect(644, 155, 800-644, 392-155);
-            // g2.drawRect(644, 403, 800-644, 637-403);
-            // g2.drawRect(644,650,800-644,866-650);
-        
-            // g2.drawRect(815, 155, 969-815, 392-155);
-            // g2.drawRect(815, 403, 969-815, 637-403);
-            // g2.drawRect(815,650,969-815,866-650);
+                // g2.drawRect(644, 155, 800-644, 392-155);
+                // g2.drawRect(644, 403, 800-644, 637-403);
+                // g2.drawRect(644,650,800-644,866-650);
 
-            // g2.drawRect(985, 155, 1138-985, 392-155);
-            // g2.drawRect(985, 403, 1138-985, 637-403);
-            // g2.drawRect(985,650,1138-985,866-650);
+                // g2.drawRect(815, 155, 969-815, 392-155);
+                // g2.drawRect(815, 403, 969-815, 637-403);
+                // g2.drawRect(815,650,969-815,866-650);
 
-            // g2.drawRect(1152, 155, 1302-1152, 392-155);
-            // g2.drawRect(1152, 403, 1302-1152, 637-403);
-            // g2.drawRect(1152,650,1302-1152,866-650);
-            if(x>=470 && x<=628 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][0] = !state.squaresClickedToPlayBird[0][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=469 && x<=627 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][0] = !state.squaresClickedToPlayBird[1][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";}
-            if(x>=470 && x<=626 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][0] = !state.squaresClickedToPlayBird[2][0];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                // g2.drawRect(985, 155, 1138-985, 392-155);
+                // g2.drawRect(985, 403, 1138-985, 637-403);
+                // g2.drawRect(985,650,1138-985,866-650);
 
-            if(x>=644 && x<=800 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][1] = !state.squaresClickedToPlayBird[0][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=644 && x<=800 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][1] = !state.squaresClickedToPlayBird[1][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-            if(x>=644 && x<=800 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][1] = !state.squaresClickedToPlayBird[2][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                // g2.drawRect(1152, 155, 1302-1152, 392-155);
+                // g2.drawRect(1152, 403, 1302-1152, 637-403);
+                // g2.drawRect(1152,650,1302-1152,866-650);
+                if(x>=470 && x<=628 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][0] = !state.squaresClickedToPlayBird[0][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=469 && x<=627 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][0] = !state.squaresClickedToPlayBird[1][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";}
+                if(x>=470 && x<=626 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][0] = !state.squaresClickedToPlayBird[2][0];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
 
-        if(x>=815 && x<=969 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][2] = !state.squaresClickedToPlayBird[0][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-        if(x>=815 && x<=969 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][2] = !state.squaresClickedToPlayBird[1][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-        if(x>=815 && x<=969 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][2] = !state.squaresClickedToPlayBird[2][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-        
-        if(x>=985 && x<=1138 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][3] = !state.squaresClickedToPlayBird[0][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-        if(x>=985 && x<=1138 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][3] = !state.squaresClickedToPlayBird[1][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-        if(x>=985 && x<=1138 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][3] = !state.squaresClickedToPlayBird[2][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-        
-        if(x>=1152 && x<=1302 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][4] = !state.squaresClickedToPlayBird[0][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-        if(x>=1152 && x<=1302 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][4] = !state.squaresClickedToPlayBird[1][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-        if(x>=1152 && x<=1302 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][4] = !state.squaresClickedToPlayBird[2][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-        repaint();
+                if(x>=644 && x<=800 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][1] = !state.squaresClickedToPlayBird[0][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=644 && x<=800 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][1] = !state.squaresClickedToPlayBird[1][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=644 && x<=800 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][1] = !state.squaresClickedToPlayBird[2][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+
+                if(x>=815 && x<=969 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][2] = !state.squaresClickedToPlayBird[0][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=815 && x<=969 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][2] = !state.squaresClickedToPlayBird[1][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=815 && x<=969 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][2] = !state.squaresClickedToPlayBird[2][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                
+                if(x>=985 && x<=1138 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][3] = !state.squaresClickedToPlayBird[0][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=985 && x<=1138 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][3] = !state.squaresClickedToPlayBird[1][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=985 && x<=1138 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][3] = !state.squaresClickedToPlayBird[2][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                
+                if(x>=1152 && x<=1302 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][4] = !state.squaresClickedToPlayBird[0][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=1152 && x<=1302 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][4] = !state.squaresClickedToPlayBird[1][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=1152 && x<=1302 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][4] = !state.squaresClickedToPlayBird[2][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                repaint();
             
-        }
-        case "Wait For Second Part Play Specific Bird" -> {
-          if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();state.specificBirdToPlay=null;currentShowing=0;
-                for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
             }
+            case "Wait For Second Part Play Specific Bird" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();state.specificBirdToPlay=null;currentShowing=0;
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                }
                 else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4)
                     currentShowing++;
                 else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
@@ -679,16 +706,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                      state.CURRENTEVENT.add("Pick Food For Specific Bird");
                    
                 }
-                
-                    
-                 
-                
-
-                    
-                
                 repaint();
-        }
-        case "Choose Bird" -> {
+            }
+            case "Choose Bird" -> {
             
             }case "When Played Ability" ->{
                 //out.println(state.CURRENTEVENT);
@@ -991,7 +1011,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     else if (ability.contains("All players draw 1 [card]")){
                         for (int i=0;i<4;i++){
-                            state.players[state.playing].addCardToHand(birds.removeFirst());
+                            state.players[state.playing].addCardToHand(birds.remove(0));
                             state.playing = (state.playing+1)%4;
                         }
                         currentBirdNum--;
@@ -1006,7 +1026,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                                     currentBirdNum--;
                                     selectingBool = false;
                                 }
-                                else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {
+                                else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=yesCrds[3]) {
                                     if (feeder.getDice().contains("i")){
                                         feeder.removeDie("i");
                                     }else{
@@ -1066,8 +1086,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
                 repaint();
-            }
-            case "Remove Bird" -> {
+            }case "Remove Bird" -> {
                 if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
                     currentShowing++;
                 else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
@@ -1173,6 +1192,17 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 state.CURRENTEVENT.removeLast();
                 repaint();
             }
+            case "Score Round" -> {
+                // Exit button click: x between 815-866, y between 54-104
+                if (x >= 815 && x <= 866 && y >= 54 && y <= 104) {
+                    // remove the Score Round view and ensure we return to the Game view
+                    if (!state.CURRENTEVENT.isEmpty()) state.CURRENTEVENT.removeLast();
+                    if (state.CURRENTEVENT.isEmpty() || !state.CURRENTEVENT.getLast().equals("Game")) {
+                        state.CURRENTEVENT.add("Game");
+                    }
+                }
+                repaint();
+            }
             case "Loop Lay Eggs" -> {
                 Bird[][] birdBoard = state.players[state.playing].getPlayerBoard();
                 for (int i=0;i<3;i++){
@@ -1249,77 +1279,77 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 repaint();
             }case "Pick Food For Specific Bird" -> {
-        //         g.drawImage(wheatToken, 250, 550, 100, 100, null);
-        // g.drawImage(fishToken, 350, 550, 100, 100, null);
-        // g.drawImage(fruitToken, 450, 550, 100, 100, null);
-        // g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
-        // g.drawImage(rodentToken, 650, 550, 100, 100, null);
-        // g.drawImage(Clear_Button, 100, 400, 250, 100, null);
-        //             if(){
-        //                 g.drawImage(Continue_Button, 100, 750, 250, 100, null);
-        //             }
+                //         g.drawImage(wheatToken, 250, 550, 100, 100, null);
+                // g.drawImage(fishToken, 350, 550, 100, 100, null);
+                // g.drawImage(fruitToken, 450, 550, 100, 100, null);
+                // g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+                // g.drawImage(rodentToken, 650, 550, 100, 100, null);
+                // g.drawImage(Clear_Button, 100, 400, 250, 100, null);
+                //             if(){
+                //                 g.drawImage(Continue_Button, 100, 750, 250, 100, null);
+                //             }
 
         
-            if(x>=100 && x<=350 && y>=400 && y<=500){
-                for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
-            }
-            else
-            if(x>=250 && x<=350 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[0]++;
-            }
-            else if (x>=350 && x<=450 && y>=550 && y<=650){
-               state.birdFoodsForPlayingBird[1]++;
-            }
-            else if (x>=450 && x<=550 && y>=550 && y<=650){
-               state.birdFoodsForPlayingBird[2]++;
-            }
-            else if (x>=550 && x<=650 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[3]++;
-            }
-            else if (x>=650 && x<=750 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[4]++;
+                if(x>=100 && x<=350 && y>=400 && y<=500){
+                    for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
+                }
+                else
+                if(x>=250 && x<=350 && y>=550 && y<=650){
+                    state.birdFoodsForPlayingBird[0]++;
+                }
+                else if (x>=350 && x<=450 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[1]++;
+                }
+                else if (x>=450 && x<=550 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[2]++;
+                }
+                else if (x>=550 && x<=650 && y>=550 && y<=650){
+                    state.birdFoodsForPlayingBird[3]++;
+                }
+                else if (x>=650 && x<=750 && y>=550 && y<=650){
+                    state.birdFoodsForPlayingBird[4]++;
                 
-            }else if (x>=100 && x<=350 && y>=750 && y<=850&&state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Remove Eggs For Bird");
-                state.eggsNeededToSpendForPlayingBird = 0;
-                for(int i=0;i<3;i++){
-                    for(int j=0;j<5;j++){
-                        if(state.squaresClickedToPlayBird[i][j]){
-                            state.eggsNeededToSpendForPlayingBird = (int)Math.ceil(j/2.0);
+                }else if (x>=100 && x<=350 && y>=750 && y<=850&&state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.add("Remove Eggs For Bird");
+                    state.eggsNeededToSpendForPlayingBird = 0;
+                    for(int i=0;i<3;i++){
+                        for(int j=0;j<5;j++){
+                            if(state.squaresClickedToPlayBird[i][j]){
+                                state.eggsNeededToSpendForPlayingBird = (int)Math.ceil(j/2.0);
+                            }
                         }
                     }
                 }
-            }
-            //     int position=0;
-            //     for(int i=0;i<3;i++){
-            //         for(int j=0;j<5;j++){
-            //             if(state.squaresClickedToPlayBird[i][j]){
-            //                 position=j;
-            //                 for(int a=j;a>-1;a--){
-            //                     if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
-            //                         position=a;
-            //                 }
-            //             }
-            //             }
-            //         }
-            //     }
-            //     // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
-            //         //     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
-            //         // 
-            //         // state.CURRENTEVENT.removeLast();
-            //     //attempt to play bird
-            //     if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
-            //         state.players[state.playing].playBird(state.specificBirdToPlay, state.habitatToPlayBird, position, state.birdFoodsForPlayingBird);
-            //         for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
-            //         state.CURRENTEVENT.removeLast();
-            //         state.CURRENTEVENT.removeLast();
-            //         for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-            //     }
-            // }
+                //     int position=0;
+                //     for(int i=0;i<3;i++){
+                //         for(int j=0;j<5;j++){
+                //             if(state.squaresClickedToPlayBird[i][j]){
+                //                 position=j;
+                //                 for(int a=j;a>-1;a--){
+                //                     if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
+                //                         position=a;
+                //                 }
+                //             }
+                //             }
+                //         }
+                //     }
+                //     // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
+                //         //     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
+                //         // 
+                //         // state.CURRENTEVENT.removeLast();
+                //     //attempt to play bird
+                //     if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
+                //         state.players[state.playing].playBird(state.specificBirdToPlay, state.habitatToPlayBird, position, state.birdFoodsForPlayingBird);
+                //         for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
+                //         state.CURRENTEVENT.removeLast();
+                //         state.CURRENTEVENT.removeLast();
+                //         for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                //     }
+                // }
+                
             
-        
-            repaint();
+                repaint();
             }
             case "Remove Eggs For Bird" -> {
                 // if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
@@ -1348,118 +1378,114 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         }
                     }
             
-        }
-        else if(x>=469 && x<=627 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][0]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][0].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
                 }
-        }
-        else if(x>=470 && x<=626 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][0]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][0].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=469 && x<=627 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][0]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][0].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=644 && x<=800 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][1]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][1].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=470 && x<=626 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][0]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][0].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=644 && x<=800 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][1]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][1].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=644 && x<=800 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][1]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][1].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=644 && x<=800 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][1]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][1].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=644 && x<=800 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][1]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][1].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=815 && x<=969 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][2]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][2].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=644 && x<=800 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][1]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][1].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=815 && x<=969 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][2]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][2].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=815 && x<=969 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][2]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][2].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=815 && x<=969 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][2]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][2].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=815 && x<=969 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][2]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][2].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=985 && x<=1138 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][3]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][3].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=815 && x<=969 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][2]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][2].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=985 && x<=1138 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][3]!=null   ){
-                if(state.players[state.playing].getBoard().getBoard()[1][3].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=985 && x<=1138 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][3]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][3].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=985 && x<=1138 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][3]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][3].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=985 && x<=1138 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][3]!=null   ){
+                        if(state.players[state.playing].getBoard().getBoard()[1][3].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=1152 && x<=1302 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][4]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][4].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][4].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=985 && x<=1138 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][3]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][3].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=1152 && x<=1302 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][4]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][4].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][4].removeEggs(1);
-                    state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=1152 && x<=1302 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][4]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][4].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][4].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=1152 && x<=1302 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][4]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][4].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][4].removeEggs(1);
-                    state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=1152 && x<=1302 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][4]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][4].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][4].removeEggs(1);
+                            state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
+                else if(x>=1152 && x<=1302 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][4]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][4].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][4].removeEggs(1);
+                            state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
+                }
         
-            repaint();
+                repaint();
+            }
+        }
+    
     }
-}
-    
-}
             
-        
-    
-       
-    
     @Override
     public void mouseReleased(MouseEvent e) {}
     @Override
@@ -1706,7 +1732,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
             g.drawImage(cover, 1300, 400, 100, 100, null); //feeder placeholder
             g.setFont(new Font("Arial", Font.BOLD, 55));
-            g.drawString("Click a player to start first. You're player " + (state.playing+1), 400, 200);
+            g.drawString("Click a player to start first. You're player " + (state.playing+1), 400, 450);
             g.setFont(new Font("Arial", Font.BOLD, 25));
             for (int i=0;i<4;i++){
                 g.setColor(Color.CYAN);
@@ -1844,7 +1870,146 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintScoreRound(Graphics g){
-        g.drawImage(Score_By_Round, 0, 0, getWidth(), getHeight(), null);
+        // improved, grid-based score sheet
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Layout params
+        int cols = state.players.length;
+        int leftPad = 40;
+        int topPad = 110;
+        int labelColWidth = 220;                 // left column for category labels
+        int availableW = Math.max(600, getWidth() - leftPad - labelColWidth - 80);
+        int colWidth = Math.max(160, availableW / Math.max(1, cols));
+        int tableWidth = labelColWidth + colWidth * cols;
+        int startX = (getWidth() - tableWidth) / 2;
+
+        // Title
+        g2.setFont(new Font("SansSerif", Font.BOLD, 36));
+        g2.setColor(new Color(30, 30, 30));
+        g2.drawString("FINAL SCORES", startX, 60);
+
+        // Player color chips (simple palette), header boxes
+        Color[] chip = { new Color(0, 120, 215), new Color(230, 180, 20), new Color(34, 139, 34), new Color(200, 30, 60) };
+        g2.setFont(new Font("SansSerif", Font.BOLD, 16));
+        for (int p = 0; p < cols; p++) {
+            int x = startX + labelColWidth + p * colWidth;
+            int y = topPad - 70;
+            // header box
+            g2.setColor(new Color(245, 245, 250));
+            g2.fillRoundRect(x + 6, y - 18, colWidth - 12, 56, 10, 10);
+            g2.setColor(Color.DARK_GRAY);
+            String title = "Player " + (p + 1);
+            // center title
+            FontMetrics fm = g2.getFontMetrics();
+            int tx = x + (colWidth - fm.stringWidth(title)) / 2;
+            int ty = y + fm.getAscent();
+            // color chip
+            g2.setColor(chip[p % chip.length]);
+            g2.fillRect(x + 8, y - 6, 22, 22);
+            g2.setColor(Color.BLACK);
+            g2.drawString(title, tx, ty);
+        }
+
+        // Categories (rows). Use same logical categories as official sheet.
+        String[] categories = {"Birds (printed)", "Bonus Cards", "End-of-Round Goals (total)", "Eggs", "Cached Food", "Tucked Cards"};
+        int rows = categories.length + 1; // +1 for TOTAL
+        int rowH = 48;
+
+        // Draw table background and grid lines
+        int tableX = startX;
+        int tableY = topPad;
+        int tableH = rows * rowH + 18;
+        // left labels column background
+        g2.setColor(new Color(250, 250, 255));
+        g2.fillRect(tableX, tableY, labelColWidth, tableH);
+        // overall table border
+        g2.setColor(Color.GRAY);
+        g2.setStroke(new BasicStroke(1.5f));
+        g2.drawRect(tableX, tableY, tableWidth, tableH);
+
+        // horizontal lines and labels
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        for (int r = 0; r < rows; r++) {
+            int y = tableY + r * rowH;
+            // row separator
+            g2.setColor(new Color(200, 200, 210));
+            g2.drawLine(tableX, y, tableX + tableWidth, y);
+            // label column text (for category rows)
+            String label;
+            if (r < categories.length) label = categories[r];
+            else label = "TOTAL";
+            // bold TOTAL label
+            if (r == rows - 1) g2.setFont(new Font("SansSerif", Font.BOLD, 18));
+            else g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            g2.setColor(Color.DARK_GRAY);
+            int labelX = tableX + 12;
+            int labelY = y + rowH / 2 + g2.getFontMetrics().getAscent() / 2 - 4;
+            g2.drawString(label, labelX, labelY);
+        }
+        // last horizontal bottom line
+        g2.drawLine(tableX, tableY + rows * rowH, tableX + tableWidth, tableY + rows * rowH);
+
+        // vertical separators and player cell backgrounds / values
+        for (int p = 0; p < cols; p++) {
+            int colXPos = tableX + labelColWidth + p * colWidth;
+            // vertical line
+            g2.setColor(new Color(200, 200, 210));
+            g2.drawLine(colXPos, tableY, colXPos, tableY + tableH);
+            // draw values per row
+            Player player = state.players[p];
+            ScoreBreakdown breakdown = player.getFinalScoreBreakdown();
+            // compute values array: Birds, Bonus, Goals, Eggs, Cached, Tucked, Total
+            String[] vals = new String[rows];
+            if (breakdown != null) {
+                vals[0] = String.valueOf(breakdown.printedPoints);
+                vals[1] = String.valueOf(breakdown.bonus);
+                vals[2] = String.valueOf(breakdown.flocked);
+                vals[3] = String.valueOf(breakdown.eggs);
+                vals[4] = String.valueOf(breakdown.cachedFood);
+                vals[5] = String.valueOf(breakdown.tuckedCards);
+                vals[6] = String.valueOf(breakdown.total());
+            } else {
+                for (int i = 0; i < vals.length; i++) vals[i] = "—";
+            }
+            for (int r = 0; r < rows; r++) {
+                int cellX = colXPos;
+                int cellY = tableY + r * rowH;
+                // highlight total row
+                if (r == rows - 1) {
+                    g2.setColor(new Color(210, 235, 255));
+                    g2.fillRect(cellX + 1, cellY + 1, colWidth - 2, rowH - 1);
+                }
+                // draw value centered
+                g2.setFont(r == rows - 1 ? new Font("SansSerif", Font.BOLD, 18) : new Font("SansSerif", Font.PLAIN, 16));
+                FontMetrics fmV = g2.getFontMetrics();
+                String text = vals[r];
+                int textW = fmV.stringWidth(text);
+                int textX = cellX + (colWidth - textW) / 2;
+                int textY = cellY + rowH / 2 + fmV.getAscent() / 2 - 4;
+                g2.setColor(Color.BLACK);
+                g2.drawString(text, textX, textY);
+            }
+        }
+
+        // final vertical right border
+        g2.setColor(new Color(200, 200, 210));
+        g2.drawLine(tableX + tableWidth, tableY, tableX + tableWidth, tableY + tableH);
+
+        // Exit button (styled)
+        int bx = startX + tableWidth - 60;
+        int by = tableY - 70;
+        g2.setColor(new Color(200, 80, 80));
+        g2.fillRoundRect(bx, by, 48, 36, 8, 8);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 20));
+        g2.drawString("X", bx + 16, by + 25);
+
+        // small footer note
+        g2.setFont(new Font("SansSerif", Font.ITALIC, 12));
+        g2.setColor(new Color(80, 80, 80));
+        g2.drawString("Fill each player column and add vertically for TOTAL.", startX, tableY + tableH + 30);
     }
 
     public void paintPlaySpecificBird(Graphics g){
@@ -1906,7 +2071,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         int counter = 0;
         for (Bird b: state.players[state.playing].getCardsInHand()){
             if (counter %showing == 0) 
-                birdArrSplit.add(new ArrayList<>());
+                birdArrSplit.add(new ArrayList<Bird>());
             counter ++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
@@ -2106,8 +2271,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (b!=null){
                     g.drawString("E: "+b.getEggCount(), 476+173*counterIndex, 330+230*counter);
                     if (b.getTuckedCards()>0){
-                        g.drawString("T: "+b.getTuckedCards(), 594+173*counterIndex, 220 + 230*counter);
-                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+173*counterIndex, 220 + 230*counter);
+                        g.drawString("T: "+b.getTuckedCards(), 594+177*counterIndex, 220 + 230*counter);
+                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+177*counterIndex, 220 + 230*counter);
                 }
                 counterIndex++;
                     //out.println("Birbing");
@@ -2208,7 +2373,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         for (Bird b: state.players[state.playing].getCardsInHand()){
             if (counter %showing == 0) 
                 birdArrSplit.add(new ArrayList<Bird>());
-            counter ++;
+            counter++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
         try{
@@ -2288,7 +2453,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     //Ability stuffs
     public void paintWPAbility(Graphics g){
-        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.drawString("Click anywhere to continue (that isn't skip)", 400, 200);
         g.drawString("Any When Placed abilities will be auto-activated", 300, 300);
@@ -2309,7 +2474,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     int loopDrawing = 0;
     ArrayList<Bird> loopOptions = new ArrayList<Bird>();
     public void paintLoopDraw(Graphics g){
-        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.setFont(new Font("Arial", Font.BOLD, 55));
         g.setColor(Color.BLACK);
         g.drawString("Player " + (loopDrawing+1) + " can select a card", 400, 200);
@@ -2392,7 +2557,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void paintInfo(Graphics g){
-        g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 30, 30, 90, 90, null);
         g.setFont(new Font("Arial", Font.BOLD, 40));
         //g.drawString("This is a PLACEHOLDER for Info (I'm lazy :))", 100, 300);
@@ -2578,6 +2743,15 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 readAmt -= 1;
             }
+            //for (Bird birbo: birds) out.println(birbo.toString());
+
+            // For debugging: print out the bonus map
+            for (String bonus : bonuses) {
+                ArrayList<String> birdsWithBonus = bonusMap.get(bonus);
+                if (birdsWithBonus != null) {
+                    out.println(bonus + ": " + birdsWithBonus);
+                }
+            }
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
         }
@@ -2604,8 +2778,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     //update card tray
     public void updateTray(){
-        for (int i=0;i<3;i++)
-            if (state.cardTray[i] == null) state.cardTray[i] = birds.removeFirst();
+        for (int i=0;i<3;i++) {
+            if (state.cardTray[i] == null && !birds.isEmpty()) {
+                state.cardTray[i] = birds.remove(0); // replaced removeFirst() -> remove(0)
+            }
+        }
         out.println("Updated tray");
         
     }
@@ -2672,6 +2849,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         startSelections = new boolean[12]; //1-5 for birds, 6-10 for foods, 11-12 for bonus
         startOptions = new Bird[5];
         for (int i=0;i<5;i++){
+
+
+
+
+
+
             startOptions[i] = birds.remove(0);
         }
         bonusOptions = new Bonus[2];
@@ -2683,9 +2866,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     public void endTurn(ProgramState.PlayerAction action) {
         state.game.next(action);
     }
-
-
-
 
     public void paintGetFoodFromFeeder(Graphics g){
         paintGame(g);
@@ -2711,7 +2891,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     public void paintTradeCardForFood(Graphics g){
-        if (state.players[state.playing].getCardsInHand().size()==0){ state.CURRENTEVENT.removeLast();repaint();return;}
+        if (state.players[state.playing].getCardsInHand().size()==0){ 
+            state.CURRENTEVENT.removeLast();
+            repaint();
+            return;
+        }
         paintGetFoodFromFeeder(g);
         g.setFont(new Font("Arial", Font.BOLD, 40));
         g.drawString("Select a bird card to trade for food, or press the x to decline", 300, 150);
@@ -2719,33 +2903,25 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
         g.drawImage(exitPic, 20, 400, 50, 50, null);
         
-        
         g.drawString(""+state.players[state.playing].getCardsInHand().size(), 1400, 460);
-      
-
-        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<ArrayList<Bird>>();
+        
+        ArrayList<ArrayList<Bird>> birdArrSplit = new ArrayList<>();
         int counter = 0;
         for (Bird b: state.players[state.playing].getCardsInHand()){
-            if (counter %showing == 0) 
+            if (counter % showing == 0) 
                 birdArrSplit.add(new ArrayList<Bird>());
-            counter ++;
+            counter++;
             birdArrSplit.get(birdArrSplit.size()-1).add(b);
         }
 
-        for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
-            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+        for (int i=0; i<birdArrSplit.get(currentShowing).size(); i++){
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325, null);
         }
-     
-
-        if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
-        if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
     }
-    public void paintLayEggs(Graphics g){
-      paintGame(g);
-      
+}
 
-}
-}
+
+
 
 
      
