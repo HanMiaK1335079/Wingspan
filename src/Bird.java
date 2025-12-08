@@ -97,6 +97,7 @@ public class Bird {
     public void setImage(BufferedImage i) { image = i; }
 
     public boolean canLiveInHabitat(String habitat) {
+        System.out.println("Checking if "+name+" can live in habitat: "+habitat);
         if (habitat == null) return false;
         String habitatNormalized = getHabitatNorm(habitat);
         return habitats != null && habitats.contains(habitatNormalized);
@@ -213,5 +214,21 @@ public class Bird {
         cachedFood = 0;
         tuckedCards = 0;
         pinkPowerUsed = false;
+    }
+    public int[] foodsToIntArray(){
+        int[] foodCounts = new int[6]; // s, f, b, i, r, a
+        for (String[] option : foods) {
+            for (String food : option) {
+                switch (food) {
+                    case "s", "seed" -> foodCounts[0]++;
+                    case "f", "fish" -> foodCounts[1]++;
+                    case "b", "berry" -> foodCounts[2]++;
+                    case "i", "insect" -> foodCounts[3]++;
+                    case "r", "rat" -> foodCounts[4]++;
+                    case "a", "wild" -> foodCounts[5]++;
+                }
+            }
+        }
+        return foodCounts;
     }
 }
