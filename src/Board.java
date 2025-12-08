@@ -252,10 +252,17 @@ public class Board {
                 }
             }
 
+            // Find first empty slot; if none available, don't move
             int newPosition = getFirstEmptySlotIndex(newHabitat);
             if (newPosition != -1) {
                 board[newHabitatIndex][newPosition] = bird;
                 bird.setHabitat(newHabitat);
+            } else {
+                // Habitat full—place bird back in old habitat
+                int oldPosition = getFirstEmptySlotIndex(oldHabitat);
+                if (oldPosition != -1) {
+                    board[oldHabitatIndex][oldPosition] = bird;
+                }
             }
         }
     }
@@ -275,6 +282,7 @@ public class Board {
                 }
             }
         }
+        // Use 6-arg constructor: printed, eggs, cached, tucked, bonus, flocked
         return new ScoreBreakdown(points, eggs, cached, tucked, 0, 0);
     }
 
