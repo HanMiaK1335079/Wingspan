@@ -30,7 +30,8 @@ public class ProgramState {
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
 
-        public ArrayList<String> CURRENTEVENT = new ArrayList<>();
+        // Use LinkedList so callers can use getLast()/removeLast()
+    public LinkedList<String> CURRENTEVENT = new LinkedList<>();
 
         
 
@@ -124,7 +125,8 @@ public class ProgramState {
     public volatile String habitatToPlayBird = "";
     
     public volatile int[][] playerActionCounts = new int[4][4]; 
-    public volatile int[] playerRoundScores = new int[4]; 
+    // playerRoundScores[playerIndex][roundIndex]
+    public volatile int[][] playerRoundScores = new int[4][4];
     public volatile boolean[] playerHasBonusCard = new boolean[4]; 
     
     public ProgramState(){
@@ -146,15 +148,20 @@ public class ProgramState {
         return 0;
     }
     
-    public void setPlayerRoundScore(int playerIndex, int round, int score) {
-        if (playerIndex >= 0 && playerIndex < 4) {
-            playerRoundScores[playerIndex] = score;
+    public void setPlayerRoundScore(int playerIndex, int roundIndex, int score) {
+        if (playerIndex >= 0 && playerIndex < playerRoundScores.length && roundIndex >= 0 && roundIndex < 4) {
+            playerRoundScores[playerIndex][roundIndex] = score;
         }
     }
     
-    public int getPlayerRoundScore(int playerIndex) {
-        if (playerIndex >= 0 && playerIndex < 4) {
-            return playerRoundScores[playerIndex];
+    // helper for UI to query stored round awards (forward to game if available)
+    public int getPlayerRoundScore(int playerIndex, int roundIndex) {
+        try {
+            if (game != null) return game.getPlayerRoundScore(playerIndex, roundIndex);
+        } catch (Exception ignored) {}
+        if (players != null && playerIndex >= 0 && playerIndex < players.length) {
+            // Player fallback
+            return players[playerIndex].getRoundGoalPoints(roundIndex);
         }
         return 0;
     }

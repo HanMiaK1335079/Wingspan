@@ -275,7 +275,8 @@ public class Board {
                 }
             }
         }
-        return new ScoreBreakdown(points, eggs, cached, tucked, 0, 0);
+        // flocked & bonus & roundGoals default to 0 here (board-level info only)
+        return new ScoreBreakdown(points, eggs, cached, tucked, 0, 0, 0);
     }
 
     public ArrayList<Bird> getBirdsByNestType(String nestType) {

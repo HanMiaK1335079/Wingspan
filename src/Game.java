@@ -8,7 +8,10 @@ public class Game {
     private int currentPlayer = 0;
     private boolean over = false;
     private ArrayList<Bird> birds;
-    
+
+    // Round goal points storage - new structure to persist awarded points
+    private int[][] roundGoalPoints;
+
     public enum GamePhase {
         SETUP,
         INITIAL_SELECTION,
@@ -16,41 +19,47 @@ public class Game {
         END_OF_ROUND,
         GAME_OVER
     }
-    
+
     public Game(ProgramState s) {
         this.state = s;
         this.feeder = new Feeder(s);
         init();
     }
-    
+
     private void init() {
+        // ensure round-goal points storage is allocated to avoid NPEs later
+        roundGoalPoints = new int[state.players.length][4];
+        for (int i = 0; i < roundGoalPoints.length; i++) Arrays.fill(roundGoalPoints[i], 0);
+
         for (int i = 0; i < state.players.length; i++) {
             state.players[i] = new Player("Player " + (i + 1), new ArrayList<>(), new ArrayList<>(), i);
         }
-        
+
+        // ProgramState.playerRoundScores will hold per-player per-round awards
+
         state.makeDeckOfCards();
         dealInitialCards();
         dealInitialBonusCards();
         setupRoundGoals();
-        
+
         state.currentPhase = ProgramState.GamePhase.INITIAL_SELECTION;
     }
-    
+
     private void setupRoundGoals() {
         int[] goalIds = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-        
+
         for (int i = 0; i < goalIds.length; i++) {
             int randomIndex = (int)(Math.random() * goalIds.length);
             int temp = goalIds[i];
             goalIds[i] = goalIds[randomIndex];
             goalIds[randomIndex] = temp;
         }
-        
+
         for (int i = 0; i < 4; i++) {
             state.setRoundGoal(i, goalIds[i]);
         }
     }
-    
+
     private void dealInitialCards() {
         for (int i = 0; i < 5; i++) {
             for (Player p : state.players) {
@@ -61,7 +70,7 @@ public class Game {
             }
         }
     }
-    
+
     private void dealInitialBonusCards() {
         for (int i = 0; i < 2; i++) {
             for (Player p : state.players) {
@@ -74,18 +83,18 @@ public class Game {
     }
 
 
-    
+
     public void next(ProgramState.PlayerAction action) {
         currentPlayer = (currentPlayer + 1) % 4;
         activatePinkPowers(state.players[currentPlayer], action);
-        
+
         if (currentPlayer == (state.firstPlayerToken - 1)) {
             nextRound();
         }
-        
+
         state.players[currentPlayer].setPlayerScore(state.players[currentPlayer].calculateScore().total());
     }
-    
+
     public void activatePinkPowers(Player p, ProgramState.PlayerAction action) {
         for (Player other : state.players) {
             if (other == p) continue;
@@ -98,61 +107,97 @@ public class Game {
             }
         }
     }
-    
+
     public void nextRound() {
         determineRoundWinner(round);
         round++;
-        
+
         if (round > 4) {
             state.currentPhase = ProgramState.GamePhase.GAME_OVER;
             over = true;
             calculateFinalScores();
             return;
         }
-        
+
         for (Player p : state.players) {
             p.nextRound();
             p.resetPinkPowers();
         }
-        
+
         state.currentPhase = ProgramState.GamePhase.PLAYER_TURN;
     }
-    
+
     private void determineRoundWinner(int roundNumber) {
         if (roundNumber < 1 || roundNumber > 4) return;
-        
+
         int goalId = state.getRoundGoal(roundNumber - 1);
-        List<Integer> winners = new ArrayList<>();
-        int maxCount = -1;
-        
-        for (Player p : state.players) {
-            int count = getRoundGoalCount(goalId, p);
-            if (count > maxCount) {
-                maxCount = count;
+        int nPlayers = state.players.length;
+        int[] values = new int[nPlayers];
+        for (int i = 0; i < nPlayers; i++) {
+            values[i] = getRoundGoalCount(goalId, state.players[i]);
+        }
+
+        // Prepare sorted indices by value (descending)
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < nPlayers; i++) indices.add(i);
+        indices.sort((a, b) -> Integer.compare(values[b], values[a])); // descending
+
+        // Scoring scheme - standard 4-player (first..fourth = 5,3,2,1).
+        // For projects that assume 4 players, this is most appropriate.
+        int[] placePoints;
+        if (nPlayers == 4) {
+            placePoints = new int[]{5, 3, 2, 1};
+        } else if (nPlayers == 3) {
+            placePoints = new int[]{6, 4, 2}; // reasonable fallback
+        } else if (nPlayers == 2) {
+            placePoints = new int[]{7, 4}; // reasonable fallback
+        } else {
+            // Generic fallback: descending starting at 5
+            placePoints = new int[nPlayers];
+            int start = 5;
+            for (int i = 0; i < nPlayers; i++) {
+                placePoints[i] = Math.max(start - i, 0);
             }
         }
 
-        for (int i = 0; i < state.players.length; i++) {
-            int count = getRoundGoalCount(goalId, state.players[i]);
-            if (count == maxCount) {
-                winners.add(i);
-            }
-        }
+        // Walk through sorted indices and allocate points for ties
+        boolean[] awarded = new boolean[nPlayers];
+        int rank = 0; // how many positions have been processed
+        while (rank < nPlayers) {
+            // find group of tied players at this rank
+            int idx = indices.get(rank);
+            int val = values[idx];
 
-        int[] points = switch (roundNumber) {
-            case 1 -> new int[]{4, 1, 0};
-            case 2 -> new int[]{5, 2, 0};
-            case 3 -> new int[]{6, 3, 1};
-            case 4 -> new int[]{7, 4, 2};
-            default -> new int[]{0, 0, 0};
-        };
-
-        if (winners.size() == 1) {
-            state.players[winners.get(0)].addPoints(points[0]);
-        } else if (winners.size() > 1) {
-            for (int winner : winners) {
-                state.players[winner].addPoints(points[1]);
+            ArrayList<Integer> tiedPlayers = new ArrayList<>();
+            int j = rank;
+            while (j < nPlayers && values[indices.get(j)] == val) {
+                tiedPlayers.add(indices.get(j));
+                j++;
             }
+
+            // determine positions covered by this tie: startPos .. endPos inclusive
+            int startPos = rank; // 0-based
+            int endPos = j - 1;
+
+            // sum the placePoints for each tied position that exists
+            int sumPoints = 0;
+            for (int pos = startPos; pos <= endPos; pos++) {
+                if (pos < placePoints.length) sumPoints += placePoints[pos];
+            }
+
+            int awardEach = tiedPlayers.size() > 0 ? (sumPoints / tiedPlayers.size()) : 0;
+
+            // assign points to each tied player (store & add)
+            for (int pIndex : tiedPlayers) {
+                state.players[pIndex].addPoints(awardEach);
+                // persist into round table (roundNumber-1)
+                roundGoalPoints[pIndex][roundNumber - 1] = awardEach;
+                // also write into Player object for easy access elsewhere
+                state.players[pIndex].setRoundGoalPoints(roundNumber - 1, awardEach);
+            }
+
+            // advance rank to after the tied group
+            rank = j;
         }
     }
 
@@ -179,11 +224,8 @@ public class Game {
     }
 
     private int getCachedFoodCount(Player p) {
-        int count = 0;
-        for (Bird b : p.getAllBirdsOnBoard()) {
-            count += b.getFoodCost();
-        }
-        return count;
+        ScoreBreakdown sb = p.calculateScore();
+        return sb == null ? 0 : sb.cachedFood;
     }
 
     private int getBirdsWithEggsCount(Player p) {
@@ -197,16 +239,13 @@ public class Game {
     }
 
     private int getMaxBirdsInSingleHabitat(Player p) {
-        return Math.max(p.getBirdsInHabitat("forest").size(), 
+        return Math.max(p.getBirdsInHabitat("forest").size(),
             Math.max(p.getBirdsInHabitat("plains").size(), p.getBirdsInHabitat("wetlands").size()));
     }
 
     private int getTuckedCardCount(Player p) {
-        int count = 0;
-        for (Bird b : p.getAllBirdsOnBoard()) {
-            count += b.getTuckedCards();
-        }
-        return count;
+        ScoreBreakdown sb = p.calculateScore();
+        return sb == null ? 0 : sb.tuckedCards;
     }
 
     private int getDietTypes(Player p) {
@@ -230,31 +269,40 @@ public class Game {
         }
         return count;
     }
-    
+
     private void calculateFinalScores() {
-        for (Player p : state.players) {
+        for (int playerIndex = 0; playerIndex < state.players.length; playerIndex++) {
+            Player p = state.players[playerIndex];
             ScoreBreakdown baseScore = p.calculateScore();
-            
+
             ArrayList<Bonus> bonuses = p.getBonuses();
             int bonusPoints = 0;
             for (Bonus b : bonuses) {
                 bonusPoints += b.getBonusPoints(p);
             }
-            
+
+            // Sum all round goal points recorded for this player.
+            int roundPointsTotal = 0;
+            for (int r = 0; r < roundGoalPoints[playerIndex].length; r++) {
+                roundPointsTotal += roundGoalPoints[playerIndex][r];
+            }
+
+            // Create final breakdown: keep bonus and round goals separate
             ScoreBreakdown finalScore = new ScoreBreakdown(
                 baseScore.printedPoints,
                 baseScore.eggs,
                 baseScore.cachedFood,
                 baseScore.tuckedCards,
                 bonusPoints,
-                baseScore.flocked
+                baseScore.flocked,
+                roundPointsTotal
             );
-            
+
             p.setFinalScore(finalScore);
             p.setPlayerScore(finalScore.total());
         }
     }
-    
+
     public boolean isOver() {
         return over;
     }
@@ -266,7 +314,7 @@ public class Game {
     public void setBirds(ArrayList<Bird> birds) {
         this.birds = birds;
     }
-    
+
     public int getPlayer() {
         return currentPlayer;
     }
@@ -274,18 +322,18 @@ public class Game {
     public int getCurrentPlayerIndex() {
         return currentPlayer;
     }
-    
+
     public int getRound() {
         return round;
     }
-    
+
     public Player getPlayer(int playerIndex) {
         if (playerIndex >= 0 && playerIndex < state.players.length) {
             return state.players[playerIndex];
         }
         return null;
     }
-    
+
     public boolean doAction(ProgramState.PlayerAction action, Object... params) {
         Player p = state.players[currentPlayer];
         if (p.getActionsRemaining(round) <= 0) return false;
@@ -325,46 +373,80 @@ public class Game {
             }
         }
     }
-    
+
     public boolean play(Player p, Object... params) {
         if (params.length < 2) return false;
-        
+
         if (!(params[0] instanceof Bird) || !(params[1] instanceof String)) {
             return false;
         }
-        
+
         Bird b = (Bird) params[0];
         String h = (String) params[1];
-        
+
         if (!p.getCardsInHand().contains(b)) {
             return false;
         }
-        
+
         if (!p.canAffordBird(b)) {
             return false;
         }
-        
+
         if (!b.canLiveInHabitat(h)) {
             return false;
         }
-        
+
         if (p.isHabitatFull(h)) {
             return false;
         }
-        
-        Object[] playParams = new Object[params.length - 2];
+
+        // convert remaining params into an int[] if possible (food choice array)
+        int[] playParamsInt = new int[0];
+        Object[] remainingParams = new Object[0];
         if (params.length > 2) {
-            System.arraycopy(params, 2, playParams, 0, params.length - 2);
+            // If the third parameter is already an int[], use it
+            if (params[2] instanceof int[]) {
+                playParamsInt = (int[]) params[2];
+                // any further params become remainingParams
+                if (params.length > 3) {
+                    remainingParams = new Object[params.length - 3];
+                    System.arraycopy(params, 3, remainingParams, 0, params.length - 3);
+                }
+            } else if (params[2] instanceof Integer[] || params[2] instanceof Number[]) {
+                Object[] arr = (Object[]) params[2];
+                playParamsInt = new int[arr.length];
+                for (int i = 0; i < arr.length; i++) playParamsInt[i] = ((Number) arr[i]).intValue();
+                if (params.length > 3) {
+                    remainingParams = new Object[params.length - 3];
+                    System.arraycopy(params, 3, remainingParams, 0, params.length - 3);
+                }
+            } else if (params[2] instanceof ArrayList) {
+                @SuppressWarnings("unchecked")
+                ArrayList<Number> list = (ArrayList<Number>) params[2];
+                playParamsInt = new int[list.size()];
+                for (int i = 0; i < list.size(); i++) playParamsInt[i] = list.get(i).intValue();
+                if (params.length > 3) {
+                    remainingParams = new Object[params.length - 3];
+                    System.arraycopy(params, 3, remainingParams, 0, params.length - 3);
+                }
+            } else {
+                // treat all trailing params as numbers to convert into int[]
+                playParamsInt = new int[params.length - 2];
+                for (int i = 2; i < params.length; i++) {
+                    playParamsInt[i - 2] = params[i] instanceof Number ? ((Number) params[i]).intValue() : 0;
+                }
+            }
         }
-        boolean played = p.playBird(b, h, -1, playParams);
+
+        boolean played = p.playBird(b, h, -1, playParamsInt, (Object[]) remainingParams);
         if (played) {
             p.removeCardFromHand(b);
-            
+
             if (b.isWhenPlayedAbility()) {
                 activateWhenPlayedAbility(p, b, params);
             }
         }
-        
+
         return played;
     }
 
@@ -535,13 +617,13 @@ public class Game {
     private boolean draw(Player p, String[] params) {
         int numToDraw = 1 + p.getBirdsInHabitat("wetlands").size();
         if (p.getActionsRemaining(getRound()) > 0) {
-            if (params[0].equals("0")) { 
+            if (params[0].equals("0")) {
                 for (int i = 0; i < numToDraw; i++) {
                     p.addCardToHand(state.deckOfCards.remove(state.deckOfCards.size() - 1));
                 }
                 p.useAction(getRound());
                 return true;
-            } else { 
+            } else {
                 int index = Integer.parseInt(params[1]);
                 if (state.cardTray[index] != null) {
                     p.addCardToHand(state.cardTray[index]);
@@ -582,5 +664,13 @@ public class Game {
 
     public Player[] getPlayers() {
         return state.players;
+    }
+
+    // new getter so UI / other systems can ask the Game for stored awarded round points
+    public int getPlayerRoundScore(int playerIndex, int roundIndex) {
+        if (roundGoalPoints == null) return 0;
+        if (playerIndex < 0 || playerIndex >= roundGoalPoints.length) return 0;
+        if (roundIndex < 0 || roundIndex >= roundGoalPoints[playerIndex].length) return 0;
+        return roundGoalPoints[playerIndex][roundIndex];
     }
 }

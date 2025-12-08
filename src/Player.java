@@ -20,7 +20,12 @@ public class Player {
     private int rodentNum=0;
     
     private int score = 0;
-    private ScoreBreakdown finalScore;
+    
+    // store awarded end-of-round goal points for 4 rounds
+    private final int[] roundGoalPoints = new int[4];
+
+    // final score breakdown (populated at game end)
+    private ScoreBreakdown finalScore = null;
     
     public Player(String name, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
         this.name = name;
@@ -447,7 +452,40 @@ public class Player {
     }
     
     public ScoreBreakdown calculateScore() {
-        return board.calculateScore();
+        int printed = 0;
+        int eggs = 0;
+        int cached = 0;
+        int tucked = 0;
+        int flocked = 0;
+
+        // sum up contributions from all birds on board
+        ArrayList<Bird> all = getAllBirdsOnBoard();
+        if (all != null) {
+            for (Bird b : all) {
+                try {
+                    // prefer a per-bird breakdown if available
+                    ScoreBreakdown bs = b.getScoreBreakdown();
+                    if (bs != null) {
+                        printed += bs.printedPoints;
+                        eggs += bs.eggs;
+                        cached += bs.cachedFood;
+                        tucked += bs.tuckedCards;
+                        flocked += bs.flocked;
+                        continue;
+                    }
+                } catch (Throwable ignored) {}
+
+                // fallback to reading basic properties
+                try { printed += b.getPoints(); } catch (Throwable ignored) {}
+                try { eggs += b.getEggCount(); } catch (Throwable ignored) {}
+                try { cached += b.getCachedFood(); } catch (Throwable ignored) {}
+                try { tucked += b.getTuckedCards(); } catch (Throwable ignored) {}
+                try { flocked += b.getFlocked(); } catch (Throwable ignored) {}
+            }
+        }
+
+        // bonusPoints and roundGoals are handled at final scoring stage (Game.calculateFinalScores)
+        return new ScoreBreakdown(printed, eggs, cached, tucked, 0 /*bonus*/, flocked, getRoundGoalsTotal());
     }
     
     public void setPlayerScore(int s) {
@@ -456,6 +494,10 @@ public class Player {
 
     public void setFinalScore(ScoreBreakdown s) {
         finalScore = s;
+    }
+    
+    public ScoreBreakdown getFinalScore() {
+        return finalScore;
     }
     
     public ArrayList<Integer> getFood(){
@@ -522,5 +564,31 @@ public class Player {
     }
     public boolean canLayEggs() {
         return canLayEggsOnAnyBird();
+    }
+
+    // called by Game when awarding end-of-round points
+    public void setRoundGoalPoints(int roundIndex, int points) {
+        if (roundIndex >= 0 && roundIndex < roundGoalPoints.length) {
+            roundGoalPoints[roundIndex] = points;
+        }
+    }
+
+    public int getRoundGoalPoints(int roundIndex) {
+        if (roundIndex >= 0 && roundIndex < roundGoalPoints.length) {
+            return roundGoalPoints[roundIndex];
+        }
+        return 0;
+    }
+
+    // convenience: total of all round points
+    public int getRoundGoalsTotal() {
+        int s = 0;
+        for (int v : roundGoalPoints) s += v;
+        return s;
+    }
+
+    // reset (call at new game / setup)
+    public void resetRoundGoals() {
+        Arrays.fill(roundGoalPoints, 0);
     }
 }
