@@ -22,6 +22,11 @@ public class ProgramState {
 
     public volatile int birdNumArrayForChoosingSpecificBird=0;
 
+    public volatile Bird specificBirdToPlay=null;
+    public volatile int[] birdFoodsForPlayingBird=new int[5];
+
+    public volatile int eggsNeededToSpendForPlayingBird=0;
+
     public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
     public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
 
