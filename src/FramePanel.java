@@ -1923,8 +1923,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 if (b!=null){
                     g.drawString("E: "+b.getEggCount(), 476+173*counterIndex, 330+230*counter);
                     if (b.getTuckedCards()>0){
-                        g.drawString("T: "+b.getTuckedCards(), 594+173*counterIndex, 220 + 230*counter);
-                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+173*counterIndex, 220 + 230*counter);
+                        g.drawString("T: "+b.getTuckedCards(), 594+177*counterIndex, 220 + 230*counter);
+                    }else if (b.getCachedFood()>0) g.drawString("C: "+b.getCachedFood(), 594+177*counterIndex, 220 + 230*counter);
                 }
                 counterIndex++;
                     //out.println("Birbing");
