@@ -260,10 +260,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         
             }case "Game" -> {
                 // g.drawImage(Action_Button, 480, 120, 50 ,50, null);
-        //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
-        // g.drawImage(Action_Button, 425, 200, 50,50,null);
-        // g.drawImage(Action_Button, 425, 450, 50,50,null);
-        // g.drawImage(Action_Button, 350, 725, 50,50,null);
+                //         g.drawImage(Action_Button, 480, 120, 50 ,50, null);
+                // g.drawImage(Action_Button, 425, 200, 50,50,null);
+                // g.drawImage(Action_Button, 425, 450, 50,50,null);
+                // g.drawImage(Action_Button, 350, 725, 50,50,null);
                 if (x>=184 && x<=231 && y>=180 && y<=222) state.CURRENTEVENT.add("View Birds");
                 else if (x>=190 && x<=235 && y>=440 && y<=484) state.CURRENTEVENT.add("View Bonus");
                 else if (x>=37 && x<=83 && y>=683 && y<=726) state.CURRENTEVENT.add("View Feeder");
@@ -561,51 +561,51 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 repaint();
             }case "Play Bird" -> {
-                   //     g2.drawRect(470, 155, 628-470, 392-155);
-            // g2.drawRect(469, 403, 627-469, 637-403);
-            // g2.drawRect(470,650,626-470,866-650);
+                //     g2.drawRect(470, 155, 628-470, 392-155);
+                // g2.drawRect(469, 403, 627-469, 637-403);
+                // g2.drawRect(470,650,626-470,866-650);
 
-            // g2.drawRect(644, 155, 800-644, 392-155);
-            // g2.drawRect(644, 403, 800-644, 637-403);
-            // g2.drawRect(644,650,800-644,866-650);
-        
-            // g2.drawRect(815, 155, 969-815, 392-155);
-            // g2.drawRect(815, 403, 969-815, 637-403);
-            // g2.drawRect(815,650,969-815,866-650);
-
-            // g2.drawRect(985, 155, 1138-985, 392-155);
-            // g2.drawRect(985, 403, 1138-985, 637-403);
-            // g2.drawRect(985,650,1138-985,866-650);
-
-            // g2.drawRect(1152, 155, 1302-1152, 392-155);
-            // g2.drawRect(1152, 403, 1302-1152, 637-403);
-            // g2.drawRect(1152,650,1302-1152,866-650);
-            if(x>=470 && x<=628 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][0] = !state.squaresClickedToPlayBird[0][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=469 && x<=627 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][0] = !state.squaresClickedToPlayBird[1][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";}
-            if(x>=470 && x<=626 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][0] = !state.squaresClickedToPlayBird[2][0];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-
-            if(x>=644 && x<=800 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][1] = !state.squaresClickedToPlayBird[0][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-            if(x>=644 && x<=800 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][1] = !state.squaresClickedToPlayBird[1][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-            if(x>=644 && x<=800 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][1] = !state.squaresClickedToPlayBird[2][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-
-        if(x>=815 && x<=969 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][2] = !state.squaresClickedToPlayBird[0][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-        if(x>=815 && x<=969 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][2] = !state.squaresClickedToPlayBird[1][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-        if(x>=815 && x<=969 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][2] = !state.squaresClickedToPlayBird[2][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-        
-        if(x>=985 && x<=1138 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][3] = !state.squaresClickedToPlayBird[0][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-        if(x>=985 && x<=1138 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][3] = !state.squaresClickedToPlayBird[1][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-        if(x>=985 && x<=1138 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][3] = !state.squaresClickedToPlayBird[2][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-        
-        if(x>=1152 && x<=1302 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][4] = !state.squaresClickedToPlayBird[0][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
-        if(x>=1152 && x<=1302 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][4] = !state.squaresClickedToPlayBird[1][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
-        if(x>=1152 && x<=1302 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][4] = !state.squaresClickedToPlayBird[2][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
-        repaint();
+                // g2.drawRect(644, 155, 800-644, 392-155);
+                // g2.drawRect(644, 403, 800-644, 637-403);
+                // g2.drawRect(644,650,800-644,866-650);
             
-        }
-        case "Wait For Second Part Play Specific Bird" -> {
-          if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();state.specificBirdToPlay=null;currentShowing=0;
-                for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                // g2.drawRect(815, 155, 969-815, 392-155);
+                // g2.drawRect(815, 403, 969-815, 637-403);
+                // g2.drawRect(815,650,969-815,866-650);
+
+                // g2.drawRect(985, 155, 1138-985, 392-155);
+                // g2.drawRect(985, 403, 1138-985, 637-403);
+                // g2.drawRect(985,650,1138-985,866-650);
+
+                // g2.drawRect(1152, 155, 1302-1152, 392-155);
+                // g2.drawRect(1152, 403, 1302-1152, 637-403);
+                // g2.drawRect(1152,650,1302-1152,866-650);
+                if(x>=470 && x<=628 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][0] = !state.squaresClickedToPlayBird[0][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=469 && x<=627 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][0] = !state.squaresClickedToPlayBird[1][0]; state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";}
+                if(x>=470 && x<=626 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][0] = !state.squaresClickedToPlayBird[2][0];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+
+                if(x>=644 && x<=800 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][1] = !state.squaresClickedToPlayBird[0][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=644 && x<=800 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][1] = !state.squaresClickedToPlayBird[1][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=644 && x<=800 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][1] = !state.squaresClickedToPlayBird[2][1];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+
+                if(x>=815 && x<=969 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][2] = !state.squaresClickedToPlayBird[0][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=815 && x<=969 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][2] = !state.squaresClickedToPlayBird[1][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=815 && x<=969 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][2] = !state.squaresClickedToPlayBird[2][2];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                
+                if(x>=985 && x<=1138 && y>=155 && y<=392){ state.squaresClickedToPlayBird[0][3] = !state.squaresClickedToPlayBird[0][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=985 && x<=1138 && y>=403 && y<=637) {state.squaresClickedToPlayBird[1][3] = !state.squaresClickedToPlayBird[1][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=985 && x<=1138 && y>=650 && y<=866) {state.squaresClickedToPlayBird[2][3] = !state.squaresClickedToPlayBird[2][3];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                
+                if(x>=1152 && x<=1302 && y>=155 && y<=392) {state.squaresClickedToPlayBird[0][4] = !state.squaresClickedToPlayBird[0][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="forest";} 
+                if(x>=1152 && x<=1302 && y>=403 && y<=637){ state.squaresClickedToPlayBird[1][4] = !state.squaresClickedToPlayBird[1][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="plains";} 
+                if(x>=1152 && x<=1302 && y>=650 && y<=866){ state.squaresClickedToPlayBird[2][4] = !state.squaresClickedToPlayBird[2][4];state.CURRENTEVENT.removeLast();state.CURRENTEVENT.add("Play Specific Bird");state.habitatToPlayBird="wetlands";} 
+                repaint();
+            
             }
+            case "Wait For Second Part Play Specific Bird" -> {
+                if (x>=20 && x<=70 && y>=400 && y<=450){ state.CURRENTEVENT.removeLast(); state.CURRENTEVENT.removeLast();state.specificBirdToPlay=null;currentShowing=0;
+                    for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                }
                 else if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4)
                     currentShowing++;
                 else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
@@ -665,16 +665,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                      state.CURRENTEVENT.add("Pick Food For Specific Bird");
                    
                 }
-                
-                    
-                 
-                
-
-                    
-                
                 repaint();
-        }
-        case "Choose Bird" -> {
+            }
+            case "Choose Bird" -> {
             
             }case "When Played Ability" ->{
                 //out.println(state.CURRENTEVENT);
@@ -1077,16 +1070,16 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
                 repaint();
-                }case "Add Food" -> {
-                    String[] fo = {"s", "f", "b", "i", "r"};
-                    for (int i=0;i<5;i++){
-                        if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
-                            state.players[state.playing].addFood(fo[i], 1);
-                            state.CURRENTEVENT.removeLast();
-                        }
+            }case "Add Food" -> {
+                String[] fo = {"s", "f", "b", "i", "r"};
+                for (int i=0;i<5;i++){
+                    if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
+                        state.players[state.playing].addFood(fo[i], 1);
+                        state.CURRENTEVENT.removeLast();
                     }
-                    repaint();
                 }
+                repaint();
+            }
             default ->{
                 state.CURRENTEVENT.removeLast();
                 repaint();
@@ -1167,77 +1160,77 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 repaint();
             }case "Pick Food For Specific Bird" -> {
-        //         g.drawImage(wheatToken, 250, 550, 100, 100, null);
-        // g.drawImage(fishToken, 350, 550, 100, 100, null);
-        // g.drawImage(fruitToken, 450, 550, 100, 100, null);
-        // g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
-        // g.drawImage(rodentToken, 650, 550, 100, 100, null);
-        // g.drawImage(Clear_Button, 100, 400, 250, 100, null);
-        //             if(){
-        //                 g.drawImage(Continue_Button, 100, 750, 250, 100, null);
-        //             }
+                //         g.drawImage(wheatToken, 250, 550, 100, 100, null);
+                // g.drawImage(fishToken, 350, 550, 100, 100, null);
+                // g.drawImage(fruitToken, 450, 550, 100, 100, null);
+                // g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+                // g.drawImage(rodentToken, 650, 550, 100, 100, null);
+                // g.drawImage(Clear_Button, 100, 400, 250, 100, null);
+                //             if(){
+                //                 g.drawImage(Continue_Button, 100, 750, 250, 100, null);
+                //             }
 
         
-            if(x>=100 && x<=350 && y>=400 && y<=500){
-                for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
-            }
-            else
-            if(x>=250 && x<=350 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[0]++;
-            }
-            else if (x>=350 && x<=450 && y>=550 && y<=650){
-               state.birdFoodsForPlayingBird[1]++;
-            }
-            else if (x>=450 && x<=550 && y>=550 && y<=650){
-               state.birdFoodsForPlayingBird[2]++;
-            }
-            else if (x>=550 && x<=650 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[3]++;
-            }
-            else if (x>=650 && x<=750 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[4]++;
+                if(x>=100 && x<=350 && y>=400 && y<=500){
+                    for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
+                }
+                else
+                if(x>=250 && x<=350 && y>=550 && y<=650){
+                    state.birdFoodsForPlayingBird[0]++;
+                }
+                else if (x>=350 && x<=450 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[1]++;
+                }
+                else if (x>=450 && x<=550 && y>=550 && y<=650){
+                state.birdFoodsForPlayingBird[2]++;
+                }
+                else if (x>=550 && x<=650 && y>=550 && y<=650){
+                    state.birdFoodsForPlayingBird[3]++;
+                }
+                else if (x>=650 && x<=750 && y>=550 && y<=650){
+                    state.birdFoodsForPlayingBird[4]++;
                 
-            }else if (x>=100 && x<=350 && y>=750 && y<=850&&state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
-                state.CURRENTEVENT.removeLast();
-                state.CURRENTEVENT.add("Remove Eggs For Bird");
-                state.eggsNeededToSpendForPlayingBird = 0;
-                for(int i=0;i<3;i++){
-                    for(int j=0;j<5;j++){
-                        if(state.squaresClickedToPlayBird[i][j]){
-                            state.eggsNeededToSpendForPlayingBird = (int)Math.ceil(j/2.0);
+                }else if (x>=100 && x<=350 && y>=750 && y<=850&&state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
+                    state.CURRENTEVENT.removeLast();
+                    state.CURRENTEVENT.add("Remove Eggs For Bird");
+                    state.eggsNeededToSpendForPlayingBird = 0;
+                    for(int i=0;i<3;i++){
+                        for(int j=0;j<5;j++){
+                            if(state.squaresClickedToPlayBird[i][j]){
+                                state.eggsNeededToSpendForPlayingBird = (int)Math.ceil(j/2.0);
+                            }
                         }
                     }
                 }
-            }
-            //     int position=0;
-            //     for(int i=0;i<3;i++){
-            //         for(int j=0;j<5;j++){
-            //             if(state.squaresClickedToPlayBird[i][j]){
-            //                 position=j;
-            //                 for(int a=j;a>-1;a--){
-            //                     if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
-            //                         position=a;
-            //                 }
-            //             }
-            //             }
-            //         }
-            //     }
-            //     // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
-            //         //     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
-            //         // 
-            //         // state.CURRENTEVENT.removeLast();
-            //     //attempt to play bird
-            //     if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
-            //         state.players[state.playing].playBird(state.specificBirdToPlay, state.habitatToPlayBird, position, state.birdFoodsForPlayingBird);
-            //         for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
-            //         state.CURRENTEVENT.removeLast();
-            //         state.CURRENTEVENT.removeLast();
-            //         for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
-            //     }
-            // }
+                //     int position=0;
+                //     for(int i=0;i<3;i++){
+                //         for(int j=0;j<5;j++){
+                //             if(state.squaresClickedToPlayBird[i][j]){
+                //                 position=j;
+                //                 for(int a=j;a>-1;a--){
+                //                     if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
+                //                         position=a;
+                //                 }
+                //             }
+                //             }
+                //         }
+                //     }
+                //     // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
+                //         //     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
+                //         // 
+                //         // state.CURRENTEVENT.removeLast();
+                //     //attempt to play bird
+                //     if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
+                //         state.players[state.playing].playBird(state.specificBirdToPlay, state.habitatToPlayBird, position, state.birdFoodsForPlayingBird);
+                //         for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
+                //         state.CURRENTEVENT.removeLast();
+                //         state.CURRENTEVENT.removeLast();
+                //         for (int i=0;i<3;i++) for (int j=0;j<5;j++) state.squaresClickedToPlayBird[i][j] = false;
+                //     }
+                // }
+                
             
-        
-            repaint();
+                repaint();
             }
             case "Remove Eggs For Bird" -> {
                 // if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
@@ -1266,118 +1259,114 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         }
                     }
             
-        }
-        else if(x>=469 && x<=627 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][0]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][0].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
                 }
-        }
-        else if(x>=470 && x<=626 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][0]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][0].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=469 && x<=627 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][0]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][0].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=644 && x<=800 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][1]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][1].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=470 && x<=626 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][0]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][0].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][0].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=644 && x<=800 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][1]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][1].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=644 && x<=800 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][1]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][1].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=644 && x<=800 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][1]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][1].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=644 && x<=800 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][1]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][1].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=815 && x<=969 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][2]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][2].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=644 && x<=800 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][1]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][1].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][1].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=815 && x<=969 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][2]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][2].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=815 && x<=969 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][2]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][2].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=815 && x<=969 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][2]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][2].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=815 && x<=969 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][2]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][2].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=985 && x<=1138 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][3]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][3].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=815 && x<=969 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][2]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][2].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][2].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=985 && x<=1138 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][3]!=null   ){
-                if(state.players[state.playing].getBoard().getBoard()[1][3].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=985 && x<=1138 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][3]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][3].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=985 && x<=1138 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][3]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][3].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=985 && x<=1138 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][3]!=null   ){
+                        if(state.players[state.playing].getBoard().getBoard()[1][3].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=1152 && x<=1302 && y>=155 && y<=392){
-            if(state.players[state.playing].getBoard().getBoard()[0][4]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[0][4].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[0][4].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=985 && x<=1138 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][3]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][3].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][3].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=1152 && x<=1302 && y>=403 && y<=637){
-            if(state.players[state.playing].getBoard().getBoard()[1][4]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[1][4].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[1][4].removeEggs(1);
-                    state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=1152 && x<=1302 && y>=155 && y<=392){
+                    if(state.players[state.playing].getBoard().getBoard()[0][4]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[0][4].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[0][4].removeEggs(1);state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
-        else if(x>=1152 && x<=1302 && y>=650 && y<=866){
-            if(state.players[state.playing].getBoard().getBoard()[2][4]!=null){
-                if(state.players[state.playing].getBoard().getBoard()[2][4].getEggCount()>0){
-                    state.players[state.playing].getBoard().getBoard()[2][4].removeEggs(1);
-                    state.eggsNeededToSpendForPlayingBird--;
-                    }
+                else if(x>=1152 && x<=1302 && y>=403 && y<=637){
+                    if(state.players[state.playing].getBoard().getBoard()[1][4]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[1][4].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[1][4].removeEggs(1);
+                            state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
                 }
-        }
+                else if(x>=1152 && x<=1302 && y>=650 && y<=866){
+                    if(state.players[state.playing].getBoard().getBoard()[2][4]!=null){
+                        if(state.players[state.playing].getBoard().getBoard()[2][4].getEggCount()>0){
+                            state.players[state.playing].getBoard().getBoard()[2][4].removeEggs(1);
+                            state.eggsNeededToSpendForPlayingBird--;
+                            }
+                        }
+                }
         
-            repaint();
+                repaint();
+            }
+        }
+    
     }
-}
-    
-}
             
-        
-    
-       
-    
     @Override
     public void mouseReleased(MouseEvent e) {}
     @Override
@@ -1622,7 +1611,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
             g.drawImage(cover, 1300, 400, 100, 100, null); //feeder placeholder
             g.setFont(new Font("Arial", Font.BOLD, 55));
-            g.drawString("Click a player to start first. You're player " + (state.playing+1), 400, 200);
+            g.drawString("Click a player to start first. You're player " + (state.playing+1), 400, 450);
             g.setFont(new Font("Arial", Font.BOLD, 25));
             for (int i=0;i<4;i++){
                 g.setColor(Color.CYAN);
@@ -2504,9 +2493,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         state.game.next(action);
     }
 
-
-
-
     public void paintGetFoodFromFeeder(Graphics g){
         paintGame(g);
         g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
@@ -2561,10 +2547,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);
     }
     public void paintLayEggs(Graphics g){
-      paintGame(g);
-      
-
-}
+        paintGame(g);
+    }
 }
 
 
