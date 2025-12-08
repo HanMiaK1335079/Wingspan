@@ -48,6 +48,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     Bird[] startOptions;
     Bonus[] bonusOptions;
 
+    private Queue<Bird> pinkPowerQueue = new LinkedList<>();
+    private Queue<Integer> pinkPowerOwnerQueue = new LinkedList<>();
+    private Bird currentPinkBird;
+    private int currentPinkOwner;
+    
     //Game run variables
     
 
@@ -465,7 +470,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     for (int i=0;i<5;i++){
                         if (x>=diceLocMap[i][0] && x<=diceLocMap[i][0]+90 && y>=diceLocMap[i][1] && y<=diceLocMap[i][1]+90){
                             if (feeder.getDice().get(i).equals("a")) selectingBool = true;
-                            else {state.players[state.playing].addFood(feeder.getDice().get(i), 1);state.CURRENTEVENT.removeLast();}
+                            else {state.players[state.playing].addFood(feeder.getDice().get(i), 1);state.CURRENTEVENT.removeLast();checkPinkPowers("Gain Food", feeder.getDice().get(i));}
                             feeder.getOutDice().add(feeder.getDice().remove(i));
                         }
                     }
@@ -497,6 +502,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                                 if (birdBoard[i][j].getEggCount()<birdBoard[i][j].getMaxEggs()){
                                     birdBoard[i][j].addEggs(1);
                                     state.CURRENTEVENT.removeLast();
+                                    checkPinkPowers("Lay Eggs");
                                 }
                             }
                         }
@@ -778,13 +784,14 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     else if (ability.contains("Roll all dice not in birdfeeder")){
                         feeder.rollOutDice();
-                        String check;
+                        String check = "";
                         if (ability.contains("[rodent]"))
                             check = "r";
                         else if (ability.contains("[fish]"))
                             check = "f";
-                        if (feeder.getOutDice().contains("check")){
+                        if (feeder.getOutDice().contains(check)){
                             currentBird.cacheFood();
+                            checkPinkPowers("Predator Success");
                         }
                         currentBirdNum--;
                         state.CURRENTEVENT.add("View Feeder");
@@ -915,8 +922,75 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     if (x>=250+100*i && x<=350+100*i && y>=550 && y<=650){
                         state.players[state.playing].addFood(fo[i], 1);
                         state.CURRENTEVENT.removeLast();
+                        checkPinkPowers("Gain Food", fo[i]);
                     }
                 }
+                repaint();
+            }case "Once Between Turns Ability" -> {
+                if (pinkPowerQueue.isEmpty()) {
+                    state.CURRENTEVENT.removeLast();
+                    repaint();
+                    return;
+                }
+                
+                if (currentPinkBird == null) {
+                    currentPinkBird = pinkPowerQueue.peek();
+                    currentPinkOwner = pinkPowerOwnerQueue.peek();
+                }
+                
+                Player owner = state.players[currentPinkOwner];
+                String abilityText = currentPinkBird.getAbilityText();
+                
+                if (x>=1100 && x<=1400 && y>=300 && y<=400) {
+                    finishPinkPower();
+                    repaint();
+                    return;
+                }
+                
+                if (abilityText.contains("lay 1 [egg]")) {
+                     // autolay on first valid bird
+                     boolean laid = owner.layEggsOnAnyBird();
+                     if (!laid) {
+                         // manual force lay field
+                     }
+                     finishPinkPower();
+                } else if (abilityText.contains("gain 1 [fish]") || abilityText.contains("gain 1 [invertebrate]") || abilityText.contains("gain 1 [die]")) {
+                    if (abilityText.contains("from the supply")) {
+                        String food = "";
+                        if (abilityText.contains("[fish]")) food = "f";
+                        else if (abilityText.contains("[invertebrate]")) food = "i";
+                        
+                        if (!food.isEmpty()) {
+                            owner.addFood(food, 1);
+                            finishPinkPower();
+                        }
+                    } else if (abilityText.contains("from the birdfeeder")) {
+                         for (int i=0;i<5;i++){
+                            if (i < feeder.getDice().size() && x>=diceLocMap[i][0] && x<=diceLocMap[i][0]+90 && y>=diceLocMap[i][1] && y<=diceLocMap[i][1]+90){
+                                String die = feeder.getDice().get(i);
+                                owner.addFood(die, 1);
+                                feeder.getOutDice().add(feeder.getDice().remove(i));
+                                finishPinkPower();
+                                break;
+                            }
+                        }
+                    }
+                } else if (abilityText.contains("tuck 1 [card]")) {
+                    // auto set to first card within hand
+                    if (!owner.getCardsInHand().isEmpty()) {
+                        Bird card = owner.getCardsInHand().remove(0);
+                        currentPinkBird.tuckCard();
+                        finishPinkPower();
+                    } else {
+                        finishPinkPower();
+                    }
+                } else if (abilityText.contains("cache 1 [rodent]")) {
+                    currentPinkBird.cacheFood();
+                    finishPinkPower();
+                } else {
+                    finishPinkPower();
+                }
+                
                 repaint();
             }
             
@@ -982,6 +1056,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 case "Choose Bonus" -> paintBonusDraw(g);
                 case "Loop Draw" -> paintLoopDraw(g);
                 case "On Activate Ability" -> paintOAAbility(g);
+                case "Once Between Turns Ability" -> paintOBTAbility(g);
                 case "Remove Bird" -> paintViewBirds(g);
                 case "Remove Food" -> paintViewFoods(g);
                 case "Add Food" -> paintViewFoods(g);
@@ -1049,6 +1124,102 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.fillRect(630, 10, 300, (int)(200*1.4)+40);
         g.drawImage(currentBird.getImage(), 650, 30, 260, (int)(200*1.4), null);
         g.drawImage(skip, 1100, 300, 300, 100, null);
+    }
+
+    public void paintOBTAbility(Graphics g){
+        if (currentPinkBird == null && !pinkPowerQueue.isEmpty()) {
+            currentPinkBird = pinkPowerQueue.peek();
+            currentPinkOwner = pinkPowerOwnerQueue.peek();
+        }
+        
+        if (currentPinkBird == null) {
+            paintGame(g);
+            return;
+        }
+
+        paintGame(g);
+        
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
+        g.setColor(Color.PINK);
+        g.fillRect(580, 180, 300, 440);
+        g.drawImage(currentPinkBird.getImage(), 600, 200, 260, 364, null);
+        
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 30));
+        String ownerName = state.players[currentPinkOwner].getName();
+        g.drawString("Pink Power Triggered for " + ownerName + "!", 500, 100);
+        
+        String ability = currentPinkBird.getAbilityText();
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        
+        int y = 650;
+        for (String line : ability.split("(?<=\\G.{50})")) {
+            g.drawString(line, 500, y);
+            y += 30;
+        }
+        g.drawImage(skip, 1100, 300, 300, 100, null);
+        
+        if (ability.contains("gain 1 [die] from the birdfeeder")) {
+             paintViewFeeder(g); 
+        }
+    }
+
+    public void checkPinkPowers(String actionType, Object... params) {
+        // only check for players other than current player
+        for (int i = 0; i < state.players.length; i++) {
+            if (i == state.playing) continue;
+            
+            Player other = state.players[i];
+            for (Bird b : other.getAllBirdsOnBoard()) {
+                if (!b.isPinkPowerUsed() && b.getAbility().getTrigger().equals("OBT")) {
+                    String abilityText = b.getAbilityText();
+                    boolean triggers = false;
+                    
+                    if (actionType.equals("Lay Eggs") && abilityText.contains("lay eggs")) {
+                        triggers = true;
+                    } else if (actionType.equals("Play Bird")) {
+                        String habitat = (String) params[0];
+                        if (abilityText.contains("plays a bird in their [" + habitat + "]")) {
+                            triggers = true;
+                        }
+                    } else if (actionType.equals("Gain Food")) {
+                         if (abilityText.contains("gain food") && abilityText.contains("[rodent]")) {
+                             // Loggerhead Shrike
+                             if (params.length > 0 && params[0] instanceof String && ((String)params[0]).equals("r")) {
+                                 triggers = true;
+                             }
+                         }
+                    } else if (actionType.equals("Predator Success")) {
+                        if (abilityText.contains("[predator] succeeds")) {
+                            triggers = true;
+                        }
+                    }
+                    
+                    if (triggers) {
+                        pinkPowerQueue.add(b);
+                        pinkPowerOwnerQueue.add(i);
+                        b.setPinkPowerUsed(true); 
+                    }
+                }
+            }
+        }
+        
+        if (!pinkPowerQueue.isEmpty()) {
+            state.CURRENTEVENT.add("Once Between Turns Ability");
+        }
+    }
+
+    private void finishPinkPower() {
+        pinkPowerQueue.poll();
+        pinkPowerOwnerQueue.poll();
+        if (pinkPowerQueue.isEmpty()) {
+            state.CURRENTEVENT.removeLast();
+        } else {
+            currentPinkBird = pinkPowerQueue.peek();
+            currentPinkOwner = pinkPowerOwnerQueue.peek();
+        }
     }
 
     public void paintScoreRound(Graphics g){
@@ -1671,7 +1842,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         try (Scanner scan = new Scanner(f)) {
             Bird b;
             String[] items;
-            int readAmt = 100;
+            int readAmt = 170;
             while (scan.hasNextLine() && readAmt>0){
                 String l = scan.nextLine();
                 //out.println("line: " + l);
@@ -1871,7 +2042,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     public void endTurn(ProgramState.PlayerAction action) {
-        //Todo: state needs a game portion
         state.game.next(action);
     }
 
@@ -1960,4 +2130,3 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 }
 }
      
-   

@@ -77,7 +77,7 @@ public class Game {
     
     public void next(ProgramState.PlayerAction action) {
         currentPlayer = (currentPlayer + 1) % 4;
-        activatePinkPowers(state.players[currentPlayer], action);
+        // activatePinkPowers(state.players[currentPlayer], action); // Handled in FramePanel now
         
         if (currentPlayer == (state.firstPlayerToken - 1)) {
             nextRound();
@@ -583,4 +583,6 @@ public class Game {
     public Player[] getPlayers() {
         return state.players;
     }
+    
+    
 }
