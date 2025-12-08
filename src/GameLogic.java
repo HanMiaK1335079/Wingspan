@@ -17,8 +17,8 @@ public class GameLogic implements Runnable {
     public void run() {
     }
     
-    public void startGame() {
-        game.start();
+    public Game getGame() {
+        return game;
     }
     
     public boolean performAction(ProgramState.PlayerAction action, Object... params) {
@@ -26,7 +26,7 @@ public class GameLogic implements Runnable {
     }
     
     public void endTurn() {
-        game.next();
+        game.next(null);
     }
     
     public void rerollFeeder() {
@@ -37,8 +37,16 @@ public class GameLogic implements Runnable {
         game.updateCardTray();
     }
     
-    public int getCurrentPlayer() {
-        return game.getPlayer();
+    public List<Bird> getBirds() {
+        return game.getBirds();
+    }
+
+    public void setBirds(ArrayList<Bird> birds) {
+        game.setBirds(birds);
+    }
+
+    public Player getCurrentPlayer() {
+        return game.getPlayer(game.getCurrentPlayerIndex());
     }
     
     public int getRound() {
@@ -48,7 +56,19 @@ public class GameLogic implements Runnable {
     public int getActionsRemaining() {
         return game.getActionsRemaining();
     }
-    
+
+    public ArrayList<Bird> getCurrentPlayerHand() {
+        return game.getPlayer(game.getCurrentPlayerIndex()).getCardsInHand();
+    }
+
+    public ArrayList<Bonus> getCurrentPlayerBonuses() {
+        return game.getPlayer(game.getCurrentPlayerIndex()).getBonuses();
+    }
+
+    public int getFoodCount(Food.FoodType type) {
+        return game.getPlayer(game.getCurrentPlayerIndex()).getFoodCount(type);
+    }
+
     public ProgramState.GamePhase getCurrentPhase() {
         return game.getCurrentPhase();
     }

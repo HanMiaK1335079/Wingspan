@@ -5,7 +5,6 @@ public class Main {
      public static void main(String[]args){
        ProgramState state = new ProgramState();
        FramePanel panel = new FramePanel(state);
-       state.CURRENTEVENT.add("BASE");
        state.CURRENTEVENT.add("Game Start");
        Frame wingSpanFrame = new Frame("Wingspan");
      
