@@ -404,41 +404,10 @@ public class Game {
         int[] playParamsInt = new int[0];
         Object[] remainingParams = new Object[0];
         if (params.length > 2) {
-            // If the third parameter is already an int[], use it
-            if (params[2] instanceof int[]) {
-                playParamsInt = (int[]) params[2];
-                // any further params become remainingParams
-                if (params.length > 3) {
-                    remainingParams = new Object[params.length - 3];
-                    System.arraycopy(params, 3, remainingParams, 0, params.length - 3);
-                }
-            } else if (params[2] instanceof Integer[] || params[2] instanceof Number[]) {
-                Object[] arr = (Object[]) params[2];
-                playParamsInt = new int[arr.length];
-                for (int i = 0; i < arr.length; i++) playParamsInt[i] = ((Number) arr[i]).intValue();
-                if (params.length > 3) {
-                    remainingParams = new Object[params.length - 3];
-                    System.arraycopy(params, 3, remainingParams, 0, params.length - 3);
-                }
-            } else if (params[2] instanceof ArrayList) {
-                @SuppressWarnings("unchecked")
-                ArrayList<Number> list = (ArrayList<Number>) params[2];
-                playParamsInt = new int[list.size()];
-                for (int i = 0; i < list.size(); i++) playParamsInt[i] = list.get(i).intValue();
-                if (params.length > 3) {
-                    remainingParams = new Object[params.length - 3];
-                    System.arraycopy(params, 3, remainingParams, 0, params.length - 3);
-                }
-            } else {
-                // treat all trailing params as numbers to convert into int[]
-                playParamsInt = new int[params.length - 2];
-                for (int i = 2; i < params.length; i++) {
-                    playParamsInt[i - 2] = params[i] instanceof Number ? ((Number) params[i]).intValue() : 0;
-                }
-            }
+            System.arraycopy(params, 2, playParams, 0, params.length - 2);
         }
-
-        boolean played = p.playBird(b, h, -1, playParamsInt, (Object[]) remainingParams);
+        int[] tim = {};
+        boolean played = p.playBird(b, h, -1, tim, playParams);
         if (played) {
             p.removeCardFromHand(b);
 
