@@ -570,7 +570,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 if(x>=120&&x<=335&&y>=515&&y<=775){//120, 515, 215, 2 60,
                     out.println("Clicked the bird deck");
-                    state.players[state.playing].addCardToHand(birds.removeFirst());
+                    if (!birds.isEmpty()) {
+                        state.players[state.playing].addCardToHand(birds.remove(0)); // replaced removeFirst() -> remove(0)
+                    }
                     state.CURRENTEVENT.removeLast(); 
                 }
                 repaint();
@@ -582,7 +584,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 // g2.drawRect(644, 155, 800-644, 392-155);
                 // g2.drawRect(644, 403, 800-644, 637-403);
                 // g2.drawRect(644,650,800-644,866-650);
-            
+
                 // g2.drawRect(815, 155, 969-815, 392-155);
                 // g2.drawRect(815, 403, 969-815, 637-403);
                 // g2.drawRect(815,650,969-815,866-650);
@@ -983,7 +985,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                     else if (ability.contains("All players draw 1 [card]")){
                         for (int i=0;i<4;i++){
-                            state.players[state.playing].addCardToHand(birds.removeFirst());
+                            state.players[state.playing].addCardToHand(birds.remove(0));
                             state.playing = (state.playing+1)%4;
                         }
                         currentBirdNum--;
@@ -1597,7 +1599,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                    
                     
             }
-        }
         }
     }
 
@@ -2426,8 +2427,11 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     
     //update card tray
     public void updateTray(){
-        for (int i=0;i<3;i++)
-            if (state.cardTray[i] == null) state.cardTray[i] = birds.removeFirst();
+        for (int i=0;i<3;i++) {
+            if (state.cardTray[i] == null && !birds.isEmpty()) {
+                state.cardTray[i] = birds.remove(0); // replaced removeFirst() -> remove(0)
+            }
+        }
         out.println("Updated tray");
         
     }
@@ -2556,6 +2560,9 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
         }
      
+
+
+        //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
 
         if (currentShowing != 0) g.drawImage(leftArrow, 50, 590, 60, 60, null);
         if (currentShowing != (state.players[state.playing].getCardsInHand().size()-1)/4) g.drawImage(rightArrow, 1400, 590, 60, 60, null);

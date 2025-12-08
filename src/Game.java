@@ -400,14 +400,15 @@ public class Game {
             return false;
         }
 
-        // convert remaining params into an int[] if possible (food choice array)
-        int[] playParamsInt = new int[0];
+        // convert remaining params into an Object[] if present (was referencing undefined playParams)
         Object[] remainingParams = new Object[0];
         if (params.length > 2) {
-            System.arraycopy(params, 2, playParams, 0, params.length - 2);
+            remainingParams = new Object[params.length - 2];
+            System.arraycopy(params, 2, remainingParams, 0, params.length - 2);
         }
-        int[] tim = {};
-        boolean played = p.playBird(b, h, -1, tim, playParams);
+
+        int[] tim = new int[0]; // keep as empty int[] if no food-choice provided
+        boolean played = p.playBird(b, h, -1, tim, remainingParams);
         if (played) {
             p.removeCardFromHand(b);
 
