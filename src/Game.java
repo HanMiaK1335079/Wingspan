@@ -356,7 +356,8 @@ public class Game {
         if (params.length > 2) {
             System.arraycopy(params, 2, playParams, 0, params.length - 2);
         }
-        boolean played = p.playBird(b, h, -1, playParams);
+        int[] tim = {};
+        boolean played = p.playBird(b, h, -1, tim, playParams);
         if (played) {
             p.removeCardFromHand(b);
             
