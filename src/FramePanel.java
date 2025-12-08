@@ -11,6 +11,8 @@ import java.io.File;
 
 import static java.lang.System.*;
 import java.util.*;
+import java.util.Queue;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import src.Bird;
@@ -20,7 +22,7 @@ import src.GameLogic;
 import src.Player;
 import src.ProgramState;
 public class FramePanel extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
-    private BufferedImage Reroll_Button,cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, skip, Clear_Button, skip;
+    private BufferedImage Reroll_Button,cover, infoButton, bg, exitPic, leftArrow, rightArrow, birdBack, wheatToken, invertebrateToken, fishToken, fruitToken, rodentToken, Continue_Button, feederPic, Action_Button, Score_By_Round, Clear_Button, skip;
     private BufferedImage[] dicePics = new BufferedImage[6];
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
@@ -1766,16 +1768,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 30));
         String ownerName = state.players[currentPinkOwner].getName();
-        g.drawString("Pink Power Triggered for " + ownerName + "!", 500, 100);
+        g.drawString("Pink Power Triggered for " + ownerName , 500, 100);
         
         String ability = currentPinkBird.getAbilityText();
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         
-        int y = 650;
-        for (String line : ability.split("(?<=\\G.{50})")) {
-            g.drawString(line, 500, y);
-            y += 30;
-        }
+        
         g.drawImage(skip, 1100, 300, 300, 100, null);
         
         if (ability.contains("gain 1 [die] from the birdfeeder")) {

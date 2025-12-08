@@ -353,10 +353,12 @@ public class Game {
         }
         
         Object[] playParams = new Object[params.length - 2];
+        int[] playParam = new int[params.length-2];
         if (params.length > 2) {
             System.arraycopy(params, 2, playParams, 0, params.length - 2);
         }
-        boolean played = p.playBird(b, h, -1, playParams);
+        for(int i = 0; i < playParam.length; i++) playParam[i] = (int) playParams[i];
+        boolean played = p.playBird(b, h, -1, playParam);
         if (played) {
             p.removeCardFromHand(b);
             
