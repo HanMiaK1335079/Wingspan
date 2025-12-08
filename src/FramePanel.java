@@ -2127,6 +2127,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 readAmt -= 1;
             }
+            //for (Bird birbo: birds) out.println(birbo.toString());
         } catch (Exception e) {
             out.println("Exception: " + e + "\ncsv reading ran into issue");
         }
