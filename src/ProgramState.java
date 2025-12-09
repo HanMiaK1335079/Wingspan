@@ -1,10 +1,9 @@
-package src;
 import java.util.*;
 
 public class ProgramState {
     public final Object lock = new Object();
-    public volatile int round=0;
-    public volatile int playerTurn=0;
+    public volatile int round = 0;
+    public volatile int playerTurn = 0;
     public volatile ArrayList<Bird> deckOfCards = new ArrayList<>();
     public volatile ArrayList<Bird> discardPile = new ArrayList<>();
     public volatile ArrayList<Bonus> bonusDeck = new ArrayList<>();
@@ -16,27 +15,23 @@ public class ProgramState {
     public volatile int playing = 0;
     public volatile int showing = 0;
 
-    public volatile boolean hasCheckedForNumberOfRemovableDice=false;
-    public volatile int numberOfRemovableDice=0;
-    public volatile boolean canTradeCardForMoreFood=false;
+    public volatile boolean hasCheckedForNumberOfRemovableDice = false;
+    public volatile int numberOfRemovableDice = 0;
+    public volatile boolean canTradeCardForMoreFood = false;
 
-    public volatile int birdNumArrayForChoosingSpecificBird=0;
+    public volatile int birdNumArrayForChoosingSpecificBird = 0;
 
-    public volatile Bird specificBirdToPlay=null;
-    public volatile int[] birdFoodsForPlayingBird=new int[5];
+    public volatile Bird specificBirdToPlay = null;
+    public volatile int[] birdFoodsForPlayingBird = new int[5];
 
-    public volatile int eggsNeededToSpendForPlayingBird=0;
+    public volatile int eggsNeededToSpendForPlayingBird = 0;
 
-    public volatile boolean canPressInfoButton=true;//PLEASE MAKE THIS FALSE DURING ANIMATIONS.
-    public volatile int firstPlayerToken=((int)(Math.random()*4))+1;
+    public volatile boolean canPressInfoButton = true;// PLEASE MAKE THIS FALSE DURING ANIMATIONS.
+    public volatile int firstPlayerToken = ((int) (Math.random() * 4)) + 1;
 
-        // Use LinkedList so callers can use getLast()/removeLast()
+    // Use LinkedList so callers can use getLast()/removeLast()
     public LinkedList<String> CURRENTEVENT = new LinkedList<>();
 
-        
-
-        
-    
     public enum GameEvent {
         GAME_START,
         SELECT_SCREEN,
@@ -77,7 +72,7 @@ public class ProgramState {
         }
     }
 
-    public void makeDeckOfCards(){
+    public void makeDeckOfCards() {
         deckOfCards.addAll(birds);
         Collections.shuffle(deckOfCards);
     }
@@ -89,8 +84,7 @@ public class ProgramState {
     public ArrayList<Bonus> getBonuses() {
         return bonusDeck;
     }
-        
-    
+
     public enum GamePhase {
         SETUP,
         INITIAL_SELECTION,
@@ -98,7 +92,7 @@ public class ProgramState {
         END_OF_ROUND,
         GAME_OVER
     }
-    
+
     public enum PlayerAction {
         PLAY_BIRD,
         GAIN_FOOD,
@@ -107,7 +101,7 @@ public class ProgramState {
         PREDATOR_SUCCESS,
         ACTIVATE_BROWN_POWER
     }
-    
+
     public enum DetailedAction {
         PLAY_BIRD_TO_FOREST,
         PLAY_BIRD_TO_PLAINS,
@@ -119,90 +113,92 @@ public class ProgramState {
         REROLL_FEEDER,
         CACHE_FOOD_ON_BIRD
     }
-    
+
     public volatile GamePhase currentPhase = GamePhase.SETUP;
     public volatile int actionsRemaining = 8;
     public volatile String habitatToPlayBird = "";
-    
-    public volatile int[][] playerActionCounts = new int[4][4]; 
+
+    public volatile int[][] playerActionCounts = new int[4][4];
     // playerRoundScores[playerIndex][roundIndex]
     public volatile int[][] playerRoundScores = new int[4][4];
-    public volatile boolean[] playerHasBonusCard = new boolean[4]; 
-    
-    public ProgramState(){
-      
+    public volatile boolean[] playerHasBonusCard = new boolean[4];
+
+    public ProgramState() {
+
     }
 
-
-    
     public void incrementPlayerActionCount(int playerIndex, int actionType) {
         if (playerIndex >= 0 && playerIndex < 4 && actionType >= 0 && actionType < 4) {
             playerActionCounts[playerIndex][actionType]++;
         }
     }
-    
+
     public int getPlayerActionCount(int playerIndex, int actionType) {
         if (playerIndex >= 0 && playerIndex < 4 && actionType >= 0 && actionType < 4) {
             return playerActionCounts[playerIndex][actionType];
         }
         return 0;
     }
-    
+
     public void setPlayerRoundScore(int playerIndex, int roundIndex, int score) {
         if (playerIndex >= 0 && playerIndex < playerRoundScores.length && roundIndex >= 0 && roundIndex < 4) {
             playerRoundScores[playerIndex][roundIndex] = score;
         }
     }
-    
+
     // helper for UI to query stored round awards (forward to game if available)
     public int getPlayerRoundScore(int playerIndex, int roundIndex) {
         try {
-            if (game != null) return game.getPlayerRoundScore(playerIndex, roundIndex);
-        } catch (Exception ignored) {}
+            if (game != null)
+                return game.getPlayerRoundScore(playerIndex, roundIndex);
+        } catch (Exception ignored) {
+        }
         if (players != null && playerIndex >= 0 && playerIndex < players.length) {
             // Player fallback
             return players[playerIndex].getRoundGoalPoints(roundIndex);
         }
         return 0;
     }
-    
+
     public void setPlayerHasBonusCard(int playerIndex, boolean hasBonus) {
         if (playerIndex >= 0 && playerIndex < 4) {
             playerHasBonusCard[playerIndex] = hasBonus;
         }
     }
-    
+
     public boolean getPlayerHasBonusCard(int playerIndex) {
         if (playerIndex >= 0 && playerIndex < 4) {
             return playerHasBonusCard[playerIndex];
         }
         return false;
     }
-    
+
     public void setRoundGoal(int roundIndex, int goalId) {
         if (roundIndex >= 0 && roundIndex < 4) {
             roundGoals[roundIndex] = goalId;
         }
     }
-    
+
     public int getRoundGoal(int roundIndex) {
         if (roundIndex >= 0 && roundIndex < 4) {
             return roundGoals[roundIndex];
         }
         return 0;
     }
-    
+
     public void setRoundWinner(int roundIndex, int playerIndex) {
         if (roundIndex >= 0 && roundIndex < 4 && playerIndex >= 0 && playerIndex < 4) {
             roundWinners[roundIndex] = playerIndex;
         }
     }
-    
+
     public int getRoundWinner(int roundIndex) {
         if (roundIndex >= 0 && roundIndex < 4) {
             return roundWinners[roundIndex];
         }
         return 0;
-    }
-    public Game game = new Game(this);
-}
+    }icGame game =ne am(this);
+
+    
+        
+    

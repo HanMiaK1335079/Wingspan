@@ -1,4 +1,3 @@
-package src;
 
 import java.util.*;
 
@@ -12,11 +11,11 @@ public class RoundGoal {
     private Object param; // Flexible parameter (e.g., habitat name, nest type, wingspan range)
 
     public enum GoalType {
-        BIRDS_IN_HABITAT,           // Count birds in a specific habitat
-        EGGS_IN_HABITAT,            // Count eggs in a specific habitat
-        NEST_TYPE_WITH_EGGS,        // Count birds of specific nest type with at least 1 egg
-        BIRDS_WITH_WINGSPAN_RANGE,  // Count birds with wingspan in range (e.g., <= 30 cm)
-        BIRDS_WITH_FOOD_COST        // Count birds that can be paid with a food type
+        BIRDS_IN_HABITAT, // Count birds in a specific habitat
+        EGGS_IN_HABITAT, // Count eggs in a specific habitat
+        NEST_TYPE_WITH_EGGS, // Count birds of specific nest type with at least 1 egg
+        BIRDS_WITH_WINGSPAN_RANGE, // Count birds with wingspan in range (e.g., <= 30 cm)
+        BIRDS_WITH_FOOD_COST // Count birds that can be paid with a food type
     }
 
     public RoundGoal(String description, GoalType type, Object param) {
@@ -62,10 +61,14 @@ public class RoundGoal {
                 int matched = 0;
                 for (Bird b : player.getAllBirdsOnBoard()) {
                     if (b != null) {
-                        if (op.equals("<=") && b.getWingspan() <= wingspanThreshold) matched++;
-                        else if (op.equals(">=") && b.getWingspan() >= wingspanThreshold) matched++;
-                        else if (op.equals("<") && b.getWingspan() < wingspanThreshold) matched++;
-                        else if (op.equals(">") && b.getWingspan() > wingspanThreshold) matched++;
+                        if (op.equals("<=") && b.getWingspan() <= wingspanThreshold)
+                            matched++;
+                        else if (op.equals(">=") && b.getWingspan() >= wingspanThreshold)
+                            matched++;
+                        else if (op.equals("<") && b.getWingspan() < wingspanThreshold)
+                            matched++;
+                        else if (op.equals(">") && b.getWingspan() > wingspanThreshold)
+                            matched++;
                     }
                 }
                 return matched;
@@ -92,7 +95,7 @@ public class RoundGoal {
      */
     public Map<Integer, Integer> awardPoints(Player[] players) {
         Map<Integer, Integer> scores = new TreeMap<>();
-        int[] placements = {5, 3, 2, 1}; // Standard 4-player official scoring
+        int[] placements = { 5, 3, 2, 1 }; // Standard 4-player official scoring
 
         // Evaluate all players
         List<Integer> metrics = new ArrayList<>();

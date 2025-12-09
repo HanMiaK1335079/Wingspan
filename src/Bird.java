@@ -1,4 +1,3 @@
-package src;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -8,6 +7,7 @@ public class Bird {
     public static Map<String, String> getFoodNameMap() {
         return foodNameMap;
     }
+
     private final String name;
     private final Ability ability;
     private final String abilityType;
@@ -25,7 +25,8 @@ public class Bird {
     private boolean pinkPowerUsed = false;
     private String habitat = "";
 
-    Bird(String name, Ability ability, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, List<String[]> foods){
+    Bird(String name, Ability ability, String abilityType, int points, String nest, int maxEggs, int wingspan,
+            List<String> habitats, List<String[]> foods) {
         this.name = name;
         this.ability = ability == null ? new Ability(Ability.Trigger.NONE, "") : ability;
         this.abilityType = abilityType == null ? "" : abilityType;
@@ -45,23 +46,56 @@ public class Bird {
         triggerMap.put("OBT", Ability.Trigger.PINK);
     }
 
-    public static Bird create(String name, String abilityActivate, String abilityText, String abilityType, int points, String nest, int maxEggs, int wingspan, List<String> habitats, ArrayList<String[]> foods){
+    public static Bird create(String name, String abilityActivate, String abilityText, String abilityType, int points,
+            String nest, int maxEggs, int wingspan, List<String> habitats, ArrayList<String[]> foods) {
         Ability.Trigger trig = triggerMap.getOrDefault(abilityActivate, Ability.Trigger.NONE);
         Ability ability = new Ability(trig, abilityText == null ? "" : abilityText);
         return new Bird(name, ability, abilityType, points, nest, maxEggs, wingspan, habitats, foods);
     }
 
-    public String getName() { return name; }
-    public Ability getAbility() { return ability; }
-    public String getabilityType() { return abilityType; }
-    public int getPoints() { return points; }
-    public String getNest() { return nest; }
-    public int getMaxEggs() { return maxEggs; }
-    public int getWingspan() { return wingspan; }
-    public List<String> getHabitats() { return habitats; }
-    public List<String[]> getFoods() { return foods; }
-    public BufferedImage getImage() { return image; }
-    public int getStoredEggs() { return storedEggs; }
+    public String getName() {
+        return name;
+    }
+
+    public Ability getAbility() {
+        return ability;
+    }
+
+    public String getabilityType() {
+        return abilityType;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public String getNest() {
+        return nest;
+    }
+
+    public int getMaxEggs() {
+        return maxEggs;
+    }
+
+    public int getWingspan() {
+        return wingspan;
+    }
+
+    public List<String> getHabitats() {
+        return habitats;
+    }
+
+    public List<String[]> getFoods() {
+        return foods;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public int getStoredEggs() {
+        return storedEggs;
+    }
 
     public int getFoodCost() {
         if (foods.isEmpty()) {
@@ -94,11 +128,14 @@ public class Bird {
         return ability.rawText.contains("[roll die]");
     }
 
-    public void setImage(BufferedImage i) { image = i; }
+    public void setImage(BufferedImage i) {
+        image = i;
+    }
 
     public boolean canLiveInHabitat(String habitat) {
-        System.out.println("Checking if "+name+" can live in habitat: "+habitat);
-        if (habitat == null) return false;
+        System.out.println("Checking if " + name + " can live in habitat: " + habitat);
+        if (habitat == null)
+            return false;
         String habitatNormalized = getHabitatNorm(habitat);
         return habitats != null && habitats.contains(habitatNormalized);
     }
@@ -113,37 +150,43 @@ public class Bird {
     }
 
     private static final Map<String, String> foodNameMap = Map.ofEntries(
-        Map.entry("i", "insect"),
-        Map.entry("s", "seed"),
-        Map.entry("f", "fish"),
-        Map.entry("b", "berry"),
-        Map.entry("r", "rat"),
-        Map.entry("a", "wild"),
-        Map.entry("wild", "wild"),
-        Map.entry("insect", "insect"),
-        Map.entry("seed", "seed"),
-        Map.entry("fish", "fish"),
-        Map.entry("berry", "berry"),
-        Map.entry("rat", "rat")
-    );
+            Map.entry("i", "insect"),
+            Map.entry("s", "seed"),
+            Map.entry("f", "fish"),
+            Map.entry("b", "berry"),
+            Map.entry("r", "rat"),
+            Map.entry("a", "wild"),
+            Map.entry("wild", "wild"),
+            Map.entry("insect", "insect"),
+            Map.entry("seed", "seed"),
+            Map.entry("fish", "fish"),
+            Map.entry("berry", "berry"),
+            Map.entry("rat", "rat"));
 
-    public int addEggs(int eggs){
-        if (eggs <= 0) return 0;
+    public int addEggs(int eggs) {
+        if (eggs <= 0)
+            return 0;
         int space = maxEggs - storedEggs;
         int toAdd = Math.min(space, eggs);
         storedEggs += toAdd;
         return eggs - toAdd; // leftover
     }
 
-    public int removeEggs(int eggs){
-        if (eggs <= 0) return 0;
+    public int removeEggs(int eggs) {
+        if (eggs <= 0)
+            return 0;
         int removed = Math.min(storedEggs, eggs);
         storedEggs -= removed;
         return eggs - removed;
     }
 
-    public void cacheFood(){ this.cachedFood++; }
-    public void tuckCard(){ this.tuckedCards++; }
+    public void cacheFood() {
+        this.cachedFood++;
+    }
+
+    public void tuckCard() {
+        this.tuckedCards++;
+    }
 
     public boolean triggersOnAction(ProgramState.PlayerAction action) {
         return switch (action) {
@@ -215,7 +258,8 @@ public class Bird {
         tuckedCards = 0;
         pinkPowerUsed = false;
     }
-    public int[] foodsToIntArray(){
+
+    public int[] foodsToIntArray() {
         int[] foodCounts = new int[6]; // s, f, b, i, r, a
         for (String[] option : foods) {
             for (String food : option) {
@@ -237,7 +281,8 @@ public class Bird {
      * A bird matches if ANY of its food cost options include the given food type.
      */
     public boolean canBePaidWith(String foodType) {
-        if (foods == null || foods.isEmpty()) return false;
+        if (foods == null || foods.isEmpty())
+            return false;
         for (String[] option : foods) {
             for (String food : option) {
                 if (food.equals(foodType)) {
