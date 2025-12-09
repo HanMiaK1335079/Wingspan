@@ -540,14 +540,14 @@ public class Game {
                 for (int i = 0; i < numToDraw; i++) {
                     p.addCardToHand(state.deckOfCards.remove(state.deckOfCards.size() - 1));
                 }
-                p.useAction(getRound());
+                //p.useAction(getRound());
                 return true;
             } else { 
                 int index = Integer.parseInt(params[1]);
                 if (state.cardTray[index] != null) {
                     p.addCardToHand(state.cardTray[index]);
                     state.cardTray[index] = state.deckOfCards.remove(state.deckOfCards.size() - 1);
-                    p.useAction(getRound());
+                    //p.useAction(getRound());
                     return true;
                 }
             }

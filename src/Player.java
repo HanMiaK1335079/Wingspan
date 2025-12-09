@@ -9,7 +9,7 @@ public class Player {
     private ArrayList<Bird> cards = new ArrayList<>();
     private Board board;
     private ArrayList<Bonus> bonus = new ArrayList<>();
-    private Map<Integer, Integer> actions = new HashMap<>();
+    private String[][] actions = new String[4][8];
     private ArrayList<Integer> foods = new ArrayList<>();
     private boolean needsToDiscard = false;
     private int tuckedCards = 0;
@@ -29,8 +29,10 @@ public class Player {
         this.bonus.addAll(startingBonuses);
         this.id = id;
         this.board = new Board();
-        for (int i = 1; i <= 4; i++) {
-            actions.put(i, 8 - (i - 1));
+        for (int i=0;i<4;i++){
+            for (int j=0;j<8;j++){
+                actions[i][j] = "";
+            }
         }
     }
 
@@ -39,10 +41,11 @@ public class Player {
     }
 
     public Player() {
-        actions.put(1, 8);
-        actions.put(2, 7);
-        actions.put(3, 6);
-        actions.put(4, 5);
+        for (int i=0;i<4;i++){
+            for (int j=0;j<8;j++){
+                actions[i][j] = "";
+            }
+        }
         
         this.foods = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0));
         board = new Board();
@@ -59,13 +62,19 @@ public class Player {
     }
     
     public int getActionsRemaining(int round) {
-        return actions.getOrDefault(round, 0);
+        int counter = 0;
+        for (int i=0;i<8;i++){
+            if (actions[round][i].equals("")) return (8-counter);
+            counter++;
+        }
+        return 0;
+    }
+    public String[] getActionUse(int round){
+        return actions[round];
     }
     
-    public void useAction(int round) {
-        if (actions.containsKey(round) && actions.get(round) > 0) {
-            actions.put(round, actions.get(round) - 1);
-        }
+    public void useAction(int round, String hab) {
+        actions[round][8-getActionsRemaining(round)] = hab;
     }
     
     public ArrayList<Bird> getCardsInHand() {
@@ -295,6 +304,11 @@ public class Player {
         }
 
         return leftovers >= wildRequired;
+    }
+
+    public boolean hasEggs(){
+        for (Bird b: getAllBirdsOnBoard()) if (b.getEggCount()>0) return true;
+        return false;
     }
 
     private void spendFoodForOption(String[] option, Object... params) {
