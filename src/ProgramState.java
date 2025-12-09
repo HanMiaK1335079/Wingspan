@@ -197,8 +197,7 @@ public class ProgramState {
             return roundWinners[roundIndex];
         }
         return 0;
-    }icGame game =ne am(this);
+    }
 
-    
-        
-    
+    public Game game = new Game(this);
+}
