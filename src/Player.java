@@ -158,9 +158,9 @@ public class Player {
     }
     
     public boolean playBird(Bird bird, String habitat, int position, int[] thing ,Object... params) {
-        if (!canPlayBird(bird, habitat, position)) {
-            return false;
-        }
+        // if (!canPlayBird(bird, habitat, position)) {
+        //     return false;
+        // }
         
         spendFoodForBird(bird, thing);
        // int eggCost = getEggCostForPlacement(habitat);
