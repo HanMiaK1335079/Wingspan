@@ -13,6 +13,10 @@ import java.net.URL;
 import static java.lang.System.*;
 import java.util.*;
 import java.util.Queue;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -59,6 +63,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private Queue<Integer> pinkPowerOwnerQueue = new LinkedList<>();
     private Bird currentPinkBird;
     private int currentPinkOwner;
+
+    private Map<Integer, List<String>> playerActionHistory = new HashMap<>();
+    private String currentActionType = null; // Tracks current action: "forest", "grasslands", "wetlands", "play", null
+    private boolean actionInProgress = false;
 
     // Game run variables
 
@@ -323,13 +331,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 else if (x >= 1375 && x <= 1425 && y >= 615 && y <= 665)
                     state.CURRENTEVENT.add("View Draw Birds");
                 else if (x >= 480 && x <= 530 && y >= 120 && y <= 170) {
+                    // Play Bird button clicked
+                    state.players[state.playing].useAction(state.round);
+                    currentActionType = "play";
+                    actionInProgress = true;
                     state.CURRENTEVENT.add("Play Bird");
                     state.specificBirdToPlay = null;
                     state.birdFoodsForPlayingBird = new int[5];
                 } else if (x >= 440 && x <= 463 && y >= 214 && y <= 238) {
+                    // Forest (Gain Food) button clicked
+                    state.players[state.playing].useAction(state.round);
+                    currentActionType = "forest";
+                    actionInProgress = true;
                     if (state.players[state.playing].getBirdsInHabitat("forest").size() != 0)
                         state.CURRENTEVENT.add("On Activate Ability");
-                    state.players[state.playing].useAction(state.round, "forest");
                     // state.CURRENTEVENT.add("Select Food");
                     runningHabitat = "forest";
                     currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("forest").size() - 1;
@@ -366,10 +381,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         }
                     }
                 } else if (x >= 439 && x <= 463 && y >= 462 && y <= 488 && state.players[state.playing].canLayEggs()) {
+                    // Grasslands (Lay Eggs) button clicked
+                    state.players[state.playing].useAction(state.round);
+                    currentActionType = "grasslands";
+                    actionInProgress = true;
                     if (state.players[state.playing].getBirdsInHabitat("grasslands").size() != 0)
                         state.CURRENTEVENT.add("On Activate Ability");
                     // state.CURRENTEVENT.add("Lay Eggs");
-                    state.players[state.playing].useAction(state.round, "grasslands");
                     // state.CURRENTEVENT.add("Lay Eggs");
                     runningHabitat = "grasslands";
                     currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("grasslands").size() - 1;
@@ -412,9 +430,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                     }
                 } else if (x >= 366 && x <= 387 && y >= 736 && y <= 759) {
+                    // Wetlands (Draw Cards) button clicked
+                    state.players[state.playing].useAction(state.round);
+                    currentActionType = "wetlands";
+                    actionInProgress = true;
                     if (state.players[state.playing].getBirdsInHabitat("wetlands").size() != 0)
                         state.CURRENTEVENT.add("On Activate Ability");
-                    state.players[state.playing].useAction(state.round, "wetlands");
                     // state.CURRENTEVENT.add("Draw Birds");
                     runningHabitat = "wetlands";
                     currentBirdNum = state.players[state.playing].getBoard().getBirdsInHabitat("wetlands").size() - 1;
@@ -470,7 +491,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                             tradeStarted = true;
                             if (runningHabitat.equals("wetlands")) {
                                 state.CURRENTEVENT.removeLast();
-                                if (!state.players[state.playing].hasEggs()) {
+                                if (state.players[state.playing].getEggCount() <= 0) {
                                     state.CURRENTEVENT.add("No Eggs");
                                 } else {
                                     state.CURRENTEVENT.add("Draw Birds");
@@ -480,6 +501,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                         }
                     } else if (x >= noCrds[0] && x <= noCrds[1] && y >= noCrds[2] && y <= noCrds[3]) {
                         state.CURRENTEVENT.removeLast();
+                        checkAndAdvanceTurn();
                     }
                 } else if (runningHabitat.equals("forest")) {
                     if (x >= 1400 && y >= 590 && x <= 1460 && y <= 650
@@ -638,6 +660,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             case "Draw Birds" -> {
                 if (x >= 20 && x <= 70 && y >= 400 && y <= 450) {
                     state.CURRENTEVENT.removeLast();
+                    checkAndAdvanceTurn();
                     repaint();
                     return;
                 }
@@ -1038,7 +1061,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                             }
                         }
                     } else if (ability.contains("Discard 1 [egg] from any")) {
-                        if (state.players[state.playing].hasEggs()) {
+                        if (state.players[state.playing].getEggCount() > 0) {
                             state.CURRENTEVENT.add("Add Food");
                             if (ability.contains("2")) {
                                 state.CURRENTEVENT.add("Add Food");
@@ -1882,7 +1905,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
 
                     out.println(state.specificBirdToPlay.getFoods());
                     g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
-                    // g.drawImage(exitPic, 20, 400, 50, 50, null);
+                    g.drawImage(exitPic, 20, 400, 50, 50, null);
                     g.setFont(new Font("Arial", Font.BOLD, 50));
                     g.drawString("Click foods to play bird with", 600, 458);
 
@@ -1929,12 +1952,13 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                             if (state.players[state.playing].playBird(state.specificBirdToPlay, state.habitatToPlayBird,
                                     position, state.birdFoodsForPlayingBird)) {
                                 state.players[state.playing].getCardsInHand().remove(state.specificBirdToPlay);
-                                state.players[state.playing].useAction(state.round, "play");
                             }
                             for (int i = 0; i < 5; i++)
                                 state.birdFoodsForPlayingBird[i] = 0;
                             state.CURRENTEVENT.removeLast();
                             state.CURRENTEVENT.removeLast();
+                            recordAction("play");
+                            advanceTurn();
                             for (int i = 0; i < 3; i++)
                                 for (int j = 0; j < 5; j++)
                                     state.squaresClickedToPlayBird[i][j] = false;
@@ -2150,6 +2174,47 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         } else {
             currentPinkBird = pinkPowerQueue.peek();
             currentPinkOwner = pinkPowerOwnerQueue.peek();
+        }
+    }
+
+    private void initActionHistory() {
+        playerActionHistory.clear();
+        for (int i = 0; i < 4; i++) {
+            playerActionHistory.put(i, new ArrayList<>());
+        }
+    }
+
+    private void recordAction(String actionType) {
+        int currentPlayer = state.playing;
+        if (!playerActionHistory.containsKey(currentPlayer)) {
+            playerActionHistory.put(currentPlayer, new ArrayList<>());
+        }
+        playerActionHistory.get(currentPlayer).add(actionType);
+    }
+
+    private void advanceTurn() {
+        state.game.next(null);
+        repaint();
+    }
+
+    private void checkAndAdvanceTurn() {
+        // Only advance if an action was in progress
+        if (!actionInProgress)
+            return;
+
+        // Check if ALL action-related events are cleared
+        boolean actionComplete = state.CURRENTEVENT.isEmpty() ||
+                (!state.CURRENTEVENT.getLast().equals("Select Food") &&
+                        !state.CURRENTEVENT.getLast().equals("Lay Eggs") &&
+                        !state.CURRENTEVENT.getLast().equals("Draw Birds") &&
+                        !state.CURRENTEVENT.getLast().equals("Trade") &&
+                        !state.CURRENTEVENT.getLast().equals("On Activate Ability"));
+
+        if (actionComplete && currentActionType != null) {
+            recordAction(currentActionType);
+            advanceTurn();
+            currentActionType = null;
+            actionInProgress = false;
         }
     }
 
@@ -2695,46 +2760,52 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         if (state.cardTray[2] != null)
             g.drawImage(state.cardTray[2].getImage(), 1446, 577, 85, 120, null);
 
-        // action cubes
+        // action cubes - show in leftmost available slot per action type
         g.setColor(colors[state.playing]);
         int w = 20;
         g.setFont(new Font("Arial", Font.BOLD, 25));
-        g.fillRect(293, 85, w, w);
-        g.fillRect(293, 258, w, w);
-        g.fillRect(293, 510, w, w);
-        g.fillRect(298, 780, w, w);
-        g.fillRect(1377, 400, w, w);
 
-        String[] habs = state.players[state.playing].getActionUse(state.round);
-        out.println("Habs: " + Arrays.toString(habs));
-        int c = 0;
-        for (int i = 0; i < 8; i++) {
-            if (habs[i].equals("play"))
-                c += 1;
+        List<String> currentPlayerActions = playerActionHistory.getOrDefault(state.playing, new ArrayList<>());
+        int playCount = 0, forestCount = 0, grasslandsCount = 0, wetlandsCount = 0;
+        for (String action : currentPlayerActions) {
+            switch (action) {
+                case "play" -> playCount++;
+                case "forest" -> forestCount++;
+                case "grasslands" -> grasslandsCount++;
+                case "wetlands" -> wetlandsCount++;
+            }
         }
-        g.drawString("X " + c, 324, 105);
-        c = 0;
 
-        for (int i = 0; i < 8; i++) {
-            if (habs[i].equals("forest"))
-                c += 1;
+        // Play Bird row - cubes at x=293, 463, 633, 803, 973 (spacing ~170)
+        for (int i = 0; i < playCount && i < 5; i++) {
+            g.fillRect(293 + 170 * i, 85, w, w);
         }
-        g.drawString("X " + c, 324, 280);
-        c = 0;
 
-        for (int i = 0; i < 8; i++) {
-            if (habs[i].equals("grasslands"))
-                c += 1;
+        // Forest row - cubes at x=293, 463, 633, 803, 973
+        for (int i = 0; i < forestCount && i < 5; i++) {
+            g.fillRect(293 + 170 * i, 258, w, w);
         }
-        g.drawString("X " + c, 324, 530);
-        c = 0;
 
-        for (int i = 0; i < 8; i++) {
-            if (habs[i].equals("wetlands"))
-                c++;
+        // Grasslands row
+        for (int i = 0; i < grasslandsCount && i < 5; i++) {
+            g.fillRect(293 + 170 * i, 510, w, w);
         }
-        g.drawString("X " + c, 324, 780);
-        g.drawString("X " + state.players[state.playing].getActionsRemaining(state.round), 1410, 424);
+
+        // Wetlands row
+        for (int i = 0; i < wetlandsCount && i < 5; i++) {
+            g.fillRect(298 + 170 * i, 780, w, w);
+        }
+
+        // Display actions remaining
+        int actionsRemaining = state.players[state.playing].getActionsRemaining(state.round);
+        g.drawString("Actions: " + actionsRemaining, 1360, 424);
+
+        if (state.playing == (state.firstPlayerToken - 1)) {
+            g.setColor(Color.YELLOW);
+            g.fillOval(200, 40, 30, 30);
+            g.setColor(Color.BLACK);
+            g.drawString("1st", 205, 60);
+        }
 
     }
 
@@ -3065,12 +3136,12 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         diceLocMap[4][1] = 670;
         readCSV(new File("src/birdInfo.csv"));
         setUpBirdPics();
-        // mockSetup();
         setUpBonus();
         setRgoals();
         updateTray();
         out.println(birds.size());
         Collections.shuffle(birds);
+        initActionHistory();
 
     }
 
@@ -3082,7 +3153,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                                                                                                                       // any
                                                                                                                       // skipped
         ArrayList<String> skippedBirds = new ArrayList<String>();
-        String focusBird = "nope"; // bird that you want to test
+        String focusBird = "nope";
         for (String s : sb)
             skippedBirds.add(s);
         try (Scanner scan = new Scanner(f)) {
@@ -3091,36 +3162,29 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             int readAmt = 170;
             while (scan.hasNextLine() && readAmt > 0) {
                 String l = scan.nextLine();
-                // out.println("line: " + l);
                 if (l.contains("\"")) {
                     l = l.replace("\"\"", "");
                     String[] quoteSplit = l.split("\"");
-                    // out.println("quotesplit: "+Arrays.toString(quoteSplit));
                     ArrayList<String> supportSplit = new ArrayList<>();
                     supportSplit.addAll(Arrays.asList(quoteSplit[0].split(",")));
                     supportSplit.add(quoteSplit[1]);
                     supportSplit.addAll(Arrays.asList(quoteSplit[2].split(",")));
                     supportSplit.remove(3);
                     items = new String[supportSplit.size()];
-                    // out.println("Support: "+supportSplit);
                     for (int i = 0; i < items.length; i++)
                         items[i] = supportSplit.get(i);
 
-                    // for (int i=0;i<items.length;i++) out.print(i+": "+items[i]+" ");
                 } else {
                     items = l.split(",");
                 }
 
-                // Doing all the food parsing yey
                 Map<Integer, String> foodMap = new HashMap<Integer, String>();
                 String[] foodtypes = { "i", "s", "f", "b", "r", "", "a" };
                 for (int i = 13; i < 20; i++)
                     foodMap.put(i, foodtypes[i - 13]);
                 ArrayList<String[]> foodArr = new ArrayList<>();
                 ArrayList<String> foods = new ArrayList<>();
-                // out.println("Food stuff instantiated");
                 if (items[20].equals("/")) {
-                    // out.println("Activated splitfoods");
                     for (int i = 13; i < 18; i++)
                         if (!items[i].equals(""))
                             foods.add(foodMap.get(i));
@@ -3131,26 +3195,20 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
 
                 } else {
-                    // out.println("Activated setfoods");
                     ArrayList<String> foo = new ArrayList<>();
                     for (int i = 13; i < 20; i++) {
                         if (!items[i].equals("")) {
-                            // out.println("Adding");
                             for (int j = 0; j < Integer.parseInt(items[i]); j++) {
                                 foo.add(foodMap.get(i));
-                                // out.println("Added food to foodMap");
                             }
                         }
                     }
                     String[] foox = new String[foo.size()];
                     for (int i = 0; i < foo.size(); i++)
                         foox[i] = foo.get(i);
-                    // out.println(Arrays.toString(foox));
                     foodArr.add(foox);
                 }
 
-                // Ability type stuff
-                // out.println("Got to abilityType stuff");
                 String abilityType;
                 if (items[3].equals("X"))
                     abilityType = "predator";
@@ -3161,8 +3219,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 else
                     abilityType = "";
 
-                // ablityActivate stuff
-                // out.println("Got to abilityActivate stuff");
                 String abilityActivate;
                 abilityActivate = switch (items[1]) {
                     case "brown" -> "OA";
@@ -3171,8 +3227,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     default -> "N";
                 };
 
-                // habitat stuff
-                // out.println("Got to Habitat stuff");
                 ArrayList<String> habitats = new ArrayList<>();
                 if (items[10].equals("X"))
                     habitats.add("f");
@@ -3180,10 +3234,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     habitats.add("p");
                 if (items[12].equals("X"))
                     habitats.add("w");
-                // out.println("Items: " + items[11]+items[12]+items[13]);
-                // out.println("Habitats: "+habitats);
-
-                // out.println("Got to birdmaking stuff");
 
                 if (skippedBirds.indexOf(items[0]) < 0) {
                     b = Bird.create(items[0], abilityActivate, items[2], abilityType, Integer.parseInt(items[6]),
@@ -3196,8 +3246,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
 
-                // out.println("Finished birdmaking stuff");
-
                 int i = 22;
                 while (i < 22 + bonuses.length && i < items.length) {
                     if (items[i].equals("X")) {
@@ -3207,9 +3255,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 }
                 readAmt -= 1;
             }
-            // for (Bird birbo: birds) out.println(birbo.toString());
 
-            // For debugging: print out the bonus map
             for (String bonus : bonuses) {
                 ArrayList<String> birdsWithBonus = bonusMap.get(bonus);
                 if (birdsWithBonus != null) {

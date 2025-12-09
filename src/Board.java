@@ -1,30 +1,29 @@
-package src;
 import java.util.*;
 
 public class Board {
-    //replace arraylist of each habitat with 2D array as follows
-    //0 - forest, 1 - plains, 2 - wetlands
+    // replace arraylist of each habitat with 2D array as follows
+    // 0 - forest, 1 - plains, 2 - wetlands
     // will reference each row and not individual arraylists.
     private Bird[][] board = new Bird[3][5];
-    
-    
+
     public Board() {
         for (Bird[] row : board) {
             Arrays.fill(row, null);
         }
     }
-    
+
     public Bird[][] getBoard() {
         return board;
     }
-    
+
     public void setBoard(Bird[][] b) {
         this.board = b;
     }
 
     public int getFirstEmptySlotIndex(String habitat) {
         int h = getHabitatIndex(habitat);
-        if (h == -1) return -1;
+        if (h == -1)
+            return -1;
 
         for (int i = 0; i < board[h].length; i++) {
             if (board[h][i] == null) {
@@ -33,11 +32,11 @@ public class Board {
         }
         return -1;
     }
-    
+
     public boolean playBird(Bird bird, String habitat) {
-        return playBird(bird, habitat, -1); 
+        return playBird(bird, habitat, -1);
     }
-    
+
     public boolean playBird(Bird bird, String habitat, int position) {
         int h = getHabitatIndex(habitat);
         if (h == -1 || !bird.canLiveInHabitat(habitat)) {
@@ -61,11 +60,11 @@ public class Board {
 
         return false;
     }
-    
+
     public boolean canPlayBird(String habitat) {
-        return canPlayBird(habitat, -1); 
+        return canPlayBird(habitat, -1);
     }
-    
+
     public boolean canPlayBird(String habitat, int position) {
         int h = getHabitatIndex(habitat);
         if (h == -1) {
@@ -78,11 +77,12 @@ public class Board {
 
         return getFirstEmptySlotIndex(habitat) != -1;
     }
-    
+
     public int getHabitatSize(String habitat) {
         int h = getHabitatIndex(habitat);
-        if (h == -1) return 0;
-        
+        if (h == -1)
+            return 0;
+
         int count = 0;
         for (Bird bird : board[h]) {
             if (bird != null) {
@@ -91,17 +91,19 @@ public class Board {
         }
         return count;
     }
-    
+
     public Bird getBirdAtPosition(String habitat, int position) {
         int h = getHabitatIndex(habitat);
-        if (h == -1 || position < 0 || position >= board[h].length) return null;
+        if (h == -1 || position < 0 || position >= board[h].length)
+            return null;
         return board[h][position];
     }
-    
+
     public boolean isHabitatFull(String habitat) {
         int h = getHabitatIndex(habitat);
-        if (h == -1) return true;
-        
+        if (h == -1)
+            return true;
+
         for (Bird bird : board[h]) {
             if (bird == null) {
                 return false;
@@ -124,10 +126,14 @@ public class Board {
 
     public String getHabitatName(int index) {
         switch (index) {
-            case 0: return "forest";
-            case 1: return "plains";
-            case 2: return "wetlands";
-            default: return "";
+            case 0:
+                return "forest";
+            case 1:
+                return "plains";
+            case 2:
+                return "wetlands";
+            default:
+                return "";
         }
     }
 
@@ -144,8 +150,9 @@ public class Board {
 
     public ArrayList<Bird> getBirdsInHabitat(String habitat) {
         int h = getHabitatIndex(habitat);
-        if (h == -1) return new ArrayList<>();
-        
+        if (h == -1)
+            return new ArrayList<>();
+
         ArrayList<Bird> birds = new ArrayList<>();
         for (Bird bird : board[h]) {
             if (bird != null) {
@@ -154,7 +161,7 @@ public class Board {
         }
         return birds;
     }
-    
+
     public ArrayList<Bird> getAllBirds() {
         ArrayList<Bird> allBirds = new ArrayList<>();
         forEachBird(allBirds::add);
@@ -164,16 +171,16 @@ public class Board {
     public int getBirdCount() {
         return getAllBirds().size();
     }
-    
+
     public int getCachedFoodCount() {
-        final int[] total = {0};
+        final int[] total = { 0 };
         forEachBird(bird -> total[0] += bird.getCachedFood());
         return total[0];
     }
-    
+
     public int getLongestRow() {
         int maxLength = 0;
-        
+
         for (int h = 0; h < 3; h++) {
             int currentLength = 0;
             for (Bird b : board[h]) {
@@ -200,10 +207,10 @@ public class Board {
 
     public void layEggsInNestType(String nestType) {
         System.out.println("Laying eggs on : " + nestType);
-        for (Bird[] row: board){
-            for (Bird b: row){
-                if (!(b==null)){
-                    if (b.getNest().equals(nestType)){
+        for (Bird[] row : board) {
+            for (Bird b : row) {
+                if (!(b == null)) {
+                    if (b.getNest().equals(nestType)) {
                         b.addEggs(1);
                         System.out.println("Added Eggz");
                     }
@@ -223,14 +230,15 @@ public class Board {
         }
         return false;
     }
-    
+
     public int getHabitatIndex(String habitat) {
         switch (habitat.toLowerCase()) {
             case "forest":
                 return 0;
             case "plains":
                 return 1;
-            case "grasslands": return 1;
+            case "grasslands":
+                return 1;
             case "wetlands":
             case "wetland":
                 return 2;
@@ -248,7 +256,7 @@ public class Board {
             for (int i = 0; i < board[oldHabitatIndex].length; i++) {
                 if (board[oldHabitatIndex][i] == bird) {
                     board[oldHabitatIndex][i] = null;
-                    break; 
+                    break;
                 }
             }
 
@@ -298,7 +306,8 @@ public class Board {
 
     public Bird getRightmostBirdInHabitat(String habitat) {
         int h = getHabitatIndex(habitat);
-        if (h == -1) return null;
+        if (h == -1)
+            return null;
 
         for (int i = board[h].length - 1; i >= 0; i--) {
             if (board[h][i] != null) {

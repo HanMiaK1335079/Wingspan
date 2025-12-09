@@ -86,10 +86,17 @@ public class Game {
 
     public void next(ProgramState.PlayerAction action) {
         currentPlayer = (currentPlayer + 1) % 4;
-        // activatePinkPowers(state.players[currentPlayer], action); // Handled in
-        // FramePanel now
+        state.playing = currentPlayer;
 
-        if (currentPlayer == (state.firstPlayerToken - 1)) {
+        boolean allDone = true;
+        for (Player p : state.players) {
+            if (p.getActionsRemaining(round) > 0) {
+                allDone = false;
+                break;
+            }
+        }
+
+        if (allDone) {
             nextRound();
         }
 

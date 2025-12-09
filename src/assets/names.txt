@@ -1,0 +1,170 @@
+Acorn_Woodpecker f www 5 cavity 4 46 WA:gainfromfeederchoosecache:w
+American_Avocet w iiw 6 ground 2 79 OBT:whenplayerlayseggslayegg:ground
+American_Bittern w
+American_Coot w
+American_Crow wpf
+American_Goldfinch p
+American_Kestrel p
+American_Oystercatcher w
+American_Robin pf
+American_WhitePelican w
+American_Woodcock pf
+Anhinga w
+Anna's_Hummingbird wpf
+Ash-Throated_Flycatcher p
+Atlantic_Puffin w
+Baird's_Sparrow p
+Bald_Eagle w
+Baltimore_Oriole f
+Barn_Owl wpf
+Barn_Swallow wp
+Barrow_Owl f
+Barrows_Goldeneye w
+Bells_Vireo pf
+Belted_Kingfisher w
+Bewick's_Wren wpf
+Black_Skimmer w
+Black_Tern w
+Black_Vulture f
+Black-Bellied_Whistling-Duck w
+Black_Billed_Magpie p
+Black-Crowned_Night-Heron w
+Blac-Necked_Stilt w
+Blue_Grossbeak wpf
+Blue_Jay f
+Blue-Gray_GnatCatcher
+Blue-Winged_Warbler
+Bobolink
+Brewer's_Blackbird
+Bronzed_Cowbird
+BrownPelican
+Brown-HeadedCowbird
+BurrowingOwl
+Bushtit
+CaliforniaCondor
+CaliforniaQuail
+CanadaGoose
+CarolinaChickadee
+CarolinaWren
+Cassin'sFinch
+Cassin'sSparrow
+CedarWaxwing
+CeruleanWarbler
+Chestnut-CollaredLongspur
+ChihuahuanRaven
+ChimneySwift
+ChippingSparrow
+Clark'sGrebe
+Clark'sNutcracker
+CommonGrackle
+CommonLoon
+CommonMerganser
+CommonNighthawk
+CommonRaven
+CommonYellowthroat
+Cooper'sHawk
+Dark-EyedJunco
+Dickcissel
+Double-CrestedCormorant
+DownyWoodpecker
+EasternBluebird
+EasternKingbird
+EasternPhoebe
+EasternScreechOwl
+FerruginousHawk
+FishCrow
+Forster'sTern
+Franklin'sGull
+GoldenEagle
+GrasshopperSparrow
+GrayCatbird
+GreatBlueHeron
+GreatCrestedFlycatcher
+GreatEgret
+GreatHornedOwl
+GreaterPrairieChicken
+GreaterRoadrunner
+GreenHeron
+HermitThrush
+HoodedMerganser
+HoodedWarbler
+HornedLark
+HouseFinch
+HouseWren
+IncaDove
+IndigoBunting
+JuniperTitmouse
+Killdeer
+KingRail
+LazuliBunting
+Lincoln'sSparrow
+LoggerheadShrike
+Mallard
+MississippiKite
+MountainBluebird
+MountainChickadee
+MourningDove
+NorthernBobwhite
+NorthernCardinal
+NorthernFlicker
+NorthernHarrier
+NorthernMockingbird
+NorthernShoveler
+Osprey
+PaintedBunting
+PeregrineFalcon
+Pied-BilledGrebe
+PileatedWoodpecker
+PineSiskin
+ProthonotaryWarbler
+PurpleGallinule
+PurpleMartin
+PygmyNuthatch
+RedCrossbill
+Red-BelliedWoodpecker
+Red-BreastedNuthatch
+Red-CockadedWoodpecker
+Red-EyedVireo
+Red-HeadedWoodpecker
+Red-ShoulderedHawk
+Red-TailedHawk
+Red-WingedBlackbird
+Ring-BilledGull
+Rose-BreastedGrossbeak
+RoseateSpoonbill
+Ruby-CrownedKinglet
+Ruby-ThroatedHummingbird
+RuddyDuck
+SandhillCrane
+SavannahSparrow
+Say'sPhoebe
+Scissor-TailedFlycatcher
+SnowyEgret
+SongSparrow
+SpottedOwl
+SpottedSandpiper
+SpottedTowhee
+Sprague'sPipit
+Steller'sJay
+Swainson'sHawk
+TreeSwallow
+TrumpeterSwan
+TuftedTitmouse
+TurkeyVulture
+Violet-GreenSwallow
+WesternMeadowlark
+WesternTanager
+White-BreastedNuthatch
+White-CrownedSparrow
+White-FacedIbis
+WhoopingCrane
+WildTurkey
+Willet
+Wilson'sSnipe
+WoodDuck
+WoodStork
+Yellow-BelliedSapsucker
+Yellow-BilledCuckoo
+Yellow-BreastedChat
+Yellow-HeadedBlackbird
+Yellow-RumpedWarbler
