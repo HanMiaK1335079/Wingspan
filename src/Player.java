@@ -1,10 +1,7 @@
-package src;
 import java.util.*;
 
-
-
 public class Player {
-    
+
     private String name;
     private ArrayList<Bird> cards = new ArrayList<>();
     private Board board;
@@ -13,21 +10,21 @@ public class Player {
     private ArrayList<Integer> foods = new ArrayList<>();
     private boolean needsToDiscard = false;
     private int tuckedCards = 0;
-    private int seedNum=0;
-    private int fishNum=0;
-    private int berryNum=0;
-    private int invertebrateNum=0;
-    private int rodentNum=0;
-    
+    private int seedNum = 0;
+    private int fishNum = 0;
+    private int berryNum = 0;
+    private int invertebrateNum = 0;
+    private int rodentNum = 0;
+
     private int score = 0;
-    
+
     // Round-by-round goal scoring (4 rounds)
     private int[] roundGoalPoints = new int[4];
     private ScoreBreakdown finalScoreBreakdown;
 
     // final score breakdown (populated at game end)
     private ScoreBreakdown finalScore = null;
-    
+
     public Player(String name, ArrayList<Bird> startingCards, ArrayList<Bonus> startingBonuses, int id) {
         this.name = name;
         this.foods = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0));
@@ -49,35 +46,35 @@ public class Player {
         actions.put(2, 7);
         actions.put(3, 6);
         actions.put(4, 5);
-        
+
         this.foods = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0));
         board = new Board();
     }
-    
+
     private int id = -1;
-    
+
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public int getId() {
         return id;
     }
-    
+
     public int getActionsRemaining(int round) {
         return actions.getOrDefault(round, 0);
     }
-    
+
     public void useAction(int round) {
         if (actions.containsKey(round) && actions.get(round) > 0) {
             actions.put(round, actions.get(round) - 1);
         }
     }
-    
+
     public ArrayList<Bird> getCardsInHand() {
         return cards;
     }
-    
+
     public void addBonusCard(Bonus card) {
         bonus.add(card);
     }
@@ -96,7 +93,7 @@ public class Player {
 
     public void nextRound() {
     }
-    
+
     public void resetPinkPowers() {
         ArrayList<Bird> allBirds = getAllBirdsOnBoard();
         for (Bird bird : allBirds) {
@@ -104,13 +101,14 @@ public class Player {
         }
     }
 
-    public boolean hasFood(){
-        for (int x: foods){
-            if (x>0) return true;
+    public boolean hasFood() {
+        for (int x : foods) {
+            if (x > 0)
+                return true;
         }
         return false;
     }
-    
+
     public void removeFood(String foodType, int amount) {
         switch (foodType) {
             case "s" -> foods.set(0, Math.max(0, foods.get(0) - amount));
@@ -130,10 +128,10 @@ public class Player {
         counts.put("r", foods.get(4));
         return counts;
     }
-    
+
     public ArrayList<String> getFoodTokens() {
         ArrayList<String> foodList = new ArrayList<>();
-        String[] types = {"s", "f", "b", "i", "r"};
+        String[] types = { "s", "f", "b", "i", "r" };
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < foods.get(i); j++) {
                 foodList.add(types[i]);
@@ -141,35 +139,47 @@ public class Player {
         }
         return foodList;
     }
-    
+
     public boolean hasFoodType(String foodType) {
         return getFoodCount(foodType) >= 1;
     }
-    
+
     public int getFoodCount(String foodType) {
         switch (foodType) {
-            case "s" -> { return foods.get(0); }
-            case "f" -> { return foods.get(1); }
-            case "b" -> { return foods.get(2); }
-            case "i" -> { return foods.get(3); }
-            case "r" -> { return foods.get(4); }
-            default -> { return 0; }
+            case "s" -> {
+                return foods.get(0);
+            }
+            case "f" -> {
+                return foods.get(1);
+            }
+            case "b" -> {
+                return foods.get(2);
+            }
+            case "i" -> {
+                return foods.get(3);
+            }
+            case "r" -> {
+                return foods.get(4);
+            }
+            default -> {
+                return 0;
+            }
         }
     }
-    
-    public boolean playBird(Bird bird, String habitat, int position, int[] thing ,Object... params) {
+
+    public boolean playBird(Bird bird, String habitat, int position, int[] thing, Object... params) {
         if (!canPlayBird(bird, habitat, position)) {
             return false;
         }
-        
+
         spendFoodForBird(bird, thing);
-       // int eggCost = getEggCostForPlacement(habitat);
+        // int eggCost = getEggCostForPlacement(habitat);
         // if (!spendEggs(eggCost)) {
-        //     return false;
+        // return false;
         // }
         return board.playBird(bird, habitat, position);
     }
-    
+
     public boolean canPlayBird(Bird bird, String habitat, int position) {
         if (!canAffordBird(bird)) {
             return false;
@@ -182,10 +192,10 @@ public class Player {
     }
 
     @SuppressWarnings("unchecked")
-    private void spendFoodForBird(Bird bird, int[] thing ,Object... params) {
-       for(int i=0;i<thing.length;i++){
-          foods.set(i, foods.get(i) - thing[i]);  
-       }
+    private void spendFoodForBird(Bird bird, int[] thing, Object... params) {
+        for (int i = 0; i < thing.length; i++) {
+            foods.set(i, foods.get(i) - thing[i]);
+        }
     }
 
     private void spendFoodFromMap(Map<String, Integer> chosenFoods) {
@@ -196,14 +206,12 @@ public class Player {
 
     private void spendTHECHOSENOPTION(Bird bird, String[] chosen) {
         for (String[] option : bird.getFoods()) {
-            if (canAffordOption(option)&&Arrays.equals(option, chosen)) {
+            if (canAffordOption(option) && Arrays.equals(option, chosen)) {
                 spendFoodForOption(option);
                 return;
             }
         }
     }
-
-    
 
     public boolean canAffordBird(Bird bird) {
         if (bird.getFoods() == null || bird.getFoods().size() == 0) {
@@ -216,65 +224,82 @@ public class Player {
         }
         return false;
     }
+
     public boolean canAffordBirdWithChosenFoods(Bird bird, int[] chosen) {
-        for(String[] option: bird.getFoods()){
-            System.out.print(Arrays.toString(option)+"/");
-        }   
-        ArrayList<String> CHOSEN = new ArrayList<>();
-        for(int i=0;i<chosen.length;i++){
-            switch(i){
-                case 0 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("s");}
-                case 1 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("f");}
-                case 2 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("b");}
-                case 3 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("i");}
-                case 4 -> {for(int k=0;k<chosen[i];k++)CHOSEN.add("r");}
-            }
-            
+        for (String[] option : bird.getFoods()) {
+            System.out.print(Arrays.toString(option) + "/");
         }
-        
-            System.out.print("the chosen one"+CHOSEN);
-        
+        ArrayList<String> CHOSEN = new ArrayList<>();
+        for (int i = 0; i < chosen.length; i++) {
+            switch (i) {
+                case 0 -> {
+                    for (int k = 0; k < chosen[i]; k++)
+                        CHOSEN.add("s");
+                }
+                case 1 -> {
+                    for (int k = 0; k < chosen[i]; k++)
+                        CHOSEN.add("f");
+                }
+                case 2 -> {
+                    for (int k = 0; k < chosen[i]; k++)
+                        CHOSEN.add("b");
+                }
+                case 3 -> {
+                    for (int k = 0; k < chosen[i]; k++)
+                        CHOSEN.add("i");
+                }
+                case 4 -> {
+                    for (int k = 0; k < chosen[i]; k++)
+                        CHOSEN.add("r");
+                }
+            }
+
+        }
+
+        System.out.print("the chosen one" + CHOSEN);
+
         ArrayList<ArrayList<String>> options = new ArrayList<>();
-        for(String[] option: bird.getFoods()){
+        for (String[] option : bird.getFoods()) {
             ArrayList<String> x = new ArrayList<>();
-            for(String op: option){
+            for (String op : option) {
                 x.add(op);
             }
             options.add(x);
         }
-        if(options.size()==1){
-        for(int i=0;i<CHOSEN.size();i++){
-            if(options.get(0).contains(CHOSEN.get(i))){ 
-           options.get(0).remove(options.get(0).indexOf(CHOSEN.get(i)));
-           CHOSEN.remove(i);
-           i--;
+        if (options.size() == 1) {
+            for (int i = 0; i < CHOSEN.size(); i++) {
+                if (options.get(0).contains(CHOSEN.get(i))) {
+                    options.get(0).remove(options.get(0).indexOf(CHOSEN.get(i)));
+                    CHOSEN.remove(i);
+                    i--;
+                }
             }
-        }
-        for(int i=0;i<CHOSEN.size()&&i<options.get(0).size();i++){
-            if(options.get(0).get(i).equals("a")){ 
-           options.get(0).remove(i);
-           CHOSEN.remove(i);
-           i--;
+            for (int i = 0; i < CHOSEN.size() && i < options.get(0).size(); i++) {
+                if (options.get(0).get(i).equals("a")) {
+                    options.get(0).remove(i);
+                    CHOSEN.remove(i);
+                    i--;
+                }
             }
+        } else {
+            if (options.contains(CHOSEN))
+                return true;
         }
-    }else{
-         if(options.contains(CHOSEN))
-            return true;
-    }
-        
+
         System.out.println("the options left after removing the chosen ones");
-        for(ArrayList<String> option: options){
-            System.out.print((option)+"/");
+        for (ArrayList<String> option : options) {
+            System.out.print((option) + "/");
         }
         System.out.println("The chosen ones left after removing from options");
-        for(String c: CHOSEN){
-            System.out.print(c+"/");
+        for (String c : CHOSEN) {
+            System.out.print(c + "/");
         }
-        for(int i=0;i<options.size();i++){
-            
-            if(options.get(i).size()==0) options.remove(i);
+        for (int i = 0; i < options.size(); i++) {
+
+            if (options.get(i).size() == 0)
+                options.remove(i);
         }
-        return options.size()==0&&CHOSEN.size()==0;
+        return options.size() == 0 && CHOSEN.size() == 0;
     }
 
     private boolean canAffordOption(String[] option) {
@@ -296,7 +321,7 @@ public class Player {
         }
 
         int leftovers = 0;
-        for (String t : new String[]{"s", "f", "b", "i", "r"}) {
+        for (String t : new String[] { "s", "f", "b", "i", "r" }) {
             leftovers += Math.max(0, playerFoodCounts.getOrDefault(t, 0) - requiredFoodCounts.getOrDefault(t, 0));
         }
 
@@ -323,7 +348,7 @@ public class Player {
     }
 
     private void spendAnyFood() {
-        for (String t : new String[]{"s", "f", "b", "i", "r"}) {
+        for (String t : new String[] { "s", "f", "b", "i", "r" }) {
             if (hasFoodType(t)) {
                 removeFood(t, 1);
                 break;
@@ -332,20 +357,32 @@ public class Player {
     }
 
     private int getEggCostForPlacement(String habitat) {
-        switch(board.getBirdsInHabitat(habitat).size()) {
-            case 0 -> { return 0; }
-            case 1 -> { return 1; }
-            case 2 -> { return 1; }
-            case 3 -> { return 2; }
-            case 4 -> { return 2;}
-            
+        switch (board.getBirdsInHabitat(habitat).size()) {
+            case 0 -> {
+                return 0;
+            }
+            case 1 -> {
+                return 1;
+            }
+            case 2 -> {
+                return 1;
+            }
+            case 3 -> {
+                return 2;
+            }
+            case 4 -> {
+                return 2;
+            }
+
         }
         return 0;
     }
 
     public boolean spendEggs(int eggs) {
-        if (eggs <= 0) return true;
-        if (getEggCount() < eggs) return false;
+        if (eggs <= 0)
+            return true;
+        if (getEggCount() < eggs)
+            return false;
         int remaining = eggs;
         Bird[][] boardArray = board.getBoard();
         for (int h = 0; h < 3 && remaining > 0; h++) {
@@ -358,7 +395,7 @@ public class Player {
         }
         return remaining == 0;
     }
-    
+
     public boolean layEggsOnBird(Bird bird, int eggs) {
         Bird[][] boardArray = board.getBoard();
         for (int h = 0; h < 3; h++) {
@@ -374,7 +411,7 @@ public class Player {
         }
         return false;
     }
-    
+
     public boolean layEggsOnAnyBird() {
         return board.layEggsOnAnyBird();
     }
@@ -382,7 +419,7 @@ public class Player {
     public int getFirstEmptySlotIndex(String habitat) {
         return board.getFirstEmptySlotIndex(habitat);
     }
-    
+
     public boolean canLayEggsOnAnyBird() {
         for (Bird bird : getAllBirdsOnBoard()) {
             if (!bird.hasMaxEggs()) {
@@ -395,7 +432,7 @@ public class Player {
     public ArrayList<Bird> getBirdsInHabitat(String habitat) {
         return board.getBirdsInHabitat(habitat);
     }
-    
+
     public int getBirdCount() {
         return board.getBirdCount();
     }
@@ -403,55 +440,55 @@ public class Player {
     public int getEggCount() {
         return board.getEggCount();
     }
-    
+
     public void setCardsInHand(ArrayList<Bird> c) {
         this.cards = c;
     }
-    
+
     public void addCardToHand(Bird b) {
         cards.add(b);
     }
-    
+
     public void removeCardFromHand(Bird b) {
         cards.remove(b);
     }
-    
+
     public Bird[][] getPlayerBoard() {
         return board.getBoard();
     }
-    
+
     public void setPlayerBoard(Bird[][] b) {
         board.setBoard(b);
     }
-    
+
     public Board getBoard() {
         return board;
     }
-    
+
     public ArrayList<Bonus> getBonuses() {
         return bonus;
     }
-    
+
     public void setBonuses(ArrayList<Bonus> b) {
         this.bonus = b;
     }
-    
-    public int getScore(){
+
+    public int getScore() {
         return calculateScore().total();
     }
-    
+
     public void addBonus(Bonus b) {
         bonus.add(b);
     }
-    
+
     public void removeBonus(Bonus b) {
         bonus.remove(b);
     }
-    
+
     public ArrayList<Bird> getAllBirdsOnBoard() {
         return board.getAllBirds();
     }
-    
+
     public ScoreBreakdown calculateScore() {
         int printed = 0;
         int eggs = 0;
@@ -463,21 +500,23 @@ public class Player {
         if (all != null) {
             for (Bird b : all) {
                 try {
-                    // fallback to reading basic properties (Bird doesn't provide per-bird ScoreBreakdown)
+                    // fallback to reading basic properties (Bird doesn't provide per-bird
+                    // ScoreBreakdown)
                     printed += b.getPoints();
                     eggs += b.getEggCount();
                     cached += b.getCachedFood();
                     tucked += b.getTuckedCards();
-                } catch (Throwable ignored) {}
+                } catch (Throwable ignored) {
+                }
             }
         }
 
         // Use the 6-argument ScoreBreakdown constructor:
         // (printedPoints, eggs, cachedFood, tuckedCards, bonusPoints, flocked)
         // bonus & flocked are handled at final scoring stage; set them to 0 here.
-        return new ScoreBreakdown(printed, eggs, cached, tucked, 0 /*bonus*/, 0 /*flocked*/);
+        return new ScoreBreakdown(printed, eggs, cached, tucked, 0 /* bonus */, 0 /* flocked */);
     }
-    
+
     public void setPlayerScore(int s) {
         score = s;
     }
@@ -485,19 +524,19 @@ public class Player {
     public void setFinalScore(ScoreBreakdown s) {
         finalScore = s;
     }
-    
+
     public ScoreBreakdown getFinalScore() {
         return finalScore;
     }
-    
-    public ArrayList<Integer> getFood(){
+
+    public ArrayList<Integer> getFood() {
         return foods;
     }
-    
+
     public ArrayList<Integer> getFoods() {
         return new ArrayList<>(foods);
     }
-    
+
     public void addFood(String foodType, int amount) {
         switch (foodType) {
             case "s" -> foods.set(0, foods.get(0) + amount);
@@ -511,16 +550,16 @@ public class Player {
     public void tuckCard() {
         tuckedCards++;
     }
-    
+
     public ArrayList<Bird> getBirdsByNestType(String nestType) {
         return board.getBirdsByNestType(nestType);
     }
-    
+
     public boolean hasBirdWithNestType(String nestType) {
         ArrayList<Bird> birds = getBirdsByNestType(nestType);
         return !birds.isEmpty();
     }
-    
+
     public Bird getRightmostBirdInHabitat(String habitat) {
         return board.getRightmostBirdInHabitat(habitat);
     }
@@ -544,14 +583,15 @@ public class Player {
     public boolean getNeedsToDiscard() {
         return needsToDiscard;
     }
-    
+
     public boolean canAffordFood(String f, int amount) {
         return getFoodCount(f) >= amount;
     }
-    
+
     public void spendFood(String f, int amount) {
         removeFood(f, amount);
     }
+
     public boolean canLayEggs() {
         return canLayEggsOnAnyBird();
     }
@@ -629,7 +669,7 @@ public class Player {
         }
 
         finalScoreBreakdown = new ScoreBreakdown(birdPoints, bonusPoints, goalPoints,
-                                                  eggPoints, cachedFoodPoints, tuckedCardPoints);
+                eggPoints, cachedFoodPoints, tuckedCardPoints);
         setPlayerScore(finalScoreBreakdown.total());
         return finalScoreBreakdown;
     }
