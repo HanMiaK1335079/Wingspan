@@ -201,7 +201,7 @@ public class Bird {
         s.append("Habitats: ").append(habitats).append("\n");
         s.append("Foods: ");
         for (String[] foodOption : foods) {
-            s.append("[").append(String.join(" OR ", foodOption)).append("] ");
+            s.append(Arrays.toString(foodOption));
         }
         s.append("\n");
         s.append("Stored Eggs: ").append(storedEggs).append("\n");

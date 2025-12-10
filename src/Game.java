@@ -305,7 +305,7 @@ public class Game {
         };
 
         if (success) {
-            p.useAction(round);
+            //p.useAction(round);
             triggerPinkPowers(action, p);
         }
 
@@ -356,7 +356,8 @@ public class Game {
         if (params.length > 2) {
             System.arraycopy(params, 2, playParams, 0, params.length - 2);
         }
-        boolean played = p.playBird(b, h, -1, playParams);
+        int[] tim = {};
+        boolean played = p.playBird(b, h, -1, tim, playParams);
         if (played) {
             p.removeCardFromHand(b);
             
@@ -539,14 +540,14 @@ public class Game {
                 for (int i = 0; i < numToDraw; i++) {
                     p.addCardToHand(state.deckOfCards.remove(state.deckOfCards.size() - 1));
                 }
-                p.useAction(getRound());
+                //p.useAction(getRound());
                 return true;
             } else { 
                 int index = Integer.parseInt(params[1]);
                 if (state.cardTray[index] != null) {
                     p.addCardToHand(state.cardTray[index]);
                     state.cardTray[index] = state.deckOfCards.remove(state.deckOfCards.size() - 1);
-                    p.useAction(getRound());
+                    //p.useAction(getRound());
                     return true;
                 }
             }

@@ -35,7 +35,10 @@ public class ProgramState {
         
 
         
-    
+    public void nextTurn(){
+        playing=(playing+1)%4;
+        
+    }
     public enum GameEvent {
         GAME_START,
         SELECT_SCREEN,

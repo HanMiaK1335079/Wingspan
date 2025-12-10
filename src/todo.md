@@ -5,3 +5,4 @@
  - theres a bird with no pic
  - skip ability
  - move to another habitat borken for when theres a bird behind it
+ ravens on loop
