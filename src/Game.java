@@ -88,8 +88,8 @@ public class Game {
 
     public void next(ProgramState.PlayerAction action) {
         currentPlayer = (currentPlayer + 1) % 4;
-        activatePinkPowers(state.players[currentPlayer], action);
-
+        // activatePinkPowers(state.players[currentPlayer], action); // Handled in FramePanel now
+        
         if (currentPlayer == (state.firstPlayerToken - 1)) {
             nextRound();
         }
@@ -403,6 +403,9 @@ public class Game {
         if (p.isHabitatFull(h)) {
             return false;
         }
+        
+        Object[] playParams = new Object[params.length - 2];
+        int[] playParam = new int[params.length-2];
 
         // convert remaining params into an Object[] if present (was referencing undefined playParams)
         Object[] remainingParams = new Object[0];
@@ -410,6 +413,7 @@ public class Game {
             remainingParams = new Object[params.length - 2];
             System.arraycopy(params, 2, remainingParams, 0, params.length - 2);
         }
+        for(int i = 0; i < playParam.length; i++) playParam[i] = (int) playParams[i];
 
         int[] tim = new int[0]; // keep as empty int[] if no food-choice provided
         boolean played = p.playBird(b, h, -1, tim, remainingParams);
