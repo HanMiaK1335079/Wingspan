@@ -231,4 +231,20 @@ public class Bird {
         }
         return foodCounts;
     }
+
+    /**
+     * Check if this bird can be paid for with a specific food type.
+     * A bird matches if ANY of its food cost options include the given food type.
+     */
+    public boolean canBePaidWith(String foodType) {
+        if (foods == null || foods.isEmpty()) return false;
+        for (String[] option : foods) {
+            for (String food : option) {
+                if (food.equals(foodType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

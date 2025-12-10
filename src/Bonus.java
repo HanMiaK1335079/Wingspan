@@ -188,4 +188,56 @@ public class Bonus {
         int count = calculateBonus(p);
         return count * 5; 
     }
+
+    /**
+     * Evaluate this bonus card for a player.
+     * Counts qualifying birds and returns points based on tiers.
+     * Bonus card scoring depends on the specific bonus name and criteria.
+     */
+    public int evaluateBonus(Player player) {
+        // Placeholder: base game has 22+ bonus cards with specific rules.
+        // This is a simplified version that returns 0 by default.
+        // Each bonus should implement its own logic based on name.
+        
+        if (name == null) return 0;
+
+        // Example implementations for common bonuses:
+        if (name.contains("Anatomist")) {
+            // "Birds with no tucked cards" → 3/7/13 for 3/5/7+ birds
+            int count = 0;
+            for (Bird b : player.getAllBirdsOnBoard()) {
+                if (b != null && b.getTuckedCards() == 0) count++;
+            }
+            if (count >= 7) return 13;
+            if (count >= 5) return 7;
+            if (count >= 3) return 3;
+        } else if (name.contains("Cartographer")) {
+            // "Birds with no eggs" → 3/7/13 for 3/5/7+ birds
+            int count = 0;
+            for (Bird b : player.getAllBirdsOnBoard()) {
+                if (b != null && b.getEggCount() == 0) count++;
+            }
+            if (count >= 7) return 13;
+            if (count >= 5) return 7;
+            if (count >= 3) return 3;
+        } else if (name.contains("Historian")) {
+            // "Birds with wingspan >= 100 cm" → 3/7/13 for 3/5/7+ birds
+            int count = 0;
+            for (Bird b : player.getAllBirdsOnBoard()) {
+                if (b != null && b.getWingspan() >= 100) count++;
+            }
+            if (count >= 7) return 13;
+            if (count >= 5) return 7;
+            if (count >= 3) return 3;
+        } else if (name.contains("Forester")) {
+            // "Birds in forest" → 4/8/12 for 3/5/7+ birds
+            int count = player.getBirdsInHabitat("forest").size();
+            if (count >= 7) return 12;
+            if (count >= 5) return 8;
+            if (count >= 3) return 4;
+        }
+        // ... more bonuses can be added similarly
+
+        return 0; // Default: no bonus points
+    }
 }
