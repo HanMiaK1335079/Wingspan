@@ -53,15 +53,7 @@ public class Ability {
                 lowerText.contains("[fruit]") ||
                 lowerText.contains("[wild]"));
     }
-    public String getTrigger(){
-        switch (trigger){
-            case Trigger.BROWN -> {return "OA";}
-            case Trigger.WHITE -> {return "WP";}
-            case Trigger.PINK -> {return "OBT";}
-            case Trigger.NONE -> {return "none";}
-        }
-        return null;
-    }
+
     
     public boolean mentionsPredator(){
         return rawText.toLowerCase(Locale.ROOT).contains("[predator]");
@@ -120,21 +112,11 @@ public class Ability {
         return rawText.toLowerCase(Locale.ROOT).contains("roll all dice");
     }
     
-    public int getFoodCount(String foodType){
-        String foodNameMap = switch(foodType) {
-            case "s" -> "seed";
-            case "f" -> "fish";
-            case "b" -> "berry";
-            case "i" -> "insect";
-            case "r" -> "rat";
-            case "a" -> "wild";
-            default -> foodType;
-        };
-        
+    public int getFoodCount(Food.FoodType foodType){
         String lowerText = rawText.toLowerCase(Locale.ROOT);
         if (lowerText.contains("gain")) {
             int gainIndex = lowerText.indexOf("gain");
-            int bracketIndex = lowerText.indexOf("[" + foodNameMap + "]", gainIndex);
+            int bracketIndex = lowerText.indexOf("[" + foodType.getName().toLowerCase() + "]", gainIndex);
             if (bracketIndex > gainIndex) {
                 String substring = lowerText.substring(gainIndex + 4, bracketIndex).trim();
                 StringBuilder numberBuilder = new StringBuilder();

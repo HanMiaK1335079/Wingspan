@@ -1782,17 +1782,6 @@ repaint();
         }
     }
 
-    private void finishPinkPower() {
-        pinkPowerQueue.poll();
-        pinkPowerOwnerQueue.poll();
-        if (pinkPowerQueue.isEmpty()) {
-            state.CURRENTEVENT.removeLast();
-        } else {
-            currentPinkBird = pinkPowerQueue.peek();
-            currentPinkOwner = pinkPowerOwnerQueue.peek();
-        }
-    }
-
     public void paintOBTAbility(Graphics g){
         if (currentPinkBird == null && !pinkPowerQueue.isEmpty()) {
             currentPinkBird = pinkPowerQueue.peek();
@@ -1829,75 +1818,11 @@ repaint();
         }
     }
 
-    
-
-    
-
-    
-
-    public void checkPinkPowers(String actionType, Object... params) {
-        // only check for players other than current player
-        for (int i = 0; i < state.players.length; i++) {
-            if (i == state.playing) continue;
-            
-            Player other = state.players[i];
-            for (Bird b : other.getAllBirdsOnBoard()) {
-                if (!b.isPinkPowerUsed() && b.getAbility().getTrigger().equals("OBT")) {
-                    String abilityText = b.getAbilityText();
-                    boolean triggers = false;
-                    
-                    if (actionType.equals("Lay Eggs") && abilityText.contains("lay eggs")) {
-                        triggers = true;
-                    } else if (actionType.equals("Play Bird")) {
-                        String habitat = (String) params[0];
-                        if (abilityText.contains("plays a bird in their [" + habitat + "]")) {
-                            triggers = true;
-                        }
-                    } else if (actionType.equals("Gain Food")) {
-                         if (abilityText.contains("gain food") && abilityText.contains("[rodent]")) {
-                             // Loggerhead Shrike
-                             if (params.length > 0 && params[0] instanceof String && ((String)params[0]).equals("r")) {
-                                 triggers = true;
-                             }
-                         }
-                    } else if (actionType.equals("Predator Success")) {
-                        if (abilityText.contains("[predator] succeeds")) {
-                            triggers = true;
-                        }
-                    }
-                    
-                    if (triggers) {
-                        pinkPowerQueue.add(b);
-                        pinkPowerOwnerQueue.add(i);
-                        b.setPinkPowerUsed(true); 
-                    }
-                }
-            }
-        }
-        
-        if (!pinkPowerQueue.isEmpty()) {
-            state.CURRENTEVENT.add("Once Between Turns Ability");
-        }
-    }
-
-    private void finishPinkPower() {
-        pinkPowerQueue.poll();
-        pinkPowerOwnerQueue.poll();
-        if (pinkPowerQueue.isEmpty()) {
-            state.CURRENTEVENT.removeLast();
-        } else {
-            currentPinkBird = pinkPowerQueue.peek();
-            currentPinkOwner = pinkPowerOwnerQueue.peek();
-        }
-    }
-
     public void paintScoreRound(Graphics g){
-        // improved, grid-based score sheet
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Layout params
         int cols = state.players.length;
         int leftPad = 40;
         int topPad = 110;
