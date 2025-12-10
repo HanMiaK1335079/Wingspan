@@ -1134,6 +1134,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 repaint();
             }
             case "Loop Gain Food" ->{
+                int runCount = 1;
                 if (selectingBool){
                     if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {
                         state.players[state.playing].addFood("s", 1);
@@ -1241,6 +1242,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
                 //     // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
                 //         //     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
                 //         // 
+                
                 //         // state.CURRENTEVENT.removeLast();
                 //     //attempt to play bird
                 //     if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
@@ -1749,6 +1751,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    /*
     private void finishPinkPower() {
         pinkPowerQueue.poll();
         pinkPowerOwnerQueue.poll();
@@ -1759,93 +1762,8 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
             currentPinkOwner = pinkPowerOwnerQueue.peek();
         }
     }
+        */
 
-    public void paintOBTAbility(Graphics g){
-        if (currentPinkBird == null && !pinkPowerQueue.isEmpty()) {
-            currentPinkBird = pinkPowerQueue.peek();
-            currentPinkOwner = pinkPowerOwnerQueue.peek();
-        }
-        
-        if (currentPinkBird == null) {
-            paintGame(g);
-            return;
-        }
-
-        paintGame(g);
-        
-        g.setColor(new Color(0, 0, 0, 150));
-        g.fillRect(0, 0, getWidth(), getHeight());
-        
-        g.setColor(Color.PINK);
-        g.fillRect(580, 180, 300, 440);
-        g.drawImage(currentPinkBird.getImage(), 600, 200, 260, 364, null);
-        
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 30));
-        String ownerName = state.players[currentPinkOwner].getName();
-        g.drawString("Pink Power Triggered for " + ownerName , 500, 100);
-        
-        String ability = currentPinkBird.getAbilityText();
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-        
-        
-        g.drawImage(skip, 1100, 300, 300, 100, null);
-        
-        if (ability.contains("gain 1 [die] from the birdfeeder")) {
-             paintViewFeeder(g); 
-        }
-    }
-
-    
-
-    
-
-    
-
-    public void checkPinkPowers(String actionType, Object... params) {
-        // only check for players other than current player
-        for (int i = 0; i < state.players.length; i++) {
-            if (i == state.playing) continue;
-            
-            Player other = state.players[i];
-            for (Bird b : other.getAllBirdsOnBoard()) {
-                if (!b.isPinkPowerUsed() && b.getAbility().getTrigger().equals("OBT")) {
-                    String abilityText = b.getAbilityText();
-                    boolean triggers = false;
-                    
-                    if (actionType.equals("Lay Eggs") && abilityText.contains("lay eggs")) {
-                        triggers = true;
-                    } else if (actionType.equals("Play Bird")) {
-                        String habitat = (String) params[0];
-                        if (abilityText.contains("plays a bird in their [" + habitat + "]")) {
-                            triggers = true;
-                        }
-                    } else if (actionType.equals("Gain Food")) {
-                         if (abilityText.contains("gain food") && abilityText.contains("[rodent]")) {
-                             // Loggerhead Shrike
-                             if (params.length > 0 && params[0] instanceof String && ((String)params[0]).equals("r")) {
-                                 triggers = true;
-                             }
-                         }
-                    } else if (actionType.equals("Predator Success")) {
-                        if (abilityText.contains("[predator] succeeds")) {
-                            triggers = true;
-                        }
-                    }
-                    
-                    if (triggers) {
-                        pinkPowerQueue.add(b);
-                        pinkPowerOwnerQueue.add(i);
-                        b.setPinkPowerUsed(true); 
-                    }
-                }
-            }
-        }
-        
-        if (!pinkPowerQueue.isEmpty()) {
-            state.CURRENTEVENT.add("Once Between Turns Ability");
-        }
-    }
 
     private void finishPinkPower() {
         pinkPowerQueue.poll();
