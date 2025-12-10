@@ -28,6 +28,10 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private BufferedImage[] rulePics = new BufferedImage[12];
     private final ProgramState state;
     private Rectangle startButtonRect = new Rectangle(700, 700, 200, 100);
+    // Clickable rect for "Goal Details" on the score screen
+    private Rectangle scoreGoalDetailsRect = new Rectangle(0, 0, 0, 0);
+    // Clickable rect for "Back" in the Round Goals Detail view
+    private Rectangle roundGoalsBackRect = new Rectangle(0, 0, 0, 0);
     private boolean hover = false;
     private final Font titleFont = new Font("SansSerif", Font.BOLD, 64);
     private final Font buttonFont = new Font("SansSerif", Font.BOLD, 28);
@@ -44,8 +48,6 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     private ArrayList<Bonus> bonusArr = new ArrayList<>();
     private int[][] diceLocMap = new int[5][2];
     private Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
-    // rectangle for Score view close button (kept as field so mousePressed can use actual drawn bounds)
-    private Rectangle scoreExitRect = new Rectangle(0,0,0,0);
     /*Gamestate variables */
 
     //Startselection variables
@@ -143,7 +145,7 @@ public class FramePanel extends JPanel implements MouseListener, MouseMotionList
     Bird highlighted;
     @Override
     public void mousePressed(MouseEvent e) {
-        int x = e.getX();
+          int x = e.getX();
         int y = e.getY();
         out.println("("+x+","+y+")");
         //out.println(state.CURRENTEVENT);
@@ -810,14 +812,14 @@ repaint();
                     }
                     else if (ability.contains("fewest birds in their")){currentBirdNum--;}
                     else if (ability.contains("Tuck 1 [card]")){
-                        if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing-1].getCardsInHand().size()/showing)
+                        if (x>=1400 && y>=590 && x<=1460 && y<=650 && currentShowing != state.players[state.playing].getCardsInHand().size()/showing)
                         currentShowing++;
                         else if (x>=50 && x<=110 && y>=590 && y<=650 && currentShowing != 0) currentShowing--;
 
                         for (int i=0;i<4;i++){
                             if (x>=250+250*i && y>=500 && x<=490+250*i && y<=825){
-                                if (currentShowing*4+i<state.players[state.playing-1].getCardsInHand().size()){
-                                    state.players[state.playing-1].getCardsInHand().remove(currentShowing*4+i);
+                                if (currentShowing*4+i<state.players[state.playing].getCardsInHand().size()){
+                                    state.players[state.playing].getCardsInHand().remove(currentShowing*4+i);
                                     currentBird.tuckCard();
                                     currentBirdNum--;
                                     if (ability.contains("draw 1 [card]"))
@@ -1119,152 +1121,210 @@ repaint();
                 repaint();
             }
             case "Score Round" -> {
-                // Use the dynamic rectangle computed by paintScoreRound so clicking the visible X closes the view.
-                if (scoreExitRect != null && scoreExitRect.contains(x, y)) {
-                    // remove the Score Round view and restore previous state -> prefer to pop current event
+                // Close X (top-right of score overlay)
+                Polygon closePoly = new Polygon(
+                    new int[]{1465, 1508, 1510, 1464},
+                    new int[]{39, 41, 69, 75},
+                    4
+                );
+                if (closePoly.contains(x, y)) {
                     if (!state.CURRENTEVENT.isEmpty()) state.CURRENTEVENT.removeLast();
-                    // if nothing left or last is not "Game", push "Game" to ensure safe return
                     if (state.CURRENTEVENT.isEmpty() || !state.CURRENTEVENT.getLast().equals("Game")) {
                         state.CURRENTEVENT.add("Game");
                     }
+                    repaint();
+                    return;
+                }
+                // Goal Details button click
+                if (scoreGoalDetailsRect != null && scoreGoalDetailsRect.contains(x, y)) {
+                    state.CURRENTEVENT.add("Round Goals Detail");
+                    repaint();
+                    return;
                 }
                 repaint();
             }
-            case "Loop Lay Eggs" -> {
-                Bird[][] birdBoard = state.players[state.playing-1].getPlayerBoard();
-                for (int i=0;i<3;i++){
-                    for (int j=0;j<5;j++){
-                        if (x>=470+170*j && x<=644+170*j && y>=155+247*i && y<= 375+247*i){
-                            if (birdBoard[i][j]!=null){
-                                if (birdBoard[i][j].getEggCount()<birdBoard[i][j].getMaxEggs()){
-                                    if (birdBoard[i][j].getNest().equals(nestType) || birdBoard[i][j].getNest().equals("wild")){
-                                        birdBoard[i][j].addEggs(1);
-                                        
-                                        runCount++;
-                                    }
-                                    
-                                }
-                            }
-                        }
-                    }
-                }
-                if (runCount==5){
-                    state.playing = playingHolder;
-                    runCount = 0;
-                    state.CURRENTEVENT.removeLast();
-                }
-                //out.println("Removing eggz");
-                repaint();
-            }
-            case "Loop Gain Food" ->{
-                if (selectingBool){
-                    if (x>=yesCrds[0] && x<=yesCrds[1] && y>=yesCrds[2] && y<=yesCrds[3]) {
-                        state.players[state.playing].addFood("s", 1);
-                        runCount++;
-                        state.playing = (state.playing+1)%4;
-                        if (runCount==4){
-                            state.playing = playingHolder;
-                            runCount = 0;
-                            state.CURRENTEVENT.removeLast();
-                        }
-                        selectingBool = false;
-                    }
-                    else if (x>=noCrds[0] && x<=noCrds[1] && y>=noCrds[2] && y<=noCrds[3]) {
-                        state.players[state.playing].addFood("i", 1);
-                        runCount++;
-                        state.playing = (state.playing+1)%4;
-                        if (runCount==4){
-                            state.playing = playingHolder;
-                            runCount = 0;
-                            state.CURRENTEVENT.removeLast();
-                        }
-                        selectingBool = false;
-                    }
-                    
-                }
-                else{
-                    if (feeder.canReroll() && x>=1185 && x<=1300 && y>=480 && y<=605) feeder.reRoll();
-                    for (int i=0;i<5;i++){
-                        if (x>=diceLocMap[i][0] && x<=diceLocMap[i][0]+90 && y>=diceLocMap[i][1] && y<=diceLocMap[i][1]+90){
-                            if (feeder.getDice().get(i).equals("a")) {
-                                selectingBool = true;
-                            }else {
-                                state.players[state.playing].addFood(feeder.getDice().get(i), 1);
-                                runCount++;
-                                state.playing = (state.playing+1)%4;
-                                if (runCount==4){
-                                    state.playing = playingHolder;
-                                    runCount = 0;
-                                    state.CURRENTEVENT.removeLast();
-                                }
-                                
-                            }
-                            feeder.getOutDice().add(feeder.getDice().remove(i));
-                        }
-                    }
-                    
-                }
-                repaint();
-            }case "Pick Food For Specific Bird" -> {
-                //         g.drawImage(wheatToken, 250, 550, 100, 100, null);
-                // g.drawImage(fishToken, 350, 550, 100, 100, null);
-                // g.drawImage(fruitToken, 450, 550, 100, 100, null);
-                // g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
-                // g.drawImage(rodentToken, 650, 550, 100, 100, null);
-                // g.drawImage(Clear_Button, 100, 400, 250, 100, null);
-                //             if(){
-                //                 g.drawImage(Continue_Button, 100, 750, 250, 100, null);
-                //             }
+			case "Round Goals Detail" -> {
+				// Back button (return to Score Round)
+				if (roundGoalsBackRect != null && roundGoalsBackRect.contains(x, y)) {
+					if (!state.CURRENTEVENT.isEmpty()) state.CURRENTEVENT.removeLast();
+					// ensure Score Round is visible
+					if (state.CURRENTEVENT.isEmpty() || !state.CURRENTEVENT.getLast().equals("Score Round")) {
+						state.CURRENTEVENT.add("Score Round");
+					}
+					repaint();
+					return;
+				}
+				// clicking elsewhere in details does nothing for now
+				repaint();
+			}
+        }
+    
+    }
+            
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mouseDragged(MouseEvent e) {}
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        // highlight the button when hovered
+        updateStartButtonRect();
+        boolean nowHover = startButtonRect.contains(e.getPoint());
+        if (nowHover != hover) {
+            hover = nowHover;
+            repaint();
+        }
+    }
+    public void keyTyped(KeyEvent e) {
+        if (e.getKeyChar() == 'e') {
+           out.println(state.CURRENTEVENT);
+        }
+    }
+    public void keyPressed(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {}
 
-        
-                if(x>=100 && x<=350 && y>=400 && y<=500){
-                    for (int i=0;i<5;i++) state.birdFoodsForPlayingBird[i]=0;
-                }
-                else
-                if(x>=250 && x<=350 && y>=550 && y<=650){
-                    state.birdFoodsForPlayingBird[0]++;
-                }
-                else if (x>=350 && x<=450 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[1]++;
-                }
-                else if (x>=450 && x<=550 && y>=550 && y<=650){
-                state.birdFoodsForPlayingBird[2]++;
-                }
-                else if (x>=550 && x<=650 && y>=550 && y<=650){
-                    state.birdFoodsForPlayingBird[3]++;
-                }
-                else if (x>=650 && x<=750 && y>=550 && y<=650){
-                    state.birdFoodsForPlayingBird[4]++;
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        synchronized(state.lock){
+            switch(state.CURRENTEVENT.getLast()) {
+                case "Process Mouse Click Game Start" -> {
                 
-                }else if (x>=100 && x<=350 && y>=750 && y<=850&&state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
+                    g.drawImage(infoButton, 1420, 720, 90, 90, null);
+                    
                     state.CURRENTEVENT.removeLast();
-                    state.CURRENTEVENT.add("Remove Eggs For Bird");
-                    state.eggsNeededToSpendForPlayingBird = 0;
-                    for(int i=0;i<3;i++){
-                        for(int j=0;j<5;j++){
-                            if(state.squaresClickedToPlayBird[i][j]){
-                                state.eggsNeededToSpendForPlayingBird = (int)Math.ceil(j/2.0);
+                    break;
+                }
+                case "Game Start" -> paintStart(g);
+                case "Select Screen" -> paintSelection(g);
+                case "Game" -> paintGame(g);
+                case "Trade" -> paintTrade(g);
+                case "View Birds" -> paintViewBirds(g);
+                case "View Bonus" -> paintViewBonus(g);
+                case "Info" -> paintInfo(g);
+                case "View Draw Birds" -> paintViewDrawBirds(g);
+                case "View Feeder" -> paintViewFeeder(g);
+                case "Draw Birds" -> paintDrawBirds(g);
+                case "Score Round" -> paintScoreRound(g);
+				case "Round Goals Detail" -> paintRoundGoalsDetail(g);
+                case "Play Bird" -> paintPlayBird(g);
+                case "Play Specific Bird" -> paintPlaySpecificBird(g);
+                case "Rules" -> paintRules(g);
+                case "Choose Bird" -> paintPlaySpecificBirdSecondPart(g);
+                case "When Played Ability" -> paintWPAbility(g);
+                case "Choose Bonus" -> paintBonusDraw(g);
+                case "Loop Draw" -> paintLoopDraw(g);
+                case "On Activate Ability" -> paintOAAbility(g);
+                case "Remove Bird" -> paintViewBirds(g);
+                case "Tuck Card" -> paintViewBirds(g);
+                case "Once Between Turns Ability" -> paintOBTAbility(g);
+                case "Remove Food" -> paintViewFoods(g);
+                case "Add Food" -> paintViewFoods(g);
+                case "No Food" -> {
+                    paintGame(g);
+                    g.setColor(Color.CYAN);
+                    g.fillRect(600, 400, 300, 100);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.setColor(Color.BLACK);
+                    g.drawString("Oops you have no food :(", 650, 420);
+                }
+                case "No Eggs" -> {
+                    paintGame(g);
+                    g.setColor(Color.CYAN);
+                }
+                case "View Highlight Bird" -> {
+                    paintGame(g);
+                    g.drawImage(highlighted.getImage(), 200, 200, 352, 600, null);
+                }
+                case "Lay Eggs" -> {
+                    paintGame(g);Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(5.0f));
+        g2.setColor(Color.BLUE);
+
+        if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
+        if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
+        if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
+
+       if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
+       
+       if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
+
+       if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
+       if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
+       if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
+
+      if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
+      if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
+      if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
+      g2.setColor(Color.BLACK);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.drawString("Click a bird to add an egg", 300, 100);
+                    int count = 0;
+                    for (String s: state.CURRENTEVENT) if (s.equals("Lay Eggs")) count ++;
+                    g.drawString("Add " + count + " more eggs", 300, 160);
+                }
+                case "Remove Egg" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    g.drawString("Click a bird to remove an egg", 300, 100);
+                }
+                case "Select Food" -> {
+                    paintViewFeeder(g);
+                    if (selectingBool) paintBoolean(g, "Select Food", "Seed","Insect");
+                }
+                case "Pick Food For Specific Bird" -> {
+                    paintGame(g);
+                    g.setFont(new Font("Arial", Font.BOLD, 55));
+                    
+                    out.println(state.specificBirdToPlay.getFoods());
+                    g.drawImage(bg, 0, 380, getWidth(), getHeight(), null);
+                    //g.drawImage(exitPic, 20, 400, 50, 50, null);
+                    g.setFont(new Font("Arial", Font.BOLD, 50));
+                    g.drawString("Click foods to play bird with", 600, 458);
+
+                    for (int i=0;i<5;i++){  
+                        g.drawString(""+state.birdFoodsForPlayingBird[i], 285+100*i, 700);
+                    }
+                    g.drawImage(state.specificBirdToPlay.getImage(), 1137, 523, 1345-1137,777-523, null);
+                    g.drawImage(wheatToken, 250, 550, 100, 100, null);
+                    g.drawImage(fishToken, 350, 550, 100, 100, null);
+                    g.drawImage(fruitToken, 450, 550, 100, 100, null);
+                    g.drawImage(invertebrateToken, 550, 550, 100, 100, null);
+                    g.drawImage(rodentToken, 650, 550, 100, 100, null);
+                    g.drawImage(Clear_Button, 100, 400, 250, 100, null);
+                    if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
+                        g.drawImage(Continue_Button, 100, 750, 250, 100, null);
+                    }
+
+                    state.lock.notifyAll();
+                }
+                case "Remove Eggs For Bird" -> {
+                    if(state.eggsNeededToSpendForPlayingBird==0){
+                        int position=0;
+                for(int i=0;i<3;i++){
+                    for(int j=0;j<5;j++){
+                        if(state.squaresClickedToPlayBird[i][j]){
+                            position=j;
+                            for(int a=j;a>-1;a--){
+                                if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
+                                    position=a;
                             }
+                        }
                         }
                     }
                 }
-                //     int position=0;
-                //     for(int i=0;i<3;i++){
-                //         for(int j=0;j<5;j++){
-                //             if(state.squaresClickedToPlayBird[i][j]){
-                //                 position=j;
-                //                 for(int a=j;a>-1;a--){
-                //                     if(state.players[state.playing].getBoard().getBoard()[i][a]==null){
-                //                         position=a;
-                //                 }
-                //             }
-                //             }
-                //         }
-                //     }
-                //     // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
+                // if(state.players[state.playing].playBird(state.players[state.playing].getCardsInHand().get(currentShowing*4+0),state.habitatToPlayBird,position ))
                     //     state.players[state.playing].getCardsInHand().remove(currentShowing*showing+0);
                     // 
-                    //     state.CURRENTEVENT.removeLast();
+                    // state.CURRENTEVENT.removeLast();
                 //attempt to play bird
                 if(state.players[state.playing].canAffordBirdWithChosenFoods(state.specificBirdToPlay, state.birdFoodsForPlayingBird)){
                     if(state.players[state.playing].playBird(state.specificBirdToPlay, state.habitatToPlayBird, position, state.birdFoodsForPlayingBird)){
@@ -1282,6 +1342,8 @@ repaint();
                 }
             }
                     
+                   
+                   
                     if(state.players[state.playing].getEggCount()<state.eggsNeededToSpendForPlayingBird){
                         state.CURRENTEVENT.removeLast();
                         state.CURRENTEVENT.removeLast();
@@ -1291,36 +1353,34 @@ repaint();
                     paintGame(g);Graphics2D g2 = (Graphics2D)g;
                     g2.setStroke(new BasicStroke(5.0f));
                     g2.setColor(Color.BLUE);
+                    g2.drawRect(470, 155, 628-470, 392-155);
+                    g2.drawRect(469, 403, 627-469, 637-403);
+                    g2.drawRect(470,650,626-470,866-650);
 
-                    if(state.players[state.playing].getBoard().getBoard()[0][0]!=null)g2.drawRect(470, 155, 628-470, 392-155);
-                    if(state.players[state.playing].getBoard().getBoard()[1][0]!=null)g2.drawRect(469, 403, 627-469, 637-403);
-                    if(state.players[state.playing].getBoard().getBoard()[2][0]!=null)g2.drawRect(470,650,626-470,866-650);
+                    g2.drawRect(644, 155, 800-644, 392-155);
+                    g2.drawRect(644, 403, 800-644, 637-403);
+                    g2.drawRect(644,650,800-644,866-650);
+       
+                    g2.drawRect(815, 155, 969-815, 392-155);
+                    g2.drawRect(815, 403, 969-815, 637-403);
+                    g2.drawRect(815,650,969-815,866-650);
 
-                    if(state.players[state.playing].getBoard().getBoard()[0][1]!=null)g2.drawRect(644, 155, 800-644, 392-155);
-                    if(state.players[state.playing].getBoard().getBoard()[1][1]!=null)g2.drawRect(644, 403, 800-644, 637-403);
-                    if(state.players[state.playing].getBoard().getBoard()[2][1]!=null)g2.drawRect(644,650,800-644,866-650);
+                    g2.drawRect(985, 155, 1138-985, 392-155);
+                    g2.drawRect(985, 403, 1138-985, 637-403);
+                    g2.drawRect(985,650,1138-985,866-650);
 
-                    if(state.players[state.playing].getBoard().getBoard()[0][2]!=null)g2.drawRect(815, 155, 969-815, 392-155);
-                    if(state.players[state.playing].getBoard().getBoard()[1][2]!=null)g2.drawRect(815, 403, 969-815, 637-403);
-                    if(state.players[state.playing].getBoard().getBoard()[2][2]!=null)g2.drawRect(815,650,969-815,866-650);
-
-                    if(state.players[state.playing].getBoard().getBoard()[0][3]!=null) g2.drawRect(985, 155, 1138-985, 392-155);
-                    if(state.players[state.playing].getBoard().getBoard()[1][3]!=null) g2.drawRect(985, 403, 1138-985, 637-403);
-                    if(state.players[state.playing].getBoard().getBoard()[2][3]!=null) g2.drawRect(985,650,1138-985,866-650);
-
-                    if(state.players[state.playing].getBoard().getBoard()[0][4]!=null) g2.drawRect(1152, 155, 1302-1152, 392-155);
-                    if(state.players[state.playing].getBoard().getBoard()[1][4]!=null) g2.drawRect(1152, 403, 1302-1152, 637-403);
-                    if(state.players[state.playing].getBoard().getBoard()[2][4]!=null) g2.drawRect(1152,650,1302-1152,866-650);
+                    g2.drawRect(1152, 155, 1302-1152, 392-155);
+                    g2.drawRect(1152, 403, 1302-1152, 637-403);
+                    g2.drawRect(1152,650,1302-1152,866-650);
                     g2.setColor(Color.BLACK);
                     g.setFont(new Font("Arial", Font.BOLD, 55));
                     g.drawString("Click eggs to spend. Eggs needed: "+state.eggsNeededToSpendForPlayingBird, 300, 100);
                    
-                    
+                }
             }
         }
     }
     
-
     public void paintOAAbility(Graphics g){
         String ability = currentBird.getAbilityText();
         if (currentBirdNum<0){
@@ -1338,7 +1398,7 @@ repaint();
         else if (ability.contains("Tuck 1 [card]")){
             paintViewBirds(g);
         }
-        else if (ability.contains("Each player gains 1 [die]")){
+        else if (ability.contains("Each player gains 1 [die]")) {
             g.drawImage(bg, 0,0, getWidth(), getHeight(), null);
             g.drawImage(cover, 1300, 400, 100, 100, null); //feeder placeholder
             g.setFont(new Font("Arial", Font.BOLD, 55));
@@ -1379,45 +1439,6 @@ repaint();
         g.drawImage(currentBird.getImage(), 650, 30, 260, (int)(200*1.4), null);
         g.drawImage(skip, 1100, 300, 300, 100, null);
     }
-
-
-    public void paintOBTAbility(Graphics g){
-        if (currentPinkBird == null && !pinkPowerQueue.isEmpty()) {
-            currentPinkBird = pinkPowerQueue.peek();
-            currentPinkOwner = pinkPowerOwnerQueue.peek();
-        }
-        
-        if (currentPinkBird == null) {
-            paintGame(g);
-            return;
-        }
-
-        paintGame(g);
-        
-        g.setColor(new Color(0, 0, 0, 150));
-        g.fillRect(0, 0, getWidth(), getHeight());
-        
-        g.setColor(Color.PINK);
-        g.fillRect(580, 180, 300, 440);
-        g.drawImage(currentPinkBird.getImage(), 600, 200, 260, 364, null);
-        
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 30));
-        String ownerName = state.players[currentPinkOwner].getName();
-        g.drawString("Pink Power Triggered for " + ownerName , 500, 100);
-        
-        String ability = currentPinkBird.getAbilityText();
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-        
-        
-        g.drawImage(skip, 1100, 300, 300, 100, null);
-        
-        if (ability.contains("gain 1 [die] from the birdfeeder")) {
-             paintViewFeeder(g); 
-        }
-    }
-
-    
 
     
 
@@ -1505,126 +1526,295 @@ repaint();
     }
 
     public void paintScoreRound(Graphics g){
-        // Polished, responsive score sheet
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         int cols = state.players.length;
-        int labelColWidth = 220;
-        int padding = 40;
-        int availableW = Math.max(640, getWidth() - padding*2 - labelColWidth);
+        int leftPad = 40;
+        int topPad = 110;
+        int labelColWidth = 220;                 // left column for category labels
+        int availableW = Math.max(600, getWidth() - leftPad - labelColWidth - 80);
         int colWidth = Math.max(160, availableW / Math.max(1, cols));
         int tableWidth = labelColWidth + colWidth * cols;
         int startX = (getWidth() - tableWidth) / 2;
-        int topY = 110;
 
         // Title
         g2.setFont(new Font("SansSerif", Font.BOLD, 36));
-        g2.setColor(new Color(20, 20, 30));
-        g2.drawString("FINAL SCORES", startX, 64);
+        g2.setColor(new Color(30, 30, 30));
+        g2.drawString("FINAL SCORES", startX, 60);
 
-        // Header: player chips + names
+        // Player color chips (simple palette), header boxes
         Color[] chip = { new Color(0, 120, 215), new Color(230, 180, 20), new Color(34, 139, 34), new Color(200, 30, 60) };
         g2.setFont(new Font("SansSerif", Font.BOLD, 16));
         for (int p = 0; p < cols; p++) {
-            int hx = startX + labelColWidth + p * colWidth;
-            int hy = topY - 60;
-            g2.setColor(new Color(245,245,250));
-            g2.fillRoundRect(hx + 6, hy - 18, colWidth - 12, 48, 10, 10);
+            int x = startX + labelColWidth + p * colWidth;
+            int y = topPad - 70;
+            // header box
+            g2.setColor(new Color(245, 245, 250));
+            g2.fillRoundRect(x + 6, y - 18, colWidth - 12, 56, 10, 10);
+            g2.setColor(Color.DARK_GRAY);
+            String title = "Player " + (p + 1);
+            // center title
+            FontMetrics fm = g2.getFontMetrics();
+            int tx = x + (colWidth - fm.stringWidth(title)) / 2;
+            int ty = y + fm.getAscent();
             // color chip
             g2.setColor(chip[p % chip.length]);
-            g2.fillOval(hx + 10, hy - 10, 20, 20);
-            // player label (use name if available)
-            String pname = (state.players[p] != null && state.players[p].getName()!=null && !state.players[p].getName().isEmpty()) ? state.players[p].getName() : "Player " + (p+1);
-            g2.setColor(Color.DARK_GRAY);
-            FontMetrics fm = g2.getFontMetrics();
-            g2.drawString(pname, hx + (colWidth - fm.stringWidth(pname)) / 2, hy + 8);
+            g2.fillRect(x + 8, y - 6, 22, 22);
+            g2.setColor(Color.BLACK);
+            g2.drawString(title, tx, ty);
         }
 
-        // Rows / categories
-        String[] cats = {"Birds (printed)", "Bonus Cards", "End-of-Round Goals (total)", "Eggs", "Cached Food", "Tucked Cards"};
-        int rows = cats.length + 1; // extra TOTAL
-        int rowH = 52;
-        int tableX = startX;
-        int tableY = topY;
-        int tableH = rows * rowH + 8;
+        // Categories (rows). Use same logical categories as official sheet.
+        String[] categories = {"Birds (printed)", "Bonus Cards", "End-of-Round Goals (total)", "Eggs", "Cached Food", "Tucked Cards"};
+        int rows = categories.length + 1; // +1 for TOTAL
+        int rowH = 48;
 
-        // Left label column
-        g2.setColor(new Color(250,250,255));
+        // Draw table background and grid lines
+        int tableX = startX;
+        int tableY = topPad;
+        int tableH = rows * rowH + 18;
+        // left labels column background
+        g2.setColor(new Color(250, 250, 255));
         g2.fillRect(tableX, tableY, labelColWidth, tableH);
+        // overall table border
         g2.setColor(Color.GRAY);
         g2.setStroke(new BasicStroke(1.5f));
         g2.drawRect(tableX, tableY, tableWidth, tableH);
 
-        // Draw rows & labels
-        g2.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        // horizontal lines and labels
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
         for (int r = 0; r < rows; r++) {
             int y = tableY + r * rowH;
-            g2.setColor(new Color(210,210,220));
+            // row separator
+            g2.setColor(new Color(200, 200, 210));
             g2.drawLine(tableX, y, tableX + tableWidth, y);
-            String lbl = (r < cats.length) ? cats[r] : "TOTAL";
-            if (r == rows - 1) g2.setFont(new Font("SansSerif", Font.BOLD, 16));
-            else g2.setFont(new Font("SansSerif", Font.PLAIN, 15));
-            g2.setColor(new Color(40,40,40));
-            g2.drawString(lbl, tableX + 14, y + rowH/2 + g2.getFontMetrics().getAscent()/2 - 4);
+            // label column text (for category rows)
+            String label;
+            if (r < categories.length) label = categories[r];
+            else label = "TOTAL";
+            // bold TOTAL label
+            if (r == rows - 1) g2.setFont(new Font("SansSerif", Font.BOLD, 18));
+            else g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            g2.setColor(Color.DARK_GRAY);
+            int labelX = tableX + 12;
+            int labelY = y + rowH / 2 + g2.getFontMetrics().getAscent() / 2 - 4;
+            g2.drawString(label, labelX, labelY);
         }
-        g2.drawLine(tableX, tableY + rows*rowH, tableX + tableWidth, tableY + rows*rowH);
+        // last horizontal bottom line
+        g2.drawLine(tableX, tableY + rows * rowH, tableX + tableWidth, tableY + rows * rowH);
 
-        // Fill player columns with values (centered)
+        // vertical separators and player cell backgrounds / values
         for (int p = 0; p < cols; p++) {
+            int colXPos = tableX + labelColWidth + p * colWidth;
+            // vertical line
+            g2.setColor(new Color(200, 200, 210));
+            g2.drawLine(colXPos, tableY, colXPos, tableY + tableH);
+            // draw values per row
             Player player = state.players[p];
-            ScoreBreakdown sb = (player!=null) ? player.getFinalScoreBreakdown() : null;
-            String[] values = new String[rows];
-            if (sb != null) {
-                values[0] = String.valueOf(sb.printedPoints);
-                values[1] = String.valueOf(sb.bonus);
-                values[2] = String.valueOf(sb.flocked);
-                values[3] = String.valueOf(sb.eggs);
-                values[4] = String.valueOf(sb.cachedFood);
-                values[5] = String.valueOf(sb.tuckedCards);
-                values[6] = String.valueOf(sb.total());
+            ScoreBreakdown breakdown = player.getFinalScoreBreakdown();
+            // compute values array: Birds, Bonus, Goals, Eggs, Cached, Tucked, Total
+            String[] vals = new String[rows];
+            if (breakdown != null) {
+                vals[0] = String.valueOf(breakdown.printedPoints);
+                vals[1] = String.valueOf(breakdown.bonus);
+                vals[2] = String.valueOf(breakdown.flocked);
+                vals[3] = String.valueOf(breakdown.eggs);
+                vals[4] = String.valueOf(breakdown.cachedFood);
+                vals[5] = String.valueOf(breakdown.tuckedCards);
+                vals[6] = String.valueOf(breakdown.total());
             } else {
-                Arrays.fill(values, "—");
+                for (int i = 0; i < vals.length; i++) vals[i] = "—";
             }
-            int cx = tableX + labelColWidth + p * colWidth;
             for (int r = 0; r < rows; r++) {
-                int cy = tableY + r * rowH;
+                int cellX = colXPos;
+                int cellY = tableY + r * rowH;
+                // highlight total row
                 if (r == rows - 1) {
-                    g2.setColor(new Color(220,240,255));
-                    g2.fillRect(cx+1, cy+1, colWidth-2, rowH-1);
+                    g2.setColor(new Color(210, 235, 255));
+                    g2.fillRect(cellX + 1, cellY + 1, colWidth - 2, rowH - 1);
                 }
-                g2.setColor(Color.DARK_GRAY);
-                g2.setFont(r==rows-1 ? new Font("SansSerif", Font.BOLD, 16) : new Font("SansSerif", Font.PLAIN, 14));
-                FontMetrics fmv = g2.getFontMetrics();
-                String txt = values[r];
-                int tx = cx + (colWidth - fmv.stringWidth(txt)) / 2;
-                int ty = cy + rowH/2 + fmv.getAscent()/2 - 4;
-                g2.drawString(txt, tx, ty);
+                // draw value centered
+                g2.setFont(r == rows - 1 ? new Font("SansSerif", Font.BOLD, 18) : new Font("SansSerif", Font.PLAIN, 16));
+                FontMetrics fmV = g2.getFontMetrics();
+                String text = vals[r];
+                int textW = fmV.stringWidth(text);
+                int textX = cellX + (colWidth - textW) / 2;
+                int textY = cellY + rowH / 2 + fmV.getAscent() / 2 - 4;
+                g2.setColor(Color.BLACK);
+                g2.drawString(text, textX, textY);
             }
         }
-        // right border
+
+        // final vertical right border
+        g2.setColor(new Color(200, 200, 210));
         g2.drawLine(tableX + tableWidth, tableY, tableX + tableWidth, tableY + tableH);
 
-        // Styled Exit (X) button — compute and store rectangle for mouse checks
-        int bx = startX + tableWidth - 62;
-        int by = tableY - 66;
-        int bw = 52;
-        int bh = 36;
-        g2.setColor(new Color(200, 60, 60));
-        g2.fillRoundRect(bx, by, bw, bh, 8, 8);
+        // Exit button (styled)
+        int bx = startX + tableWidth - 60;
+        int by = tableY - 70;
+        g2.setColor(new Color(200, 80, 80));
+        g2.fillRoundRect(bx, by, 48, 36, 8, 8);
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.BOLD, 20));
-        g2.drawString("X", bx + (bw/2 - 6), by + (bh/2 + 7));
-        // update rectangle used by mousePressed
-        scoreExitRect.setBounds(bx, by, bw, bh);
+        g2.drawString("X", bx + 16, by + 25);
 
-        // footer hint
+        // small footer note
         g2.setFont(new Font("SansSerif", Font.ITALIC, 12));
-        g2.setColor(new Color(90,90,90));
-        g2.drawString("Write subtotals into each field and add vertically for TOTAL.", startX, tableY + tableH + 30);
-    }
-    
+        g2.setColor(new Color(80, 80, 80));
+        g2.drawString("Fill each player column and add vertically for TOTAL.", startX, tableY + tableH + 30);
+
+        // ROUND GOALS SECTION
+        int roundSectionY = tableY + tableH + 60;
+        g2.setFont(new Font("SansSerif", Font.BOLD, 20));
+        g2.setColor(new Color(30, 30, 30));
+        g2.drawString("END-OF-ROUND GOAL WINNERS", startX, roundSectionY);
+
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        Color[] chip = { new Color(0, 120, 215), new Color(230, 180, 20), new Color(34, 139, 34), new Color(200, 30, 60) };
+        
+        for (int round = 0; round < 4; round++) {
+            int roundY = roundSectionY + 25 + round * 22;
+            
+            // Round label + goal image (if available)
+            g2.setColor(Color.DARK_GRAY);
+            g2.drawString("Round " + (round + 1) + ":", startX, roundY);
+            
+            // Draw round goal image thumbnail (small)
+            if (roundPics[round] != null) {
+                g.drawImage(roundPics[round], startX + 100, roundY - 16, 20, 20, null);
+            }
+            
+            // Find which player won this round (who earned the most points)
+            int maxPoints = -1;
+            int winnerIndex = -1;
+            for (int p = 0; p < cols; p++) {
+                int pointsThisRound = state.players[p].getRoundGoalPoints(round);
+                if (pointsThisRound > maxPoints) {
+                    maxPoints = pointsThisRound;
+                    winnerIndex = p;
+                }
+            }
+            
+            // Display winner
+            if (winnerIndex >= 0 && maxPoints > 0) {
+                g2.setColor(chip[winnerIndex % chip.length]);
+                g2.fillRect(startX + 130, roundY - 14, 16, 16);
+                g2.setColor(Color.BLACK);
+                g2.drawString("Player " + (winnerIndex + 1) + " — " + maxPoints + " pts", startX + 155, roundY);
+            } else {
+                g2.setColor(new Color(150, 150, 150));
+                g2.drawString("(no winner)", startX + 155, roundY);
+            }
+        }
+
+		// Draw Goal Details button (right side)
+		int btnW = 160;
+		int btnH = 36;
+		int btnX = startX + tableWidth - btnW - 10;
+		int btnY = tableY + tableH + 20;
+		g2.setColor(new Color(60, 130, 200));
+		g2.fillRoundRect(btnX, btnY, btnW, btnH, 10, 10);
+		g2.setColor(Color.WHITE);
+		g2.setFont(new Font("SansSerif", Font.BOLD, 14));
+		FontMetrics fmBtn = g2.getFontMetrics();
+		String lbl = "Goal Details";
+		int lblX = btnX + (btnW - fmBtn.stringWidth(lbl)) / 2;
+		int lblY = btnY + (btnH - fmBtn.getHeight()) / 2 + fmBtn.getAscent();
+		g2.drawString(lbl, lblX, lblY);
+		// update clickable rect for mouse handler
+		scoreGoalDetailsRect.setBounds(btnX, btnY, btnW, btnH);
+	}
+
+	// New view: detailed round-goals scoring and per-player metrics
+	public void paintRoundGoalsDetail(Graphics g) {
+		g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		int margin = 40;
+		int y = margin;
+		g2.setFont(new Font("SansSerif", Font.BOLD, 28));
+		g2.setColor(Color.DARK_GRAY);
+		g2.drawString("Round Goals — Details & Scoring", margin, y);
+		y += 40;
+
+		// Back button (top-right)
+		int backW = 100, backH = 32;
+		int backX = getWidth() - backW - margin;
+		int backY = margin;
+		g2.setColor(new Color(180, 50, 50));
+		g2.fillRoundRect(backX, backY, backW, backH, 8, 8);
+		g2.setColor(Color.WHITE);
+		g2.setFont(new Font("SansSerif", Font.BOLD, 14));
+		g2.drawString("Back", backX + 32, backY + 20);
+		roundGoalsBackRect.setBounds(backX, backY, backW, backH);
+
+		// Header row for players
+		int cols = state.players.length;
+		int colW = (getWidth() - margin*2) / (cols + 1);
+		int startX = margin;
+		y += 20;
+
+		g2.setFont(new Font("SansSerif", Font.BOLD, 16));
+		g2.setColor(Color.BLACK);
+		g2.drawString("Goal", startX, y + 18);
+		for (int p = 0; p < cols; p++) {
+			g2.drawString("P" + (p+1), startX + (p+1)*colW + 8, y + 18);
+		}
+		y += 28;
+
+		// For each round show image, metric per player and awarded points
+		for (int r = 0; r < 4; r++) {
+			int rowX = startX;
+			// Goal image thumbnail
+			if (roundPics[r] != null) {
+				g.drawImage(roundPics[r], rowX, y - 12, 40, 40, null);
+			}
+			// Goal title (if Game has RoundGoal info use it)
+			String goalDesc = "";
+			try {
+				RoundGoal rg = state.game.getRoundGoal(r);
+				if (rg != null) goalDesc = rg.getDescription();
+			} catch (Exception ignored) {}
+			if (goalDesc.isEmpty()) goalDesc = "Round " + (r+1);
+			g2.setFont(new Font("SansSerif", Font.PLAIN, 14));
+			g2.setColor(Color.DARK_GRAY);
+			g2.drawString(goalDesc, rowX + 48, y + 6);
+
+			// Player metrics and awarded points
+			for (int p = 0; p < cols; p++) {
+				Player pl = state.players[p];
+				// metric: ask Game's RoundGoal evaluator if available
+				int metric = 0;
+				try {
+					RoundGoal rg = state.game.getRoundGoal(r);
+					if (rg != null) metric = rg.evaluatePlayer(pl);
+				} catch (Exception ignored) {
+					metric = pl.getRoundGoalPoints(r); // fallback
+				}
+				int awarded = pl.getRoundGoalPoints(r);
+
+				int textX = startX + (p+1)*colW + 8;
+				g2.setColor(Color.BLACK);
+				g2.drawString(metric + " (" + awarded + "pt)", textX, y + 6);
+			}
+
+			y += 36;
+			if (y > getHeight() - 100) { // simple pagination clamp (avoid overflow)
+				g2.setColor(Color.GRAY);
+				g2.drawString("... (scroll not implemented)", startX, y);
+				break;
+			}
+		}
+
+		// small note
+		g2.setFont(new Font("SansSerif", Font.ITALIC, 12));
+		g2.setColor(new Color(90,90,90));
+		g2.drawString("Competitive scoring applied: 1st=5, 2nd=3, 3rd=2, 4th=1. Ties split points.", margin, getHeight() - 40);
+	}
+
     public void paintPlaySpecificBird(Graphics g){
        
         paintGame(g);
@@ -2028,10 +2218,10 @@ repaint();
         }
         try{
         for (int i=0;i<birdArrSplit.get(currentShowing).size();i++){
-            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325, null);
         }
     } catch (IndexOutOfBoundsException e){for (int i=0;i<birdArrSplit.get(currentShowing--).size();i++){
-            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325,null);
+            g.drawImage(birdArrSplit.get(currentShowing).get(i).getImage(), 250 + 250*i, 500, 240, 325, null);
         }
     }
         //BUG::: rightarrow still shows up even though there are only 4 birbs (max is 4)
@@ -2237,6 +2427,7 @@ repaint();
     
     public void startSetUp(){
         try {
+
             for (int i=0;i<6;i++){
                 dicePics[i] = ImageIO.read(FramePanel.class.getResource("/assets/dice/"+i+".png"));
             }
@@ -2426,29 +2617,30 @@ repaint();
 
     //select round goals
     public void setRgoals(){
-        //out.println("Ran");
-        //if (setUp == true) return;
-        //else setUp = true;
+        // Use the game's authoritative goal IDs from ProgramState so UI matches scoring
         roundGoals.clear();
-        int randNum;
-        for (int i=0;i<4;i++){
-            randNum = (int)(Math.random()*16);
-            while (roundGoals.contains(randNum))
-                randNum = (int)(Math.random()*16);
-            roundGoals.add(randNum);
-            
-        }
-
-        // YES I KNOW EGG IN CAVITY IS UPSIDE DOWN IDFC
-        for (int i=0;i<4;i++){
+        for (int i = 0; i < 4; i++) {
+            int id = -1;
             try {
-                roundPics[i] = ImageIO.read(FramePanel.class.getResource("/assets/round/"+roundGoals.get(i)+".png"));
-            } catch (Exception e) { 
-                out.println("Exception: "+e);
-                out.println("Round goal pics unloaded");
+                id = state.getRoundGoal(i);
+            } catch (Exception ignored) {}
+            // validate id; fallback to a random unique id if out of range
+            if (id < 0 || id > 15) {
+                int randNum = (int)(Math.random() * 16);
+                while (roundGoals.contains(randNum))
+                    randNum = (int)(Math.random() * 16);
+                id = randNum;
+                try { state.setRoundGoal(i, id); } catch (Exception ignored) {}
+            }
+            roundGoals.add(id);
+            try {
+                roundPics[i] = ImageIO.read(FramePanel.class.getResource("/assets/round/" + id + ".png"));
+            } catch (Exception e) {
+                out.println("Exception: " + e);
+                out.println("Round goal pics unloaded for id " + id);
+                roundPics[i] = null;
             }
         }
-        //out.println(roundGoals);
     } 
     //start Selection methods
     public void mockSetup(){
@@ -2520,7 +2712,8 @@ repaint();
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(5.0f));
         g2.drawRect(730, 494, 425, 298);
-        g.drawString(""+state.numberOfRemovableDice, 1400, 460);
+        g2.drawRect(207, 494, 425, 298);
+
         for (int i=0;i<feeder.getDice().size();i++){
             g.drawImage(dicePics[feeder.getImageIndex(i)], diceLocMap[i][0], diceLocMap[i][1], 90, 90, null);
         }
